@@ -40,10 +40,11 @@ venv
 node_modules/
 *npm-debug.log
 
-
 # js and css
 *all.css
 *all.css.map
 *all.js
 *all.js.map
 
+# generated js from jsx
+react_todo/src/js/components/*.js
