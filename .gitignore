@@ -1,0 +1,49 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+.DS_Store
+*.pid
+
+# C extensions
+*.so
+
+# Distribution / packaging
+/back/venv
+.Python
+env/
+bin/
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+*.swp
+*.sublime-project
+*.sublime-workspace
+
+# python  virtualenv
+venv
+
+# NodeJS modules
+node_modules/
+*npm-debug.log
+
+
+# js and css
+*all.css
+*all.css.map
+*all.js
+*all.js.map
+
