@@ -41,10 +41,8 @@ node_modules/
 *npm-debug.log
 
 # js and css
-*all.css
-*all.css.map
-*all.js
-*all.js.map
+/react_todo/static/js/*
+/react_todo/static/css/*
 
 # generated js from jsx
 react_todo/src/js/components/*.js
