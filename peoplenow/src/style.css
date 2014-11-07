@@ -99,3 +99,9 @@ blockquote, q {
 	display: inline-block;
 	padding: 0 5px;
 }
+
+.top-pannel-item.status {
+	color: #aaa;
+	font-size: 15px;
+	vertical-align: middle;
+}
