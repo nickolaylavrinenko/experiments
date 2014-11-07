@@ -95,11 +95,7 @@ blockquote, q {
 	padding: 0 20px;
 }
 
-.social-button {
+.top-pannel-item {
 	display: inline-block;
-	vertical-align: middle;
-/*
-	min-width: 200px;
-	background: #ddd;
-*/
+	padding: 0 5px;
 }
