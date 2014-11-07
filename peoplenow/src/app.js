@@ -40,6 +40,9 @@ window.display_messages = function(channel_name, messages) {
 
 $(function(){
 
+	// init facebook
+	require('./fb_auth');
+
 	// innit backendless
 	Backendless.initApp(config.APP_ID,
 											config.JS_KEY,
