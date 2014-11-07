@@ -45,10 +45,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var $ = __webpack_require__(4);
-	var _ = __webpack_require__(5);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(8);
 	var config = __webpack_require__(1);
-	var structures = __webpack_require__(13);
+	var structures = __webpack_require__(2);
 	var errors = __webpack_require__(3);
 
 
@@ -93,8 +93,8 @@
 
 		// init app blocks
 		var blocks = _.assign(
-			__webpack_require__(2),
-			__webpack_require__(11)
+			__webpack_require__(4),
+			__webpack_require__(5)
 		);
 		_(blocks).each(function(constructor, class_name){
 			$('.' + class_name + ':not(.init-block)').each(function(ind, item){
@@ -138,10 +138,111 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	__webpack_require__(6);
+	function Tags( args ) {
+	    args = args || {};
+	    this.___class = "Tags";
+	                                        
+	    this.title = args.title || "";
+	                                                
+	    this.updated = args.updated || "";
+	                                                
+	    this.created = args.created || "";
+	                                                
+	    this.ownerId = args.ownerId || "";
+	                                                
+	    this.desc = args.desc || "";
+	                                                
+	    this.objectId = args.objectId || "";
+	                                                
+	    var storage = Backendless.Persistence.of( Tags );
 
-	var $ = __webpack_require__(4);
-	var _ = __webpack_require__(5);
+	    this.save = function ( async )
+	    {
+	        storage.save( this, async );
+	    };
+
+	    this.remove = function ( async )
+	    {
+	        var result = storage.remove( this, async );
+	        this.objectId = null;
+	        return result;
+	    };                                      
+	};
+
+	function CustomUser( args ) {
+	    args = args || {};
+	    this.___class = "CustomUser";
+	                                        
+	    this.objectId = args.objectId || "";
+	                                                
+	    this.created = args.created || "";
+	                                                
+	    this.email = args.email || "";
+	                                                
+	    this.ownerId = args.ownerId || "";
+	                                                
+	    this.updated = args.updated || "";
+	                                                
+	    this.tags = args.tags || "";
+	                                                
+	    this.name = args.name || "";
+	                                                
+	    this.fbuid = args.fbuid || "";
+	                                                
+	    var storage = Backendless.Persistence.of( CustomUser );
+
+	    this.save = function ( async )
+	    {
+	        storage.save( this, async );
+	    };
+
+	    this.remove = function ( async )
+	    {
+	        var result = storage.remove( this, async );
+	        this.objectId = null;
+	        return result;
+	    };                                        
+	};
+
+
+	module.exports = {
+	  'Tags': Tags,
+	  'CustomUser': CustomUser,
+	};
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var _ = __webpack_require__(8);
+
+	var handler = Backendless.Async(
+	  function (data) {
+	    /* success */
+	  },
+	  function (error) {
+	    if( !_(error).isEmpty() && error.statusCode) {
+	      console.warn('Error occured, code - ' + (error.statusCode || 'NO') +
+	         ', message - ' + (error.message || 'NO'));                        
+	    }
+	  }
+	);
+
+
+	module.exports = {
+	    handler: handler,
+	};
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	__webpack_require__(9);
+
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(8);
 	var errors = __webpack_require__(3);
 
 
@@ -197,31 +298,93 @@
 	};
 
 /***/ },
-/* 3 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var _ = __webpack_require__(5);
+	__webpack_require__(9);
 
-	var handler = Backendless.Async(
-	  function (data) {
-	    /* success */
-	  },
-	  function (error) {
-	    if( !_(error).isEmpty() && error.statusCode) {
-	      console.warn('Error occured, code - ' + (error.statusCode || 'NO') +
-	         ', message - ' + (error.message || 'NO'));                        
-	    }
-	  }
-	);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(8);
+	var errors = __webpack_require__(3);
+	var constants = __webpack_require__(6);
+
+
+	var SendMessageForm = function(el) {
+		this.form = $(el);
+		this.initForm();
+	};
+
+	SendMessageForm.prototype.initForm = function() {
+		var that = this;
+		if( this.form ) {
+			this.form.find('.submit-button')
+						   .on('click', function(ev){
+						   	 ev.preventDefault();
+							 	 that._handle_submit(ev);
+							 });
+		}
+	};
+
+	SendMessageForm.prototype._handle_submit = function(ev) {
+		var message = this.form[0].message.value;
+		var tags = [];
+		_(this.form[0].tags.options).each(function(option){
+			option && option.selected && tags.push(option.value.toLowerCase());
+		});
+		if( message && tags.length ) {
+			this.sendMessage(tags, message);
+		}
+		
+	};
+
+	SendMessageForm.prototype.sendMessage = function(tags, messages) {
+		if( messages && !_(messages).isArray() ) {
+			messages = [messages];
+		}
+		if( tags && !_(tags).isArray() ) {
+			tags = [tags];
+		}
+		if( tags && messages ) {
+			console.log('Send messages', tags, messages);
+			_(tags).each(function(channel){
+				_(messages).each(function(message){
+					if( channel && message ) {
+						Backendless.Messaging
+																	.publish(channel,
+																					 message,
+																					 null,
+																					 null,
+																					 errors.handler);
+					}
+				});
+			});
+		}
+	};
 
 
 	module.exports = {
-	    handler: handler,
+		'send-message-form': SendMessageForm,
 	};
 
 /***/ },
-/* 4 */
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	PUBLISH_STATUS = {
+		PUBLISHED: 'published',
+		SCHEDULED: 'scheduled',
+		FAILED: 'failed',
+	};
+
+	module.exports = {
+		PUBLISH_STATUS: PUBLISH_STATUS,
+
+	};
+
+/***/ },
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -9417,7 +9580,7 @@
 
 
 /***/ },
-/* 5 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -16578,24 +16741,24 @@
 	  }
 	}.call(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module), (function() { return this; }())))
 
 /***/ },
-/* 6 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(7);
+	var content = __webpack_require__(10);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(8)(content, {});
+	var update = __webpack_require__(11)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!/home/nick/dev/peoplenow/node_modules/css-loader/index.js!/home/nick/dev/peoplenow/src/style.css", function() {
-			var newContent = require("!!/home/nick/dev/peoplenow/node_modules/css-loader/index.js!/home/nick/dev/peoplenow/src/style.css");
+		module.hot.accept("!!/home/nick/dev/experiments/peoplenow/node_modules/css-loader/index.js!/home/nick/dev/experiments/peoplenow/src/style.css", function() {
+			var newContent = require("!!/home/nick/dev/experiments/peoplenow/node_modules/css-loader/index.js!/home/nick/dev/experiments/peoplenow/src/style.css");
 			if(typeof newContent === 'string') newContent = [module.id, newContent, ''];
 			update(newContent);
 		});
@@ -16604,14 +16767,14 @@
 	}
 
 /***/ },
-/* 7 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(9)();
-	exports.push([module.id, "\n\n/***** clear css start ********/\n\n\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, font, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td {\n\tmargin: 0;\n\tpadding: 0;\n\tborder: 0;\n\toutline: 0;\n\tfont-weight: inherit;\n\tfont-style: inherit;\n\tfont-size: 100%;\n\tfont-family: inherit;\n\tvertical-align: baseline;\n}\n/* remember to define focus styles! */\n:focus {\n\toutline: 0;\n}\nbody {\n\tline-height: 1;\n\tcolor: black;\n\tbackground: white;\n}\nol, ul {\n\tlist-style: none;\n}\n/* tables still need 'cellspacing=\"0\"' in the markup */\ntable {\n\tborder-collapse: separate;\n\tborder-spacing: 0;\n}\ncaption, th, td {\n\ttext-align: left;\n\tfont-weight: normal;\n}\nblockquote:before, blockquote:after,\nq:before, q:after {\n\tcontent: \"\";\n}\nblockquote, q {\n\tquotes: \"\" \"\";\n}\n\n\n/***** clear css end ********/\n\n\n.content {\n\twidth: 100%;\n\tpadding: 20px 10px 10px 10px;\n}\n\n.field {\n\tmargin-top: 5px;\n}\n\n.user-register-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.send-message-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.bordered-input {\n\twidth: 160px;\n\toverflow: hidden;\n\tborder: 1px solid #aaa;\n\tborder-radius: 4px;\n}\n\n.top-pannel {\n\tdisplay: block;\n\twidth: 100%;\n\theight: 40px;\n\tbackground: #eee;\n}\n\n.social-button {\n\tdisplay: block;\n\tfloat: right;\n\theight: 40px;\n/*\n\tmin-width: 200px;\n\tbackground: #ddd;\n*/\n}", ""]);
+	exports = module.exports = __webpack_require__(12)();
+	exports.push([module.id, "\n\n/***** clear css start ********/\n\n\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, font, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td {\n\tmargin: 0;\n\tpadding: 0;\n\tborder: 0;\n\toutline: 0;\n\tfont-weight: inherit;\n\tfont-style: inherit;\n\tfont-size: 100%;\n\tfont-family: inherit;\n\tvertical-align: baseline;\n}\n/* remember to define focus styles! */\n:focus {\n\toutline: 0;\n}\nbody {\n\tline-height: 1;\n\tcolor: black;\n\tbackground: white;\n}\nol, ul {\n\tlist-style: none;\n}\n/* tables still need 'cellspacing=\"0\"' in the markup */\ntable {\n\tborder-collapse: separate;\n\tborder-spacing: 0;\n}\ncaption, th, td {\n\ttext-align: left;\n\tfont-weight: normal;\n}\nblockquote:before, blockquote:after,\nq:before, q:after {\n\tcontent: \"\";\n}\nblockquote, q {\n\tquotes: \"\" \"\";\n}\n\n\n/***** clear css end ********/\n\n\n.content {\n\twidth: 100%;\n\tpadding: 20px 10px 10px 10px;\n}\n\n.field {\n\tmargin-top: 5px;\n}\n\n.user-register-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.send-message-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.bordered-input {\n\twidth: 160px;\n\toverflow: hidden;\n\tborder: 1px solid #aaa;\n\tborder-radius: 4px;\n}\n\n.top-pannel {\n\tdisplay: block;\n\twidth: 100%;\n\theight: 40px;\n\tline-height: 30px;\n\tbackground: #eee;\n\tpadding: 0 20px;\n}\n\n.social-button {\n\tdisplay: inline-block;\n\tvertical-align: middle;\n/*\n\tmin-width: 200px;\n\tbackground: #ddd;\n*/\n}", ""]);
 
 /***/ },
-/* 8 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -16807,7 +16970,7 @@
 
 
 /***/ },
-/* 9 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function() {
@@ -16828,7 +16991,7 @@
 	}
 
 /***/ },
-/* 10 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(module) {
@@ -16842,169 +17005,6 @@
 		return module;
 	}
 
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	__webpack_require__(6);
-
-	var $ = __webpack_require__(4);
-	var _ = __webpack_require__(5);
-	var errors = __webpack_require__(3);
-	var constants = __webpack_require__(12);
-
-
-	var SendMessageForm = function(el) {
-		this.form = $(el);
-		this.initForm();
-	};
-
-	SendMessageForm.prototype.initForm = function() {
-		var that = this;
-		if( this.form ) {
-			this.form.find('.submit-button')
-						   .on('click', function(ev){
-						   	 ev.preventDefault();
-							 	 that._handle_submit(ev);
-							 });
-		}
-	};
-
-	SendMessageForm.prototype._handle_submit = function(ev) {
-		var message = this.form[0].message.value;
-		var tags = [];
-		_(this.form[0].tags.options).each(function(option){
-			option && option.selected && tags.push(option.value.toLowerCase());
-		});
-		if( message && tags.length ) {
-			this.sendMessage(tags, message);
-		}
-		
-	};
-
-	SendMessageForm.prototype.sendMessage = function(tags, messages) {
-		if( messages && !_(messages).isArray() ) {
-			messages = [messages];
-		}
-		if( tags && !_(tags).isArray() ) {
-			tags = [tags];
-		}
-		if( tags && messages ) {
-			console.log('Send messages', tags, messages);
-			_(tags).each(function(channel){
-				_(messages).each(function(message){
-					if( channel && message ) {
-						Backendless.Messaging
-																	.publish(channel,
-																					 message,
-																					 null,
-																					 null,
-																					 errors.handler);
-					}
-				});
-			});
-		}
-	};
-
-
-	module.exports = {
-		'send-message-form': SendMessageForm,
-	};
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	PUBLISH_STATUS = {
-		PUBLISHED: 'published',
-		SCHEDULED: 'scheduled',
-		FAILED: 'failed',
-	};
-
-	module.exports = {
-		PUBLISH_STATUS: PUBLISH_STATUS,
-
-	};
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	function Tags( args ) {
-	    args = args || {};
-	    this.___class = "Tags";
-	                                        
-	    this.title = args.title || "";
-	                                                
-	    this.updated = args.updated || "";
-	                                                
-	    this.created = args.created || "";
-	                                                
-	    this.ownerId = args.ownerId || "";
-	                                                
-	    this.desc = args.desc || "";
-	                                                
-	    this.objectId = args.objectId || "";
-	                                                
-	    var storage = Backendless.Persistence.of( Tags );
-
-	    this.save = function ( async )
-	    {
-	        storage.save( this, async );
-	    };
-
-	    this.remove = function ( async )
-	    {
-	        var result = storage.remove( this, async );
-	        this.objectId = null;
-	        return result;
-	    };                                      
-	};
-
-	function CustomUser( args ) {
-	    args = args || {};
-	    this.___class = "CustomUser";
-	                                        
-	    this.objectId = args.objectId || "";
-	                                                
-	    this.created = args.created || "";
-	                                                
-	    this.email = args.email || "";
-	                                                
-	    this.ownerId = args.ownerId || "";
-	                                                
-	    this.updated = args.updated || "";
-	                                                
-	    this.tags = args.tags || "";
-	                                                
-	    this.name = args.name || "";
-	                                                
-	    this.fbuid = args.fbuid || "";
-	                                                
-	    var storage = Backendless.Persistence.of( CustomUser );
-
-	    this.save = function ( async )
-	    {
-	        storage.save( this, async );
-	    };
-
-	    this.remove = function ( async )
-	    {
-	        var result = storage.remove( this, async );
-	        this.objectId = null;
-	        return result;
-	    };                                        
-	};
-
-
-	module.exports = {
-	  'Tags': Tags,
-	  'CustomUser': CustomUser,
-	};
 
 /***/ }
 /******/ ])
