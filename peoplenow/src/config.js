@@ -1,0 +1,8 @@
+
+var config = {
+	APP_ID: '6D4C958D-0C09-359A-FF05-12C556EC6000',
+	JS_KEY: 'E9758161-B979-FCF4-FF5F-11E67F2F1F00',
+	APP_VERSION: 'v1',
+};
+
+module.exports = config;

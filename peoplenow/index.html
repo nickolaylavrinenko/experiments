@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>people now!</title>
+		<script type="text/javascript" src="static/backendless.min.js"></script>
+		<script type="text/javascript" src="static/bundle.js"></script>
+		<script type="text/javascript" src="static/fb_auth.js"></script>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	</head>
+	<body>
+
+		<div class="top-pannel">
+
+			<div class="social-button">
+				<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+				</fb:login-button>
+				<div id="status">
+				</div>
+			</div>
+
+		</div>
+
+		<div class="content">
+
+			<h3><u>Регистрация пользователя</u></h3>
+			<form class="user-register-form">
+				<table>
+					<tr class="field">
+						<td><label for="name">Логин:</label></td>
+						<td><input class="bordered-input" type="text" name="name" required></td>
+					</tr>
+					<tr class="field">
+					  <td><label for="password">Пароль:</label></td>
+					  <td><input class="bordered-input" type="password" name="password" required></td>
+					</tr>
+					<tr class="field">
+						<td><label for="email">E-mail:</label></td>
+						<td><input class="bordered-input" type="text" name="email" required></td>
+					</tr>
+					<tr class="field">
+					  <td><label for="tags">Теги:</label></td>
+						<td>
+							<select class="bordered-input" name="tags" multiple required>
+  							<option value="flash">Flash</option>
+  							<option value="html">HTML</option>
+  							<option value="css">CSS</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+				<br>
+				<input class="submit-button" type="submit" value="Добавить">
+			</form>
+
+      <h3><u>Отправка сообщения по тегам</u></h3>
+			<form class="send-message-form">
+				<table>
+					<tr class="field">
+						<td><label for="message">Сообщение:</label></td>
+						<td><textarea class="bordered-input" name="message"></textarea></td>
+					</tr>
+					<tr class="field">
+					  <td><label for="tags">Теги:</label></td>
+						<td>
+							<select class="bordered-input" name="tags" multiple>
+  							<option value="flash">Flash</option>
+  							<option value="html">HTML</option>
+  							<option value="css">CSS</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+				<br>
+				<input class="submit-button" type="submit" value="Отправить">
+			</form>
+		</div>
+	</body>
+</html>
