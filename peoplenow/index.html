@@ -11,10 +11,12 @@
 
 		<div class="top-pannel">
 			<div class="top-pannel-item">
-				<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+				<fb:login-button scope="public_profile,email"
+								 onlogin="checkLoginState();"
+								 autologoutlink="true">
 				</fb:login-button>
 			</div>
-			<div id="status" class="top-pannel-item status">Status</div>
+			<div id="auth-status" class="top-pannel-item status"></div>
 		</div>
 
 		<div class="content">

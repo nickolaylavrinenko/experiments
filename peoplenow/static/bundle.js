@@ -17013,6 +17013,12 @@
 /* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
+	
+
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(8);
+
+
 	// This is called with the results from from FB.getLoginStatus().
 	function statusChangeCallback(response) {
 	  // The response object is returned with a status field that lets the
@@ -17022,15 +17028,22 @@
 	  if (response.status === 'connected') {
 	    // Logged into your app and Facebook.
 	    testAPI();
+	    // get name from FB and put it to auth status div
+	    FB.api('/me', function(response) {
+	      if( !_.isEmpty(response) && response.name) {
+	        $('#auth-status').html(response.name);
+	      }
+	    });
+	    //
 	  } else if (response.status === 'not_authorized') {
 	    // The person is logged into Facebook, but not your app.
-	    document.getElementById('status').innerHTML = 'Please log ' +
-	      'into this app.';
+	    $('#auth-status').html('Please log ' +
+	      'in with facebook.');
 	  } else {
 	    // The person is not logged into Facebook, so we're not sure if
 	    // they are logged into this app or not.
-	    document.getElementById('status').innerHTML = 'Please log ' +
-	      'into Facebook.';
+	    $('#auth-status').html('Please log ' +
+	      'in with facebook.');
 	  }
 	};
 
