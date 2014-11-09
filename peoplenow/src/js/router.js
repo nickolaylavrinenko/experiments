@@ -1,0 +1,172 @@
+
+var Backbone = require('backbone');
+var _ = require('underscore');
+var constants = require('./constants');
+
+var Router = Backbone.Router.extend({
+
+  // queue to handle routes coherently
+  queue : null,
+  auth: new Backbone.Model(),
+
+  initialize: function(options) {
+    this.queue = options.queue;
+    this.auth.listenTo('change', this._on_auth_changed_handler);
+    if( !_.isEmpty(options.auth) ) {
+      _.extend(this.auth, options.auth);  
+    }
+  },
+
+  /*
+   * Routes handlers decorator
+   */
+  execute: function(callback, args) {
+    // check auth
+    if( !this.checkAuth() ) {
+      this.queue.skipAll();
+      this.queue.add(this, this.logoutHandler);
+      this.queue.add(this, this.loginHandler);
+      this.queue.add(this, callback, args);
+    }
+    // add callback to queue
+    if( _.isFunction(callback) ){
+      this.queue.add(this, callback, args);
+    }
+  },
+
+
+  /******************** URL-map *********************/
+
+
+  routes: {
+    '': 'indexHandler',
+    'login(/)': 'loginHandler',
+    'logout(/)': 'logoutHandler',
+    'profile(/)': 'profileHandler',
+  },
+
+
+  /****************** URL-callbacks *****************/
+
+  /*
+   * every callback returns promise object
+   */
+
+
+  indexHandler: function(){
+
+    console.log('routing: start app');
+
+    var deferred = $.Deferred();
+
+    //TODO handler logic 
+
+    return deferred;
+
+  },
+
+  loginHandler: function(){
+
+    console.log('routing: login');
+
+    var deferred = $.Deferred();
+
+    //TODO handler logic 
+
+    return deferred;
+
+  },
+
+  logoutHandler: function(){
+
+    console.log('routing: logout');
+
+    var deferred = $.Deferred();
+
+    //TODO handler logic 
+
+    return deferred;
+
+  },
+
+  profileHandler: function(){
+
+    console.log('routing: profile');
+
+    var deferred = $.Deferred();
+
+    //TODO handler logic 
+
+    return deferred;
+
+  },
+
+
+  /****************** Other methods *****************/
+
+
+  checkAuth: function() {
+    var result = false;
+    if( !_.isempty(this.auth)
+          && this.auth.status === 'connected'
+            && this.auth.userId ) {
+      result = true;
+    }
+    return result;
+  },
+
+  updateAuthData: function(object) {
+    if( !_.isEmty(object) ){
+      _.extend(this.auth, object);
+    }
+  },
+
+  /*
+   * call this method in app init script
+   */
+  startRouting : function() {
+    Backbone.history.stop();
+    Backbone.history.start({
+        pushState: true,
+        hashChange: true,
+        root: '/',
+        //silent: true,
+    });
+  },
+
+  /*
+   * modify all links, to pass them through router
+   */
+  setupLinks: function(container){
+    var container = container ? $(container) : $(document.body);
+    var links = container.find('a').filter(function(){
+        var element = $(this);
+        if( element.hasClass('no-proc') ) {
+            return false;
+        }
+        var href = element.attr('href');
+        //TODO need a regexp to check the path
+        return href && href != "" && href != "#";
+    });
+
+    // link may has other handlers, so we must turn off appropriate handler (see .../js/calendar.js)
+    links.off(constants.click_event, this._on_link_clicked_handler);
+    links.on(constants.click_event, this._on_link_clicked_handler);
+  },
+  
+  _on_link_clicked_handler: function(e) {
+    e.preventDefault();
+    this.navigateTo($(this).attr('href'),
+                    {trigger: true, replace: false});
+  },
+
+  _on_auth_changed_handler: function() {
+    console.log('router: auth changed', arguments);
+  },
+
+});
+
+
+module.exports = {
+  'Router': Router,  
+};

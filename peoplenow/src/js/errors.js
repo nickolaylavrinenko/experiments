@@ -1,5 +1,5 @@
 
-var _ = require('lodash');
+var _ = require('underscore');
 
 var handler = Backendless.Async(
   function (data) {

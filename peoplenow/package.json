@@ -1,15 +1,17 @@
 {
   "name": "peoplenow",
   "version": "0.0.0",
-  "description": "Want easy money - use People Now",
+  "description": "Hunt people with People Now",
   "main": "app.js",
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "css-loader": "^0.8.0",
-    "style-loader": "^0.8.0",
+    "css-loader": "^0.9.0",
+    "style-loader": "^0.8.2",
+    "ejs-loader": "0.1.0",
     "jquery": "^2.1.1",
-    "lodash": "^2.4.1",
-    "webpack": "^1.4.0-beta6"
+    "underscore": "^1.7.0",
+    "backbone": "^1.1.2",
+    "webpack": "^1.4.13"
   }
 }

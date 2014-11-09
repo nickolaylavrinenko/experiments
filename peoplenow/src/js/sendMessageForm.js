@@ -1,8 +1,8 @@
 
-require('./style.css');
+require('../styles/style.css');
 
 var $ = require('jquery');
-var _ = require('lodash');
+var _ = require('underscore');
 var errors = require('./errors');
 var constants = require('./constants');
 

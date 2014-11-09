@@ -4,14 +4,14 @@
 		<title>people now!</title>
 		<script type="text/javascript" src="static/backendless.min.js"></script>
 		<script type="text/javascript" src="static/bundle.js"></script>
-		<script type="text/javascript" src="static/fb_auth.js"></script>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	</head>
 	<body>
 
 		<div class="top-pannel">
 			<div class="top-pannel-item">
-				<fb:login-button scope="public_profile,email"
+				<fb:login-button id="fb-login-button"
+								 scope="public_profile,email"
 								 onlogin="checkLoginState();"
 								 autologoutlink="true">
 				</fb:login-button>
