@@ -1,6 +1,7 @@
 
-var Backbone = require('backbone');
+var $ = require('jquery');
 var _ = require('underscore');
+var Backbone = require('backbone');
 var constants = require('./constants');
 
 var Router = Backbone.Router.extend({
@@ -11,7 +12,7 @@ var Router = Backbone.Router.extend({
 
   initialize: function(options) {
     this.queue = options.queue;
-    this.auth.listenTo('change', this._on_auth_changed_handler);
+    this.listenTo(this.auth, 'change', this._on_auth_changed_handler);
     if( !_.isEmpty(options.auth) ) {
       _.extend(this.auth, options.auth);  
     }
@@ -107,7 +108,7 @@ var Router = Backbone.Router.extend({
 
   checkAuth: function() {
     var result = false;
-    if( !_.isempty(this.auth)
+    if( !_.isEmpty(this.auth)
           && this.auth.status === 'connected'
             && this.auth.userId ) {
       result = true;
