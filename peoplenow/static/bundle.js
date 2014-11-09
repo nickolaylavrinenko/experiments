@@ -584,7 +584,7 @@
 	  },
 
 	  updateAuthData: function(object) {
-	    if( !_.isEmty(object) ){
+	    if( !_.isEmpty(object) ){
 	      _.extend(this.auth, object);
 	    }
 	  },
