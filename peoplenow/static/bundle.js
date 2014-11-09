@@ -17028,13 +17028,6 @@
 	  if (response.status === 'connected') {
 	    // Logged into your app and Facebook.
 	    testAPI();
-	    // get name from FB and put it to auth status div
-	    FB.api('/me', function(response) {
-	      if( !_.isEmpty(response) && response.name) {
-	        $('#auth-status').html(response.name);
-	      }
-	    });
-	    //
 	  } else if (response.status === 'not_authorized') {
 	    // The person is logged into Facebook, but not your app.
 	    $('#auth-status').html('Please log ' +
@@ -17055,6 +17048,8 @@
 	    statusChangeCallback(response);
 	  });
 	};
+
+	window.checkLoginState = checkLoginState;
 
 	window.fbAsyncInit = function() {
 	  FB.init({
@@ -17094,10 +17089,11 @@
 	// successful.  See statusChangeCallback() for when this call is made.
 	function testAPI() {
 	  console.log('Welcome!  Fetching your information.... ');
+	  // get name from FB and put it to auth status div
 	  FB.api('/me', function(response) {
-	    console.log('Successful login for: ' + response.name);
-	    document.getElementById('status').innerHTML =
-	      'Thanks for logging in, ' + response.name + '!';
+	    if( !_.isEmpty(response) && response.name) {
+	      $('#auth-status').html(response.name);
+	    }
 	  });
 	}
 
