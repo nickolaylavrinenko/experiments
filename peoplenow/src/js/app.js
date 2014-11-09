@@ -46,13 +46,9 @@ var utils = require('./utils');
  */
 var getAuthStatus = function(callback){
 
-	console.log('>>> get status');
-
   var auth_options = {};
-  //var FB = window.FB;
 
   FB.getLoginStatus(function(response) {
-		console.log('>>> status', response);
 
   	if( !_.isEmpty(response.authResponse) ) {
   		_.extend(auth_options, response.authResponse);
@@ -91,7 +87,6 @@ $(function(){
 	// init facebook SDK
   $.ajaxSetup({ cache: true });
   $.getScript(config.FB_SDK_URL, function(){
-  	console.log('>>> init FB');
     FB.init({
       appId: config.FB_APP_ID,
       cookie     : true,  // enable cookies to allow the server to access 
@@ -108,11 +103,11 @@ $(function(){
 													config.APP_VERSION);
 
 			// init app blocks
-			var blocks = _.assign(
+			var blocks = _.extend({},
 				require('./userRegisterForm'),
 				require('./sendMessageForm')
 			);
-			_(blocks).each(function(constructor, class_name){
+			_.each(blocks, function(constructor, class_name){
 				$('.' + class_name + ':not(.init-block)').each(function(ind, item){
 					item = $(item);
 					item.addClass('init-block');
