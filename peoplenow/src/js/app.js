@@ -7,6 +7,7 @@ var config = require('./config');
 var structures = require('./structures');
 var errors = require('./errors');
 var utils = require('./utils');
+var Router = require('./router');
 
 
 // window.subscribe_to_channel = function(channels) {
