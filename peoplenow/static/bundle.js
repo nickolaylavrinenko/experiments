@@ -146,18 +146,18 @@
 														config.JS_KEY,
 														config.APP_VERSION);
 
-				// init app blocks
-				var blocks = _.extend({},
-					__webpack_require__(7),
-					__webpack_require__(8)
-				);
-				_.each(blocks, function(constructor, class_name){
-					$('.' + class_name + ':not(.init-block)').each(function(ind, item){
-						item = $(item);
-						item.addClass('init-block');
-						item.data('init-block', new constructor(item.first()));
-					});
-				});
+				// // init app blocks
+				// var blocks = _.extend({},
+				// 	require('./userRegisterForm'),
+				// 	require('./sendMessageForm')
+				// );
+				// _.each(blocks, function(constructor, class_name){
+				// 	$('.' + class_name + ':not(.init-block)').each(function(ind, item){
+				// 		item = $(item);
+				// 		item.addClass('init-block');
+				// 		item.data('init-block', new constructor(item.first()));
+				// 	});
+				// });
 
 				// init app router
 				var container = $('#app-container').first();
@@ -557,9 +557,11 @@
 	var $ = __webpack_require__(16);
 	var _ = __webpack_require__(12);
 	var Backbone = __webpack_require__(17);
+
 	var constants = __webpack_require__(9);
-	var IndexView = __webpack_require__(13);
 	var EmptyView = __webpack_require__(14).EmptyView;
+	var IndexView = __webpack_require__(13);
+	var ProfileView = __webpack_require__(20);
 
 
 	var Router = Backbone.Router.extend({
@@ -598,8 +600,8 @@
 	    // check auth
 	    if( !this.checkAuth() ) {
 	      this.queue.skipAll();
-	      this.queue.add(this, this.logoutHandler);
-	      this.queue.add(this, this.loginHandler);
+	      this.queue.add(this, this.logoutUser);
+	      this.queue.add(this, this.indexHandler);
 	      this.queue.add(this, callback, args);
 	    }
 	    // add callback to queue
@@ -608,22 +610,18 @@
 	    }
 	  },
 
-
 	  /******************** URL-map *********************/
-
 
 	  routes: {
 	    '': 'indexHandler',
 	    'profile(/)': 'profileHandler',
 	  },
 
-
 	  /****************** URL-callbacks *****************/
 
 	  /*
 	   * every callback returns promise object
 	   */
-
 
 	  indexHandler: function(){
 
@@ -659,13 +657,29 @@
 	    console.log('routing: profile');
 
 	    var deferred = $.Deferred();
-	    
-	    //TODO handler logic 
+	    var view_name = 'profile';
+
+	    // get view
+	    var view = this._cache[view_name];
+	    if( !view ) {
+	      view = new ProfileView();
+	      this._cache[view_name] = view;
+	    }
+
+	    // detach previous view and attach new
+	    if( view !== this._active ) {
+	      this._active.detach().done(function(){
+	        view.render().attach(this.container);
+	        this._active = view;
+	        deferred.resolve();
+	      });
+	    } else {
+	      deferred.resolve();
+	    }
 
 	    return deferred;
 
 	  },
-
 
 	  /****************** Other methods *****************/
 
@@ -679,6 +693,17 @@
 	    console.log('>>> check auth - ', this.auth);
 	    console.log('>>> check auth - ', result);
 	    return result;
+	  },
+
+	  /*
+	   * returns jQuery promise object
+	   */
+	  logoutUser: function() {
+	    var deferred = $.Deferred();
+	    FB.logout(function(){
+	      deferred.resolve();
+	    });
+	    return deferred;
 	  },
 
 	  updateAuthData: function(object) {
@@ -740,139 +765,8 @@
 	module.exports = Router;
 
 /***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	__webpack_require__(10);
-
-	var $ = __webpack_require__(16);
-	var _ = __webpack_require__(12);
-	var errors = __webpack_require__(4);
-
-
-	var UserRegisterForm = function(el){
-		this.form = $(el);
-		this.initForm();
-	};
-
-	UserRegisterForm.prototype.initForm = function() {
-		var that = this;
-		if( this.form ) {
-			this.form.find('.submit-button')
-						   .on('click', function(ev){
-						   	 ev.preventDefault();
-							 	 that._handle_submit(ev);
-							 });
-		}
-	};
-
-	UserRegisterForm.prototype._handle_submit = function(ev) {
-		var name = this.form[0].name.value;
-		var password = this.form[0].password.value;
-		var email = this.form[0].email.value;
-		var tags = [];
-		_(this.form[0].tags.options).each(function(option){
-			option && option.selected && tags.push(option.value.toLowerCase());
-		});
-		if( name && password && tags) {
-			this.registerUser(name, password, email, tags);
-		}
-		
-	};
-
-	UserRegisterForm.prototype.registerUser = function(name, password, email, tags) {
-		if( tags && !_(tags).isArray() ){
-			tags = [tags];
-		}	
-		if ( name && password && email 
-					&& _(tags).isArray && tags.length ) {
-			console.log('Register user ', name, tags);
-			user = new Backendless.User();
-			user.name = name;
-			user.password = password;
-			user.email = email;
-			user.tags = tags.join(",");
-			response = Backendless.UserService.register(user, errors.handler);
-		}
-	};
-
-
-	module.exports = {
-		'user-register-form': UserRegisterForm,
-	};
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	__webpack_require__(10);
-
-	var $ = __webpack_require__(16);
-	var _ = __webpack_require__(12);
-	var errors = __webpack_require__(4);
-	var constants = __webpack_require__(9);
-
-
-	var SendMessageForm = function(el) {
-		this.form = $(el);
-		this.initForm();
-	};
-
-	SendMessageForm.prototype.initForm = function() {
-		var that = this;
-		if( this.form ) {
-			this.form.find('.submit-button')
-						   .on('click', function(ev){
-						   	 ev.preventDefault();
-							 	 that._handle_submit(ev);
-							 });
-		}
-	};
-
-	SendMessageForm.prototype._handle_submit = function(ev) {
-		var message = this.form[0].message.value;
-		var tags = [];
-		_(this.form[0].tags.options).each(function(option){
-			option && option.selected && tags.push(option.value.toLowerCase());
-		});
-		if( message && tags.length ) {
-			this.sendMessage(tags, message);
-		}
-		
-	};
-
-	SendMessageForm.prototype.sendMessage = function(tags, messages) {
-		if( messages && !_(messages).isArray() ) {
-			messages = [messages];
-		}
-		if( tags && !_(tags).isArray() ) {
-			tags = [tags];
-		}
-		if( tags && messages ) {
-			console.log('Send messages', tags, messages);
-			_(tags).each(function(channel){
-				_(messages).each(function(message){
-					if( channel && message ) {
-						Backendless.Messaging
-																	.publish(channel,
-																					 message,
-																					 null,
-																					 null,
-																					 errors.handler);
-					}
-				});
-			});
-		}
-	};
-
-
-	module.exports = {
-		'send-message-form': SendMessageForm,
-	};
-
-/***/ },
+/* 7 */,
+/* 8 */,
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -13527,7 +13421,7 @@
 	    };
 	    var __stack = {
 	        lineno: 1,
-	        input: '\n<div style="width: 100px; height: 100px; background: red;">\n	Hello from template\n</div>',
+	        input: '\n<div style="width: 100px; height: 100px; background: red;">\n	Index page\n</div>',
 	        filename: undefined
 	    };
 	    function rethrow(err, str, filename, lineno) {
@@ -13544,7 +13438,66 @@
 	        var buf = [];
 	        with (locals || {}) {
 	            (function() {
-	                buf.push('\n<div style="width: 100px; height: 100px; background: red;">\n	Hello from template\n</div>');
+	                buf.push('\n<div style="width: 100px; height: 100px; background: red;">\n	Index page\n</div>');
+	            })();
+	        }
+	        return buf.join("");
+	    } catch (err) {
+	        rethrow(err, __stack.input, __stack.filename, __stack.lineno);
+	    }
+	}
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var _ = __webpack_require__(12);
+	var base = __webpack_require__(14);
+	var BaseView = base.BaseView;
+	var FadingMixIn = base.FadingMixIn;
+	var template = __webpack_require__(21);
+
+
+	//var ProfileView = BaseView.extend(FadingMixIn)
+	//						  .extend({
+	var ProfileView = BaseView.extend({
+
+	  template: template,
+
+	});
+
+
+	module.exports = ProfileView;
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function anonymous(locals, filters, escape, rethrow) {
+	    escape = escape || function(html) {
+	        return String(html).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+	    };
+	    var __stack = {
+	        lineno: 1,
+	        input: '\n<div style="width: 100px; height: 100px; background: blue;">\n	Profile page\n</div>',
+	        filename: undefined
+	    };
+	    function rethrow(err, str, filename, lineno) {
+	        var lines = str.split("\n"), start = Math.max(lineno - 3, 0), end = Math.min(lines.length, lineno + 3);
+	        var context = lines.slice(start, end).map(function(line, i) {
+	            var curr = i + start + 1;
+	            return (curr == lineno ? " >> " : "    ") + curr + "| " + line;
+	        }).join("\n");
+	        err.path = filename;
+	        err.message = (filename || "ejs") + ":" + lineno + "\n" + context + "\n\n" + err.message;
+	        throw err;
+	    }
+	    try {
+	        var buf = [];
+	        with (locals || {}) {
+	            (function() {
+	                buf.push('\n<div style="width: 100px; height: 100px; background: blue;">\n	Profile page\n</div>');
 	            })();
 	        }
 	        return buf.join("");

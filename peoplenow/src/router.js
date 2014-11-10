@@ -2,9 +2,11 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+
 var constants = require('./constants');
-var IndexView = require('./views/index');
 var EmptyView = require('./views/base').EmptyView;
+var IndexView = require('./views/index');
+var ProfileView = require('./views/profile');
 
 
 var Router = Backbone.Router.extend({
@@ -43,8 +45,8 @@ var Router = Backbone.Router.extend({
     // check auth
     if( !this.checkAuth() ) {
       this.queue.skipAll();
-      this.queue.add(this, this.logoutHandler);
-      this.queue.add(this, this.loginHandler);
+      this.queue.add(this, this.logoutUser);
+      this.queue.add(this, this.indexHandler);
       this.queue.add(this, callback, args);
     }
     // add callback to queue
@@ -53,22 +55,18 @@ var Router = Backbone.Router.extend({
     }
   },
 
-
   /******************** URL-map *********************/
-
 
   routes: {
     '': 'indexHandler',
     'profile(/)': 'profileHandler',
   },
 
-
   /****************** URL-callbacks *****************/
 
   /*
    * every callback returns promise object
    */
-
 
   indexHandler: function(){
 
@@ -104,13 +102,29 @@ var Router = Backbone.Router.extend({
     console.log('routing: profile');
 
     var deferred = $.Deferred();
-    
-    //TODO handler logic 
+    var view_name = 'profile';
+
+    // get view
+    var view = this._cache[view_name];
+    if( !view ) {
+      view = new ProfileView();
+      this._cache[view_name] = view;
+    }
+
+    // detach previous view and attach new
+    if( view !== this._active ) {
+      this._active.detach().done(function(){
+        view.render().attach(this.container);
+        this._active = view;
+        deferred.resolve();
+      });
+    } else {
+      deferred.resolve();
+    }
 
     return deferred;
 
   },
-
 
   /****************** Other methods *****************/
 
@@ -124,6 +138,17 @@ var Router = Backbone.Router.extend({
     console.log('>>> check auth - ', this.auth);
     console.log('>>> check auth - ', result);
     return result;
+  },
+
+  /*
+   * returns jQuery promise object
+   */
+  logoutUser: function() {
+    var deferred = $.Deferred();
+    FB.logout(function(){
+      deferred.resolve();
+    });
+    return deferred;
   },
 
   updateAuthData: function(object) {

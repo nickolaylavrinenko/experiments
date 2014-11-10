@@ -100,18 +100,18 @@ $(function(){
 													config.JS_KEY,
 													config.APP_VERSION);
 
-			// init app blocks
-			var blocks = _.extend({},
-				require('./userRegisterForm'),
-				require('./sendMessageForm')
-			);
-			_.each(blocks, function(constructor, class_name){
-				$('.' + class_name + ':not(.init-block)').each(function(ind, item){
-					item = $(item);
-					item.addClass('init-block');
-					item.data('init-block', new constructor(item.first()));
-				});
-			});
+			// // init app blocks
+			// var blocks = _.extend({},
+			// 	require('./userRegisterForm'),
+			// 	require('./sendMessageForm')
+			// );
+			// _.each(blocks, function(constructor, class_name){
+			// 	$('.' + class_name + ':not(.init-block)').each(function(ind, item){
+			// 		item = $(item);
+			// 		item.addClass('init-block');
+			// 		item.data('init-block', new constructor(item.first()));
+			// 	});
+			// });
 
 			// init app router
 			var container = $('#app-container').first();
