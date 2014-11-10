@@ -579,7 +579,7 @@
 	    var result = false;
 	    if( !_.isEmpty(this.auth.attributes)
 	          && this.auth.get('status') === 'connected'
-	            && this.auth.get(userId) ) {
+	            && this.auth.get('userId') ) {
 	      result = true;
 	    }
 	    return result;
