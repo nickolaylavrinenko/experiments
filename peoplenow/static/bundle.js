@@ -13410,10 +13410,6 @@
 
 		template: null,
 
-		initialize: function(options){
-
-		},
-
 		render: function(attributes){
 
 			if( this.isAttached() ) {
