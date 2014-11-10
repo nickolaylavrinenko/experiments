@@ -101,14 +101,14 @@
 	  FB.getLoginStatus(function(response) {
 
 	  	if( !_.isEmpty(response.authResponse) ) {
-	  		_.extend(auth_options, response.authResponse);
+	  		auth_options = _.extend(auth_options, response.authResponse);
 	  	}
 			if( response && response.status ) {
 				auth_options.status = response.status;
 				if( response.status === 'connected' ) {
 					FB.api('/me', function(response) {
 					  if( !_.isEmpty(response) ) {
-					    _.extend(auth_options, response);
+					    auth_options = _.extend(auth_options, response);
 					  }
 					  if( _.isFunction(callback) ) {
 					  	console.log('>>> 1');
@@ -137,7 +137,7 @@
 		var queue = new utils.Queue({'start': true});
 
 		// init facebook SDK and check get auth
-	  $.ajaxSetup({ cache: true });
+	  //$.ajaxSetup({ cache: true });
 	  $.getScript(config.FB_SDK_URL, function(){
 	    FB.init({
 	      appId: config.FB_APP_ID,
