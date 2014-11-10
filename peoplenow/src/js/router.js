@@ -14,7 +14,7 @@ var Router = Backbone.Router.extend({
     this.queue = options.queue;
     this.listenTo(this.auth, 'change', this._on_auth_changed_handler);
     if( !_.isEmpty(options.auth) ) {
-      _.extend(this.auth, options.auth);  
+      this.auth = _.extend(this.auth, options.auth);  
     }
   },
 

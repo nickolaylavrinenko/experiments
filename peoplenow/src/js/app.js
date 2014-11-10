@@ -147,6 +147,7 @@ $(function(){
 			console.log('Application started');
 
 			//TODO temporary expose something to global context
+			//TODO remove
 			window.router = router;
 			window.auth_options = router.auth;
 

@@ -193,6 +193,7 @@
 				console.log('Application started');
 
 				//TODO temporary expose something to global context
+				//TODO remove
 				window.router = router;
 				window.auth_options = router.auth;
 
@@ -481,7 +482,7 @@
 	    this.queue = options.queue;
 	    this.listenTo(this.auth, 'change', this._on_auth_changed_handler);
 	    if( !_.isEmpty(options.auth) ) {
-	      _.extend(this.auth, options.auth);  
+	      this.auth = _.extend(this.auth, options.auth);  
 	    }
 	  },
 
