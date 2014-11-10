@@ -129,7 +129,7 @@
 
 	// DOM loaded
 
-	$(function(){
+	$('#app-body').on('onload', function(){
 
 		// init app global queue
 		var queue = new utils.Queue({'start': true});
