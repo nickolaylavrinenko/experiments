@@ -566,6 +566,7 @@
 	var Backbone = __webpack_require__(16);
 	var constants = __webpack_require__(9);
 	var IndexView = __webpack_require__(13);
+	var EmptyView = __webpack_require__(18);
 
 
 	var Router = Backbone.Router.extend({
@@ -579,17 +580,21 @@
 	  _active: null,
 
 	  initialize: function(options) {
-	    // queue
+
 	    this.queue = options.queue;
-	    // auth
-	    if( !_.isEmpty(options.auth) ) {
-	      this.auth.set(options.auth);  
-	    }
+	    this.container = $(options.container);
+	    this.auth.set(options.auth);
+	    // add emty view as active
+	    this._active = (new EmptyView())
+	                        .render()
+	                        .attach(this.container);
+	    this.bindEvents();
+
+	  },
+
+	  bindEvents: function(){
+
 	    this.listenTo(this.auth, 'change', this._on_auth_changed_handler);
-	    // container
-	    if( options.container ) {
-	      this.container = $(options.container);
-	    }
 
 	  },
 
@@ -13483,6 +13488,18 @@
 		},
 		
 	});
+
+
+	var EmptyView = BaseView.extend({
+
+		render: function(attributes) {
+
+			this.$el = $('<div>');
+			
+		},
+
+	});
+
 
 	var FadingMixIn = {
 

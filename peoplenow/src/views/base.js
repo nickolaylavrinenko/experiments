@@ -89,6 +89,18 @@ var BaseView = Backbone.View.extend({
 	
 });
 
+
+var EmptyView = BaseView.extend({
+
+	render: function(attributes) {
+
+		this.$el = $('<div>');
+		
+	},
+
+});
+
+
 var FadingMixIn = {
 
 	/*

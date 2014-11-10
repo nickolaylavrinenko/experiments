@@ -4,6 +4,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var constants = require('./constants');
 var IndexView = require('./views/index');
+var EmptyView = require('./views/base');
 
 
 var Router = Backbone.Router.extend({
@@ -17,17 +18,21 @@ var Router = Backbone.Router.extend({
   _active: null,
 
   initialize: function(options) {
-    // queue
+
     this.queue = options.queue;
-    // auth
-    if( !_.isEmpty(options.auth) ) {
-      this.auth.set(options.auth);  
-    }
+    this.container = $(options.container);
+    this.auth.set(options.auth);
+    // add emty view as active
+    this._active = (new EmptyView())
+                        .render()
+                        .attach(this.container);
+    this.bindEvents();
+
+  },
+
+  bindEvents: function(){
+
     this.listenTo(this.auth, 'change', this._on_auth_changed_handler);
-    // container
-    if( options.container ) {
-      this.container = $(options.container);
-    }
 
   },
 
