@@ -45,15 +45,19 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	__webpack_require__(9)
+	__webpack_require__(10)
 
-	var $ = __webpack_require__(13);
-	var _ = __webpack_require__(11);
-	var config = __webpack_require__(1);
-	var structures = __webpack_require__(2);
-	var errors = __webpack_require__(3);
-	var utils = __webpack_require__(4);
-	var Router = __webpack_require__(5);
+	// patch backbone extend method
+	__webpack_require__(1)
+
+
+	var $ = __webpack_require__(15);
+	var _ = __webpack_require__(12);
+	var config = __webpack_require__(2);
+	var structures = __webpack_require__(3);
+	var errors = __webpack_require__(4);
+	var utils = __webpack_require__(5);
+	var Router = __webpack_require__(6);
 
 
 	// window.subscribe_to_channel = function(channels) {
@@ -151,8 +155,8 @@
 
 				// init app blocks
 				var blocks = _.extend({},
-					__webpack_require__(6),
-					__webpack_require__(7)
+					__webpack_require__(7),
+					__webpack_require__(8)
 				);
 				_.each(blocks, function(constructor, class_name){
 					$('.' + class_name + ':not(.init-block)').each(function(ind, item){
@@ -178,9 +182,14 @@
 				//template = require('../templates/test.ejs');
 
 				// init app router
+				var container = $('#app-container').first();
+				if( !container.length ){
+					throw "Can't find application container element in DOM";
+				}
 				var router = new Router({
 					queue: queue,
 					auth: auth_options,
+					container: container,
 				});
 				router.startRouting();
 				setInterval(function(){
@@ -206,6 +215,92 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
+	var Backbone = __webpack_require__(16);
+
+	/*
+	 * Change backbone extend method with John Resig inheritence template.
+	 */
+
+	// Wrap an optional error callback with a fallback error event.
+	var wrapError = function(model, options) {
+	    var error = options.error;
+	    options.error = function(resp) {
+	        if (error) error(model, resp, options);
+	        model.trigger('error', model, resp, options);
+	    };
+	};
+
+
+	// difine new extend method
+	var extend = function(protoProps, staticProps) {
+	    var parent = this;
+	    var child;
+	    var fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+
+	    // The constructor function for the new subclass is either defined by you
+	    // (the "constructor" property in your `extend` definition), or defaulted
+	    // by us to simply call the parent's constructor.
+	    if (protoProps && _.has(protoProps, 'constructor')) {
+	      child = protoProps.constructor;
+	    } else {
+	      child = function(){ return parent.apply(this, arguments); };
+	    }
+
+	    // Add static properties to the constructor function, if supplied.
+	    _.extend(child, parent, staticProps);
+
+	    // Set the prototype chain to inherit from `parent`, without calling
+	    // `parent`'s constructor function.
+	    var Surrogate = function(){ this.constructor = child; };
+	    Surrogate.prototype = parent.prototype;
+	    child.prototype = new Surrogate;
+
+	    // Add prototype properties (instance properties) to the subclass,
+	    // if supplied.
+	    if (protoProps) {
+
+	        // John Resig inheritence template with setting _supper method
+	        for (var name in protoProps) {
+	            // Check if we're overwriting an existing function
+	            child.prototype[name] = typeof protoProps[name] === "function" &&
+	                typeof parent.prototype[name] === "function" && fnTest.test(protoProps[name]) ?
+	                    (function(name, fn){
+	                        return function() {
+	                            var tmp = this._super;
+	                           
+	                            // Add a new ._super() method that is the same method
+	                            // but on the super-class
+	                            this._super = parent.prototype[name];
+	                           
+	                            // The method only need to be bound temporarily, so we
+	                            // remove it when we're done executing
+	                            var ret = fn.apply(this, arguments);        
+	                            this._super = tmp;
+	                           
+	                            return ret;
+	                        };
+	                    })(name, protoProps[name]) :
+	                    protoProps[name];
+	        }
+	    }
+
+	    return child;
+	};
+
+	// populate defaned new extend method against backbone structures
+	Backbone.Model.extend = 
+	Backbone.Collection.extend = 
+	Backbone.Router.extend = 
+	Backbone.View.extend = 
+	Backbone.History.extend = 
+	                          extend;
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
 	var config = {
 
 		// BACKENDLESS
@@ -222,7 +317,7 @@
 	module.exports = config;
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -299,11 +394,11 @@
 	};
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var _ = __webpack_require__(11);
+	var _ = __webpack_require__(12);
 
 	var handler = Backendless.Async(
 	  function (data) {
@@ -323,12 +418,12 @@
 	};
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var _ = __webpack_require__(11);
-	var $ = __webpack_require__(13);
+	var _ = __webpack_require__(12);
+	var $ = __webpack_require__(15);
 
 
 	/*
@@ -463,27 +558,37 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var $ = __webpack_require__(13);
-	var _ = __webpack_require__(11);
-	var Backbone = __webpack_require__(14);
-	var constants = __webpack_require__(8);
+	var $ = __webpack_require__(15);
+	var _ = __webpack_require__(12);
+	var Backbone = __webpack_require__(16);
+	var constants = __webpack_require__(9);
+	var IndexView = __webpack_require__(13);
+
 
 	var Router = Backbone.Router.extend({
 
 	  // queue to handle routes coherently
 	  queue : null,
 	  auth: new Backbone.Model(),
+	  container: null,
 
 	  initialize: function(options) {
+	    // queue
 	    this.queue = options.queue;
+	    // auth
 	    if( !_.isEmpty(options.auth) ) {
 	      this.auth.set(options.auth);  
 	    }
 	    this.listenTo(this.auth, 'change', this._on_auth_changed_handler);
+	    // container
+	    if( options.container ) {
+	      this.container = $(options.container);
+	    }
+
 	  },
 
 	  /*
@@ -522,7 +627,7 @@
 
 	  indexHandler: function(){
 
-	    console.log('routing: start app');
+	    console.log('routing: index page');
 
 	    var deferred = $.Deferred();
 
@@ -617,15 +722,15 @@
 	module.exports = Router;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	__webpack_require__(9);
+	__webpack_require__(10);
 
-	var $ = __webpack_require__(13);
-	var _ = __webpack_require__(11);
-	var errors = __webpack_require__(3);
+	var $ = __webpack_require__(15);
+	var _ = __webpack_require__(12);
+	var errors = __webpack_require__(4);
 
 
 	var UserRegisterForm = function(el){
@@ -680,16 +785,16 @@
 	};
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	__webpack_require__(9);
+	__webpack_require__(10);
 
-	var $ = __webpack_require__(13);
-	var _ = __webpack_require__(11);
-	var errors = __webpack_require__(3);
-	var constants = __webpack_require__(8);
+	var $ = __webpack_require__(15);
+	var _ = __webpack_require__(12);
+	var errors = __webpack_require__(4);
+	var constants = __webpack_require__(9);
 
 
 	var SendMessageForm = function(el) {
@@ -750,7 +855,7 @@
 	};
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -767,16 +872,16 @@
 	};
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(10);
+	var content = __webpack_require__(11);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(12)(content, {});
+	var update = __webpack_require__(14)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -790,14 +895,14 @@
 	}
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(15)();
+	exports = module.exports = __webpack_require__(17)();
 	exports.push([module.id, "\n\n/***** clear css start ********/\n\n\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, font, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td {\n\tmargin: 0;\n\tpadding: 0;\n\tborder: 0;\n\toutline: 0;\n\tfont-weight: inherit;\n\tfont-style: inherit;\n\tfont-size: 100%;\n\tfont-family: inherit;\n\tvertical-align: baseline;\n}\n/* remember to define focus styles! */\n:focus {\n\toutline: 0;\n}\nbody {\n\tline-height: 1;\n\tcolor: black;\n\tbackground: white;\n}\nol, ul {\n\tlist-style: none;\n}\n/* tables still need 'cellspacing=\"0\"' in the markup */\ntable {\n\tborder-collapse: separate;\n\tborder-spacing: 0;\n}\ncaption, th, td {\n\ttext-align: left;\n\tfont-weight: normal;\n}\nblockquote:before, blockquote:after,\nq:before, q:after {\n\tcontent: \"\";\n}\nblockquote, q {\n\tquotes: \"\" \"\";\n}\n\n\n/***** clear css end ********/\n\n\n.content {\n\twidth: 100%;\n\tpadding: 20px 10px 10px 10px;\n}\n\n.field {\n\tmargin-top: 5px;\n}\n\n.user-register-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.send-message-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.bordered-input {\n\twidth: 160px;\n\toverflow: hidden;\n\tborder: 1px solid #aaa;\n\tborder-radius: 4px;\n}\n\n.top-pannel {\n\tdisplay: block;\n\twidth: 100%;\n\theight: 40px;\n\tline-height: 30px;\n\tbackground: #eee;\n\tpadding: 0 20px;\n}\n\n.top-pannel-item {\n\tdisplay: inline-block;\n\tpadding: 0 5px;\n}\n\n.top-pannel-item.status {\n\tcolor: #aaa;\n\tfont-size: 15px;\n\tvertical-align: middle;\n}", ""]);
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.7.0
@@ -2218,7 +2323,31 @@
 
 
 /***/ },
-/* 12 */
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var base = __webpack_require__(18)
+	var BaseView = base.BaseView;
+	var FadingMixIn = base.FadingMixIn;
+	var template = __webpack_require__(19);
+
+
+	//var IndexView = BaseView.extend(FadingMixIn)
+	//						  .extend({
+	var IndexView = BaseView.extend({
+
+	//  template: template,
+
+	});
+
+
+	module.exports = {
+		'IndexView': IndexView,
+	};
+
+/***/ },
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -2414,7 +2543,7 @@
 
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -11610,7 +11739,7 @@
 
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Backbone.js 1.1.2
@@ -11624,7 +11753,7 @@
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(11), __webpack_require__(13), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(12), __webpack_require__(15), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -13224,7 +13353,7 @@
 
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function() {
@@ -13242,6 +13371,135 @@
 			return result.join("");
 		};
 		return list;
+	}
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	/*
+	 *	Base content view
+	 */
+	var BaseView = Backbone.View.extend({
+
+		template: null,
+
+		initialize: function(options){
+
+		},
+
+		render: function(attributes){
+
+			if( this.isAttached() ) {
+				this.detach();
+			}
+			if( _.isFunction(this.template) ) {
+				this.$el = $('<div>').html(this.template(attributes));
+			}
+			return this;
+
+		},
+
+	  /*
+	   *	returns jQuery promise object
+	   */
+		attach: function(container) {
+
+	    container = $(container);
+	    var deferred = $.Deferred();
+	    if( container.length && !this.isAttached() ) {
+	    	container.html(this.$el);
+	    	this.bindEvents();
+	    	deferred.resolve();
+	    } else {
+	    	deferred.resolve();
+	    }
+	    return deferred;
+
+		},
+
+	  /*
+	   *	returns jQuery promise object
+	   */
+		detach: function() {
+
+	    var deferred = $.Deferred();
+			if( this.isAttached() ) {
+				this.unbindEvents();
+				this.$el.detach();
+				deferred.resolve();
+			} else {
+	    	deferred.resolve();
+	    }
+	    return deferred;
+			
+		},
+
+		isAttached: function() {
+
+			return this.$el.length && this.$el.parents('body') ? true: false;
+
+		},
+
+		bindEvents: function() {
+			// Empty
+		},
+
+		unbindEvents: function() {
+			// Empty
+		},
+
+		remove: function() {
+
+			var _super = this._super;
+			var _arguments = arguments;
+
+			if( this.isAttached() ) {
+				this.unbindEvents();
+				_supper.apply(this, _arguments);
+			}
+
+		},
+		
+	});
+
+	var FadingMixIn = {
+
+		/*
+	   *	returns jQuery promise object
+	   */
+		attach: function(container) {
+			//TODO
+		},
+
+		/*
+	   *	returns jQuery promise object
+	   */
+		detach: function() {
+			//TODO
+		},
+
+	};
+
+
+	module.exports = {
+		'BaseView': BaseView,
+		'FadingMixIn': FadingMixIn,
+	};
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function (obj) {
+	obj || (obj = {});
+	var __t, __p = '', __e = _.escape;
+	with (obj) {
+	__p += '<div style="width: 100px; height: 100px; background: red;">\n\tHello from template\n</div>';
+
+	}
+	return __p
 	}
 
 /***/ }
