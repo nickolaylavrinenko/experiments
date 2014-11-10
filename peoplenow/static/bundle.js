@@ -13529,7 +13529,7 @@
 	obj || (obj = {});
 	var __t, __p = '', __e = _.escape;
 	with (obj) {
-	__p += '<div style="width: 100px; height: 100px; background: red;">\n\tHello from template\n</div>';
+	__p += '\nvar _ = require(\'underscore\');\n\n<div style="width: 100px; height: 100px; background: red;">\n\tHello from template\n</div>';
 
 	}
 	return __p
