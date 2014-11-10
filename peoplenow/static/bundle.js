@@ -51,7 +51,7 @@
 	__webpack_require__(1)
 
 
-	var $ = __webpack_require__(15);
+	var $ = __webpack_require__(16);
 	var _ = __webpack_require__(12);
 	var config = __webpack_require__(2);
 	var structures = __webpack_require__(3);
@@ -213,7 +213,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var Backbone = __webpack_require__(16);
+	var Backbone = __webpack_require__(17);
 	var _ = __webpack_require__(12);
 
 	/*
@@ -422,7 +422,7 @@
 
 	
 	var _ = __webpack_require__(12);
-	var $ = __webpack_require__(15);
+	var $ = __webpack_require__(16);
 
 
 	/*
@@ -561,12 +561,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var $ = __webpack_require__(15);
+	var $ = __webpack_require__(16);
 	var _ = __webpack_require__(12);
-	var Backbone = __webpack_require__(16);
+	var Backbone = __webpack_require__(17);
 	var constants = __webpack_require__(9);
 	var IndexView = __webpack_require__(13);
-	var EmptyView = __webpack_require__(18).EmptyView;
+	var EmptyView = __webpack_require__(14).EmptyView;
 
 
 	var Router = Backbone.Router.extend({
@@ -751,7 +751,7 @@
 	
 	__webpack_require__(10);
 
-	var $ = __webpack_require__(15);
+	var $ = __webpack_require__(16);
 	var _ = __webpack_require__(12);
 	var errors = __webpack_require__(4);
 
@@ -814,7 +814,7 @@
 	
 	__webpack_require__(10);
 
-	var $ = __webpack_require__(15);
+	var $ = __webpack_require__(16);
 	var _ = __webpack_require__(12);
 	var errors = __webpack_require__(4);
 	var constants = __webpack_require__(9);
@@ -904,7 +904,7 @@
 	var content = __webpack_require__(11);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(14)(content, {});
+	var update = __webpack_require__(15)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -921,7 +921,7 @@
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(17)();
+	exports = module.exports = __webpack_require__(18)();
 	exports.push([module.id, "\n\n/***** clear css start ********/\n\n\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, font, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td {\n\tmargin: 0;\n\tpadding: 0;\n\tborder: 0;\n\toutline: 0;\n\tfont-weight: inherit;\n\tfont-style: inherit;\n\tfont-size: 100%;\n\tfont-family: inherit;\n\tvertical-align: baseline;\n}\n/* remember to define focus styles! */\n:focus {\n\toutline: 0;\n}\nbody {\n\tline-height: 1;\n\tcolor: black;\n\tbackground: white;\n}\nol, ul {\n\tlist-style: none;\n}\n/* tables still need 'cellspacing=\"0\"' in the markup */\ntable {\n\tborder-collapse: separate;\n\tborder-spacing: 0;\n}\ncaption, th, td {\n\ttext-align: left;\n\tfont-weight: normal;\n}\nblockquote:before, blockquote:after,\nq:before, q:after {\n\tcontent: \"\";\n}\nblockquote, q {\n\tquotes: \"\" \"\";\n}\n\n\n/***** clear css end ********/\n\n\n.content {\n\twidth: 100%;\n\tpadding: 20px 10px 10px 10px;\n}\n\n.field {\n\tmargin-top: 5px;\n}\n\n.user-register-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.send-message-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.bordered-input {\n\twidth: 160px;\n\toverflow: hidden;\n\tborder: 1px solid #aaa;\n\tborder-radius: 4px;\n}\n\n.top-pannel {\n\tdisplay: block;\n\twidth: 100%;\n\theight: 40px;\n\tline-height: 30px;\n\tbackground: #eee;\n\tpadding: 0 20px;\n}\n\n.top-pannel-item {\n\tdisplay: inline-block;\n\tpadding: 0 5px;\n}\n\n.top-pannel-item.status {\n\tcolor: #aaa;\n\tfont-size: 15px;\n\tvertical-align: middle;\n}", ""]);
 
 /***/ },
@@ -2350,7 +2350,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var base = __webpack_require__(18)
+	var base = __webpack_require__(14)
 	var BaseView = base.BaseView;
 	var FadingMixIn = base.FadingMixIn;
 	var template = __webpack_require__(19);
@@ -2369,6 +2369,133 @@
 
 /***/ },
 /* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var $ = __webpack_require__(16);
+	var _ = __webpack_require__(12);
+	var Backbone = __webpack_require__(17);
+
+
+	/*
+	 *	Base content view
+	 */
+	var BaseView = Backbone.View.extend({
+
+		template: null,
+
+		render: function(attributes){
+
+			if( this.isAttached() ) {
+				this.detach();
+			}
+			if( _.isFunction(this.template) ) {
+				this.$el = $('<div>').html(this.template(attributes));
+			}
+			return this;
+
+		},
+
+	  /*
+	   *	returns jQuery promise object
+	   */
+		attach: function(container) {
+
+	    container = $(container);
+	    var deferred = $.Deferred();
+	    if( container.length && !this.isAttached() ) {
+	    	container.html(this.$el);
+	    	this.bindEvents();
+	    	deferred.resolve();
+	    } else {
+	    	deferred.resolve();
+	    }
+	    return deferred;
+
+		},
+
+	  /*
+	   *	returns jQuery promise object
+	   */
+		detach: function() {
+
+	    var deferred = $.Deferred();
+			if( this.isAttached() ) {
+				this.unbindEvents();
+				this.$el.detach();
+				deferred.resolve();
+			} else {
+	    	deferred.resolve();
+	    }
+	    return deferred;
+			
+		},
+
+		isAttached: function() {
+
+			return this.$el.length && this.$el.parents('body') ? true: false;
+
+		},
+
+		bindEvents: function() {
+			// Empty
+		},
+
+		unbindEvents: function() {
+			// Empty
+		},
+
+		remove: function() {
+
+			var _super = this._super;
+			var _arguments = arguments;
+			if( this.isAttached() ) {
+				this.unbindEvents();
+				_supper.apply(this, _arguments);
+			}
+
+		},
+		
+	});
+
+
+	var EmptyView = BaseView.extend({
+
+		render: function(attributes) {
+			this.$el = $('<div>');
+			return this;
+		},
+
+	});
+
+
+	var FadingMixIn = {
+
+		/*
+	   *	returns jQuery promise object
+	   */
+		attach: function(container) {
+			//TODO
+		},
+
+		/*
+	   *	returns jQuery promise object
+	   */
+		detach: function() {
+			//TODO
+		},
+
+	};
+
+
+	module.exports = {
+		'BaseView': BaseView,
+		'FadingMixIn': FadingMixIn,
+		'EmptyView': EmptyView,
+	};
+
+/***/ },
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -2564,7 +2691,7 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -11760,7 +11887,7 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Backbone.js 1.1.2
@@ -11774,7 +11901,7 @@
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(12), __webpack_require__(15), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(12), __webpack_require__(16), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -13374,7 +13501,7 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function() {
@@ -13393,133 +13520,6 @@
 		};
 		return list;
 	}
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	var $ = __webpack_require__(15);
-	var _ = __webpack_require__(12);
-	var Backbone = __webpack_require__(16);
-
-
-	/*
-	 *	Base content view
-	 */
-	var BaseView = Backbone.View.extend({
-
-		template: null,
-
-		render: function(attributes){
-
-			if( this.isAttached() ) {
-				this.detach();
-			}
-			if( _.isFunction(this.template) ) {
-				this.$el = $('<div>').html(this.template(attributes));
-			}
-			return this;
-
-		},
-
-	  /*
-	   *	returns jQuery promise object
-	   */
-		attach: function(container) {
-
-	    container = $(container);
-	    var deferred = $.Deferred();
-	    if( container.length && !this.isAttached() ) {
-	    	container.html(this.$el);
-	    	this.bindEvents();
-	    	deferred.resolve();
-	    } else {
-	    	deferred.resolve();
-	    }
-	    return deferred;
-
-		},
-
-	  /*
-	   *	returns jQuery promise object
-	   */
-		detach: function() {
-
-	    var deferred = $.Deferred();
-			if( this.isAttached() ) {
-				this.unbindEvents();
-				this.$el.detach();
-				deferred.resolve();
-			} else {
-	    	deferred.resolve();
-	    }
-	    return deferred;
-			
-		},
-
-		isAttached: function() {
-
-			return this.$el.length && this.$el.parents('body') ? true: false;
-
-		},
-
-		bindEvents: function() {
-			// Empty
-		},
-
-		unbindEvents: function() {
-			// Empty
-		},
-
-		remove: function() {
-
-			var _super = this._super;
-			var _arguments = arguments;
-			if( this.isAttached() ) {
-				this.unbindEvents();
-				_supper.apply(this, _arguments);
-			}
-
-		},
-		
-	});
-
-
-	var EmptyView = BaseView.extend({
-
-		render: function(attributes) {
-			this.$el = $('<div>');
-			return this;
-		},
-
-	});
-
-
-	var FadingMixIn = {
-
-		/*
-	   *	returns jQuery promise object
-	   */
-		attach: function(container) {
-			//TODO
-		},
-
-		/*
-	   *	returns jQuery promise object
-	   */
-		detach: function() {
-			//TODO
-		},
-
-	};
-
-
-	module.exports = {
-		'BaseView': BaseView,
-		'FadingMixIn': FadingMixIn,
-		'EmptyView': EmptyView,
-	};
 
 /***/ },
 /* 19 */
