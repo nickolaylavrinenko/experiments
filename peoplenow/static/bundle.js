@@ -106,18 +106,18 @@
 	  	console.log('>>> auth options', auth_options);
 			if( response && response.status ) {
 				auth_options.status = response.status;
-				if( response.status === 'connected' ) {
-					FB.api('/me', function(response) {
-					  if( !_.isEmpty(response) ) {
-					    auth_options = _.extend(auth_options, response);
-					  }
-					  if( _.isFunction(callback) ) {
-					  	console.log('>>> 1');
-							callback(auth_options);
-							return;
-						}
-					});
-				}
+				// if( response.status === 'connected' ) {
+				// 	FB.api('/me', function(response) {
+				// 	  if( !_.isEmpty(response) ) {
+				// 	    auth_options = _.extend(auth_options, response);
+				// 	  }
+				// 	  if( _.isFunction(callback) ) {
+				// 	  	console.log('>>> 1');
+				// 			callback(auth_options);
+				// 			return;
+				// 		}
+				// 	});
+				// }
 			}
 		  if( _.isFunction(callback) ) {
 		  	console.log('>>> 2');
