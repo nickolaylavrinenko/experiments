@@ -65,6 +65,7 @@ var getAuthStatus = function(callback){
 				    _.extend(auth_options, response);
 				  }
 				  if( _.isFunction(callback) ) {
+				  	console.log('>>> 1');
 						callback(auth_options);
 						return;
 					}
@@ -73,6 +74,7 @@ var getAuthStatus = function(callback){
 			}
 		}
 	  if( _.isFunction(callback) ) {
+	  	console.log('>>> 2');
 			callback(auth_options);
 			return;
 		}
@@ -85,15 +87,12 @@ var getAuthStatus = function(callback){
 
 $(function(){
 
-	console.log('>>> onload ', this);
-
 	// init app global queue
 	var queue = new utils.Queue({'start': true});
 
 	// init facebook SDK and check get auth
   $.ajaxSetup({ cache: true });
   $.getScript(config.FB_SDK_URL, function(){
-  	console.log('>>> script loaded');
     FB.init({
       appId: config.FB_APP_ID,
       cookie     : true,  // enable cookies to allow the server to access 
