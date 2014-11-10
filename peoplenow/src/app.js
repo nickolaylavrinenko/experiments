@@ -50,6 +50,8 @@ var Router = require('./router');
  */
 var getAuthStatus = function(callback){
 
+	console.log('>>> get status - ', arguments.callee);
+
   var auth_options = {};
 
   FB.getLoginStatus(function(response) {
