@@ -47,7 +47,6 @@
 	
 	// patch backbone extend method
 	__webpack_require__(1)
-
 	__webpack_require__(10)
 
 	var $ = __webpack_require__(16);
@@ -114,7 +113,6 @@
 			    auth_options = _.extend(auth_options, profile);
 			  }
 			  if( _.isFunction(callback) ) {
-			  	console.log('>>> auth options', auth_options);
 					callback(auth_options);
 				}
 			});
@@ -678,6 +676,7 @@
 	            && this.auth.get('userId') ) {
 	      result = true;
 	    }
+	    console.log('>>> check auth - ', result);
 	    return result;
 	  },
 

@@ -1,7 +1,6 @@
 
 // patch backbone extend method
 require('./backbone_patch')
-
 require('./styles/style.css')
 
 var $ = require('jquery');
@@ -68,7 +67,6 @@ var getAuthStatus = function(callback){
 		    auth_options = _.extend(auth_options, profile);
 		  }
 		  if( _.isFunction(callback) ) {
-		  	console.log('>>> auth options', auth_options);
 				callback(auth_options);
 			}
 		});
