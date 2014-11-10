@@ -9,7 +9,7 @@ var template = require('../templates/index.ejs');
 //						  .extend({
 var IndexView = BaseView.extend({
 
-//  template: template,
+  template: template,
 
 });
 

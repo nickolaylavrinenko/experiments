@@ -578,6 +578,7 @@
 	  container: null,
 
 	  initialize: function(options) {
+	    console.log('>>> router options - ', options);
 	    // queue
 	    this.queue = options.queue;
 	    // auth
@@ -588,6 +589,7 @@
 	    // container
 	    if( options.container ) {
 	      this.container = $(options.container);
+	      console.log('>>> ', this.container);
 	    }
 
 	  },
@@ -2338,7 +2340,7 @@
 	//						  .extend({
 	var IndexView = BaseView.extend({
 
-	//  template: template,
+	  template: template,
 
 	});
 
