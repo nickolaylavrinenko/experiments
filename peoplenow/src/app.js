@@ -1,9 +1,8 @@
 
-require('./styles/style.css')
-
 // patch backbone extend method
 require('./backbone_patch')
 
+require('./styles/style.css')
 
 var $ = require('jquery');
 var _ = require('underscore');

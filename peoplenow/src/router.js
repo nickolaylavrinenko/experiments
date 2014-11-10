@@ -21,7 +21,7 @@ var Router = Backbone.Router.extend({
 
     this.queue = options.queue;
     this.container = $(options.container);
-    this.auth.set(options.auth);
+    this.auth.set(options.auth, {silent: true});
     // add emty view as active
     this._active = new EmptyView();
     this._active.render()
