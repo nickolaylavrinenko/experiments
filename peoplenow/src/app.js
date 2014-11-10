@@ -83,7 +83,9 @@ var getAuthStatus = function(callback){
 
 // DOM loaded
 
-$('#app-body').on('onload', function(){
+$(function(){
+
+	console.log('>>> onload ', this);
 
 	// init app global queue
 	var queue = new utils.Queue({'start': true});
