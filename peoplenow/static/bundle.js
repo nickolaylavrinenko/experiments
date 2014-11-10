@@ -482,7 +482,7 @@
 	    this.queue = options.queue;
 	    this.listenTo(this.auth, 'change', this._on_auth_changed_handler);
 	    if( !_.isEmpty(options.auth) ) {
-	      this.auth = _.extend(this.auth, options.auth);  
+	      this.auth.set(options.auth);  
 	    }
 	  },
 
@@ -575,11 +575,11 @@
 
 
 	  checkAuth: function() {
-	    console.log('>>>>', this.auth);
+	    console.log('>>>>', this.auth.attributes);
 	    var result = false;
-	    if( !_.isEmpty(this.auth)
-	          && this.auth.status === 'connected'
-	            && this.auth.userId ) {
+	    if( !_.isEmpty(this.auth.attributes)
+	          && this.auth.get('status') === 'connected'
+	            && this.auth.get(userId) ) {
 	      result = true;
 	    }
 	    return result;
@@ -587,7 +587,7 @@
 
 	  updateAuthData: function(object) {
 	    if( !_.isEmpty(object) ){
-	      _.extend(this.auth, object);
+	      this.auth.set(object);
 	    }
 	  },
 
