@@ -178,6 +178,7 @@
 					container: container,
 				});
 				router.startRouting();
+				console.log('>>> set interval');
 				setInterval(function(){
 					getAuthStatus(function(auth_options){
 						router.updateAuthData(auth_options)
