@@ -139,6 +139,7 @@
 		// init facebook SDK and check get auth
 	  $.ajaxSetup({ cache: true });
 	  $.getScript(config.FB_SDK_URL, function(){
+	  	console.log('>>> script loaded');
 	    FB.init({
 	      appId: config.FB_APP_ID,
 	      cookie     : true,  // enable cookies to allow the server to access 
