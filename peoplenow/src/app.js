@@ -89,7 +89,7 @@ $(function(){
 	// init app global queue
 	var queue = new utils.Queue({'start': true});
 
-	// init facebook SDK
+	// init facebook SDK and check get auth
   $.ajaxSetup({ cache: true });
   $.getScript(config.FB_SDK_URL, function(){
     FB.init({
@@ -101,6 +101,8 @@ $(function(){
     });     
     $('#fb-login-button').removeAttr('disabled');
 		getAuthStatus(function(auth_options){
+
+      console.log('>>> get auth status', auth_options);
 
 			// innit backendless
 			Backendless.initApp(config.APP_ID,
@@ -120,21 +122,6 @@ $(function(){
 				});
 			});
 
-		  // get tags
-		  // var callback = Backendless.Async(
-		  // 	function(data){
-		  // 		console.log('>>> tags response success', data);
-		  // 	},
-		  // 	function(error){
-		  // 		console.log('>>> tags response error', error);
-		  // 	}
-		  // );
-		  // var users = Backendless.Persistence.of(structures.CustomUser).find(callback);
-		  // console.log('>>> users return', users);
-
-			// test for ejs
-			//template = require('../templates/test.ejs');
-
 			// init app router
 			var container = $('#app-container').first();
 			if( !container.length ){
@@ -147,13 +134,14 @@ $(function(){
 			});
 			router.startRouting();
 			setInterval(function(){
+				console.log('>>> get auth status again');
 				getAuthStatus(function(auth_options){
 					router.updateAuthData(auth_options)
 				});
 			}, 30000);
 
 
-			console.log('Application started');
+			console.log('app: Started');
 
 			//TODO temporary expose something to global context
 			//TODO remove
@@ -163,3 +151,15 @@ $(function(){
 		});
 	});
 });
+
+		  // get tags
+		  // var callback = Backendless.Async(
+		  // 	function(data){
+		  // 		console.log('>>> tags response success', data);
+		  // 	},
+		  // 	function(error){
+		  // 		console.log('>>> tags response error', error);
+		  // 	}
+		  // );
+		  // var users = Backendless.Persistence.of(structures.CustomUser).find(callback);
+		  // console.log('>>> users return', users);

@@ -14,7 +14,6 @@ var Router = Backbone.Router.extend({
   container: null,
 
   initialize: function(options) {
-    console.log('>>> router options - ', options);
     // queue
     this.queue = options.queue;
     // auth
@@ -25,7 +24,6 @@ var Router = Backbone.Router.extend({
     // container
     if( options.container ) {
       this.container = $(options.container);
-      console.log('>>> ', this.container);
     }
 
   },
