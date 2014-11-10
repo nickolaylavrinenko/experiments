@@ -2350,7 +2350,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var base = __webpack_require__(14)
+	var _ = __webpack_require__(12);
+	var base = __webpack_require__(14);
 	var BaseView = base.BaseView;
 	var FadingMixIn = base.FadingMixIn;
 	var template = __webpack_require__(19);
@@ -13529,7 +13530,7 @@
 	obj || (obj = {});
 	var __t, __p = '', __e = _.escape;
 	with (obj) {
-	__p += '\nvar _ = require(\'underscore\');\n\n<div style="width: 100px; height: 100px; background: red;">\n\tHello from template\n</div>';
+	__p += '\n<div style="width: 100px; height: 100px; background: red;">\n\tHello from template\n</div>';
 
 	}
 	return __p
