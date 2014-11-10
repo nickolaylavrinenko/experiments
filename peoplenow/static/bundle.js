@@ -575,6 +575,7 @@
 
 
 	  checkAuth: function() {
+	    console.log('>>>>', this.auth);
 	    var result = false;
 	    if( !_.isEmpty(this.auth)
 	          && this.auth.status === 'connected'
