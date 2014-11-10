@@ -13399,9 +13399,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var Backbone = __webpack_require__(16);
 	var $ = __webpack_require__(15);
 	var _ = __webpack_require__(12);
+	var Backbone = __webpack_require__(16);
 
 
 	/*
