@@ -585,9 +585,9 @@
 	    this.container = $(options.container);
 	    this.auth.set(options.auth);
 	    // add emty view as active
-	    this._active = (new EmptyView())
-	                        .render()
-	                        .attach(this.container);
+	    this._active = new EmptyView();
+	    this._active.render()
+	                .attach(this.container);
 	    this.bindEvents();
 
 	  },
