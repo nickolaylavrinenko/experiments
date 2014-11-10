@@ -600,9 +600,7 @@
 	    // check auth
 	    if( !this.checkAuth() ) {
 	      this.queue.skipAll();
-	      this.queue.add(this, this.logoutUser);
 	      this.queue.add(this, this.indexHandler);
-	      this.queue.add(this, callback, args);
 	    }
 	    // add callback to queue
 	    if( _.isFunction(callback) ){
@@ -698,13 +696,13 @@
 	  /*
 	   * returns jQuery promise object
 	   */
-	  logoutUser: function() {
-	    var deferred = $.Deferred();
-	    FB.logout(function(){
-	      deferred.resolve();
-	    });
-	    return deferred;
-	  },
+	  // logoutUser: function() {
+	  //   var deferred = $.Deferred();
+	  //   FB.logout(function(){
+	  //     deferred.resolve();
+	  //   });
+	  //   return deferred;
+	  // },
 
 	  updateAuthData: function(object) {
 	    if( !_.isEmpty(object) ){
