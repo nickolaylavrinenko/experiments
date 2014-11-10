@@ -635,10 +635,10 @@
 	    var view_name = 'index';
 
 	    // get view
-	    var view = this.cache[view_name];
+	    var view = this._cache[view_name];
 	    if( !view ) {
 	      view = new IndexView();
-	      this.cache[view_name] = view;
+	      this._cache[view_name] = view;
 	    }
 
 	    // detach previous view and attach new
