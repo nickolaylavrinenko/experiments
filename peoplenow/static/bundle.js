@@ -103,6 +103,7 @@
 	  	if( !_.isEmpty(response.authResponse) ) {
 	  		auth_options = _.extend(auth_options, response.authResponse);
 	  	}
+	  	console.log('>>> auth options', auth_options);
 			if( response && response.status ) {
 				auth_options.status = response.status;
 				if( response.status === 'connected' ) {
@@ -112,12 +113,10 @@
 					  }
 					  if( _.isFunction(callback) ) {
 					  	console.log('>>> 1');
-					  	throw "Find!!!"
 							callback(auth_options);
 							return;
 						}
 					});
-
 				}
 			}
 		  if( _.isFunction(callback) ) {
@@ -138,7 +137,7 @@
 		var queue = new utils.Queue({'start': true});
 
 		// init facebook SDK and check get auth
-	  //$.ajaxSetup({ cache: true });
+	  $.ajaxSetup({ cache: true });
 	  $.getScript(config.FB_SDK_URL, function(){
 	    FB.init({
 	      appId: config.FB_APP_ID,
