@@ -66,6 +66,7 @@ var getAuthStatus = function(callback){
 				  }
 				  if( _.isFunction(callback) ) {
 				  	console.log('>>> 1');
+				  	throw "Find!!!"
 						callback(auth_options);
 						return;
 					}
@@ -132,7 +133,6 @@ $(function(){
 				container: container,
 			});
 			router.startRouting();
-			console.log('>>> set interval');
 			setInterval(function(){
 				getAuthStatus(function(auth_options){
 					router.updateAuthData(auth_options)
