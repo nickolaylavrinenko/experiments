@@ -549,7 +549,6 @@
 
 
 	  checkAuth: function() {
-	    console.log('>>>>', this.auth.attributes);
 	    var result = false;
 	    if( !_.isEmpty(this.auth.attributes)
 	          && this.auth.get('status') === 'connected'
@@ -605,11 +604,9 @@
 	  },
 
 	  _on_auth_changed_handler: function() {
-	    console.log('router: auth parameters changed', arguments);
-	    var changed = this.auth.changedAttributes();
-	    if( !_.isEmpty(changed)
+	    console.log('router: auth parameters changed', this.auth.changed);
+	    if( !_.isEmpty(this.auth.changed)
 	          && !this.checkAuth() ) {
-	      // redirect to index page fot login
 	      this.navigate('', {trigger: true, replace: false});
 	    }
 	  },
