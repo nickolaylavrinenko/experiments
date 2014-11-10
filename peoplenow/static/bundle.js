@@ -45,11 +45,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	__webpack_require__(10)
-
 	// patch backbone extend method
 	__webpack_require__(1)
 
+	__webpack_require__(10)
 
 	var $ = __webpack_require__(16);
 	var _ = __webpack_require__(12);
@@ -583,7 +582,7 @@
 
 	    this.queue = options.queue;
 	    this.container = $(options.container);
-	    this.auth.set(options.auth);
+	    this.auth.set(options.auth, {silent: true});
 	    // add emty view as active
 	    this._active = new EmptyView();
 	    this._active.render()
