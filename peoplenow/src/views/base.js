@@ -75,7 +75,6 @@ var BaseView = Backbone.View.extend({
 
 		var _super = this._super;
 		var _arguments = arguments;
-
 		if( this.isAttached() ) {
 			this.unbindEvents();
 			_supper.apply(this, _arguments);
@@ -89,9 +88,8 @@ var BaseView = Backbone.View.extend({
 var EmptyView = BaseView.extend({
 
 	render: function(attributes) {
-
 		this.$el = $('<div>');
-
+		return this;
 	},
 
 });

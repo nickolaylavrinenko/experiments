@@ -13475,7 +13475,6 @@
 
 			var _super = this._super;
 			var _arguments = arguments;
-
 			if( this.isAttached() ) {
 				this.unbindEvents();
 				_supper.apply(this, _arguments);
@@ -13489,9 +13488,8 @@
 	var EmptyView = BaseView.extend({
 
 		render: function(attributes) {
-
 			this.$el = $('<div>');
-
+			return this;
 		},
 
 	});
