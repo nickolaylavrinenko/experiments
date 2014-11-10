@@ -4,7 +4,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var constants = require('./constants');
 var IndexView = require('./views/index');
-var EmptyView = require('./views/base');
+var EmptyView = require('./views/base').EmptyView;
 
 
 var Router = Backbone.Router.extend({

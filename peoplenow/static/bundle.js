@@ -566,7 +566,7 @@
 	var Backbone = __webpack_require__(16);
 	var constants = __webpack_require__(9);
 	var IndexView = __webpack_require__(13);
-	var EmptyView = __webpack_require__(18);
+	var EmptyView = __webpack_require__(18).EmptyView;
 
 
 	var Router = Backbone.Router.extend({
