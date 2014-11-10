@@ -148,8 +148,6 @@
 	    $('#fb-login-button').removeAttr('disabled');
 			getAuthStatus(function(auth_options){
 
-	      console.log('>>> get auth status', auth_options);
-
 				// innit backendless
 				Backendless.initApp(config.APP_ID,
 														config.JS_KEY,
@@ -180,14 +178,13 @@
 				});
 				router.startRouting();
 				setInterval(function(){
-					console.log('>>> get auth status again');
 					getAuthStatus(function(auth_options){
 						router.updateAuthData(auth_options)
 					});
 				}, 30000);
 
 
-				console.log('app: Started');
+				console.log('app: started');
 
 				//TODO temporary expose something to global context
 				//TODO remove
@@ -578,6 +575,9 @@
 	  auth: new Backbone.Model(),
 	  container: null,
 
+	  _cache: {},
+	  _active: null,
+
 	  initialize: function(options) {
 	    // queue
 	    this.queue = options.queue;
@@ -632,8 +632,25 @@
 	    console.log('routing: index page');
 
 	    var deferred = $.Deferred();
+	    var view_name = 'index';
 
-	    //TODO handler logic 
+	    // get view
+	    var view = this.cache[view_name];
+	    if( !view ) {
+	      view = new IndexView();
+	      this.cache[view_name] = view;
+	    }
+
+	    // detach previous view and attach new
+	    if( view !== this._active ) {
+	      this._active.detach().done(function(){
+	        view.render().attach(this.container);
+	        this._active = view;
+	        deferred.resolve();
+	      });
+	    } else {
+	      deferred.resolve();
+	    }
 
 	    return deferred;
 
@@ -644,7 +661,7 @@
 	    console.log('routing: profile');
 
 	    var deferred = $.Deferred();
-
+	    
 	    //TODO handler logic 
 
 	    return deferred;
@@ -653,7 +670,6 @@
 
 
 	  /****************** Other methods *****************/
-
 
 	  checkAuth: function() {
 	    var result = false;

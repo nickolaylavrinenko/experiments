@@ -102,8 +102,6 @@ $(function(){
     $('#fb-login-button').removeAttr('disabled');
 		getAuthStatus(function(auth_options){
 
-      console.log('>>> get auth status', auth_options);
-
 			// innit backendless
 			Backendless.initApp(config.APP_ID,
 													config.JS_KEY,
@@ -134,14 +132,13 @@ $(function(){
 			});
 			router.startRouting();
 			setInterval(function(){
-				console.log('>>> get auth status again');
 				getAuthStatus(function(auth_options){
 					router.updateAuthData(auth_options)
 				});
 			}, 30000);
 
 
-			console.log('app: Started');
+			console.log('app: started');
 
 			//TODO temporary expose something to global context
 			//TODO remove

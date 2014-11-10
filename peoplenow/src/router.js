@@ -13,6 +13,9 @@ var Router = Backbone.Router.extend({
   auth: new Backbone.Model(),
   container: null,
 
+  _cache: {},
+  _active: null,
+
   initialize: function(options) {
     // queue
     this.queue = options.queue;
@@ -67,8 +70,25 @@ var Router = Backbone.Router.extend({
     console.log('routing: index page');
 
     var deferred = $.Deferred();
+    var view_name = 'index';
 
-    //TODO handler logic 
+    // get view
+    var view = this.cache[view_name];
+    if( !view ) {
+      view = new IndexView();
+      this.cache[view_name] = view;
+    }
+
+    // detach previous view and attach new
+    if( view !== this._active ) {
+      this._active.detach().done(function(){
+        view.render().attach(this.container);
+        this._active = view;
+        deferred.resolve();
+      });
+    } else {
+      deferred.resolve();
+    }
 
     return deferred;
 
@@ -79,7 +99,7 @@ var Router = Backbone.Router.extend({
     console.log('routing: profile');
 
     var deferred = $.Deferred();
-
+    
     //TODO handler logic 
 
     return deferred;
@@ -88,7 +108,6 @@ var Router = Backbone.Router.extend({
 
 
   /****************** Other methods *****************/
-
 
   checkAuth: function() {
     var result = false;
