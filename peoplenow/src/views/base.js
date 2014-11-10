@@ -95,7 +95,7 @@ var EmptyView = BaseView.extend({
 	render: function(attributes) {
 
 		this.$el = $('<div>');
-		
+
 	},
 
 });
@@ -123,4 +123,5 @@ var FadingMixIn = {
 module.exports = {
 	'BaseView': BaseView,
 	'FadingMixIn': FadingMixIn,
+	'EmptyView': EmptyView,
 };

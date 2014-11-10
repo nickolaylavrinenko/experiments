@@ -13495,7 +13495,7 @@
 		render: function(attributes) {
 
 			this.$el = $('<div>');
-			
+
 		},
 
 	});
@@ -13523,6 +13523,7 @@
 	module.exports = {
 		'BaseView': BaseView,
 		'FadingMixIn': FadingMixIn,
+		'EmptyView': EmptyView,
 	};
 
 /***/ },
