@@ -12,10 +12,10 @@ var Router = Backbone.Router.extend({
 
   initialize: function(options) {
     this.queue = options.queue;
-    this.listenTo(this.auth, 'change', this._on_auth_changed_handler);
     if( !_.isEmpty(options.auth) ) {
       this.auth.set(options.auth);  
     }
+    this.listenTo(this.auth, 'change', this._on_auth_changed_handler);
   },
 
   /*
@@ -41,8 +41,6 @@ var Router = Backbone.Router.extend({
 
   routes: {
     '': 'indexHandler',
-    'login(/)': 'loginHandler',
-    'logout(/)': 'logoutHandler',
     'profile(/)': 'profileHandler',
   },
 
@@ -57,30 +55,6 @@ var Router = Backbone.Router.extend({
   indexHandler: function(){
 
     console.log('routing: start app');
-
-    var deferred = $.Deferred();
-
-    //TODO handler logic 
-
-    return deferred;
-
-  },
-
-  loginHandler: function(){
-
-    console.log('routing: login');
-
-    var deferred = $.Deferred();
-
-    //TODO handler logic 
-
-    return deferred;
-
-  },
-
-  logoutHandler: function(){
-
-    console.log('routing: logout');
 
     var deferred = $.Deferred();
 
@@ -163,7 +137,13 @@ var Router = Backbone.Router.extend({
   },
 
   _on_auth_changed_handler: function() {
-    console.log('router: auth changed', arguments);
+    console.log('router: auth parameters changed', arguments);
+    var changed = this.auth.changedAttributes();
+    if( !_.isEmpty(changed)
+          && !this.checkAuth() ) {
+      // redirect to index page fot login
+      this.navigate('', {trigger: true, replace: false});
+    }
   },
 
 });
