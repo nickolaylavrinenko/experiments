@@ -121,6 +121,7 @@ var Router = Backbone.Router.extend({
             && this.auth.get('userId') ) {
       result = true;
     }
+    console.log('>>> check auth - ', this.auth);
     console.log('>>> check auth - ', result);
     return result;
   },
