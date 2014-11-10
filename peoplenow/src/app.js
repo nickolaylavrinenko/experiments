@@ -52,32 +52,26 @@ var getAuthStatus = function(callback){
 
   var auth_options = {};
 
+  // get status data from FB
   FB.getLoginStatus(function(status) {
 
   	if( !_.isEmpty(status.authResponse) ) {
   		auth_options = _.extend(auth_options, status.authResponse);
   	}
-  	console.log('>>> auth options', auth_options);
 		if( status && status.status ) {
 			auth_options.status = status.status;
-			if( status.status === 'connected' ) {
-				FB.api('/me', function(profile) {
-				  if( !_.isEmpty(profile) ) {
-				    auth_options = _.extend(auth_options, profile);
-				  }
-				  if( _.isFunction(callback) ) {
-				  	console.log('>>> 1');
-						callback(auth_options);
-						return;
-					}
-				});
+		}
+
+		// get profile data from FB
+		FB.api('/me', function(profile) {
+		  if( !_.isEmpty(profile) ) {
+		    auth_options = _.extend(auth_options, profile);
+		  }
+		  if( _.isFunction(callback) ) {
+		  	console.log('>>> auth options', auth_options);
+				callback(auth_options);
 			}
-		}
-	  if( _.isFunction(callback) ) {
-	  	console.log('>>> 2');
-			callback(auth_options);
-			return;
-		}
+		});
 	  
 	});
 
