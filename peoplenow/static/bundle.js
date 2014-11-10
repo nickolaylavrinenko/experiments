@@ -52,6 +52,7 @@
 	var $ = __webpack_require__(16);
 	var _ = __webpack_require__(12);
 	var config = __webpack_require__(2);
+	var constants = __webpack_require__(9);
 	var structures = __webpack_require__(3);
 	var errors = __webpack_require__(4);
 	var utils = __webpack_require__(5);
@@ -169,15 +170,17 @@
 					auth: auth_options,
 					container: container,
 				});
+				router.wrapLinks();
 				router.startRouting();
 				setInterval(function(){
 					getAuthStatus(function(auth_options){
 						router.updateAuthData(auth_options)
 					});
-				}, 30000);
+				}, constants.AUTH_REFRESH_INTERVAL);
 
 
 				console.log('app: started');
+				console.log('app: user ' + (router.checkAuth() ? 'authorized': 'not authorized') );
 
 				//TODO temporary expose something to global context
 				//TODO remove
@@ -594,13 +597,14 @@
 	  },
 
 	  /*
-	   * Routes handlers decorator
+	   * Routes handlers hook
 	   */
 	  execute: function(callback, args) {
 	    // check auth
 	    if( !this.checkAuth() ) {
 	      this.queue.skipAll();
 	      this.queue.add(this, this.indexHandler);
+	      return;
 	    }
 	    // add callback to queue
 	    if( _.isFunction(callback) ){
@@ -612,6 +616,7 @@
 
 	  routes: {
 	    '': 'indexHandler',
+	    'index(/)': 'indexHandler',
 	    'profile(/)': 'profileHandler',
 	  },
 
@@ -627,6 +632,8 @@
 
 	    var deferred = $.Deferred();
 	    var view_name = 'index';
+	    var router = this;
+	    var container = this.container;
 
 	    // get view
 	    var view = this._cache[view_name];
@@ -634,18 +641,23 @@
 	      view = new IndexView();
 	      this._cache[view_name] = view;
 	    }
-
 	    // detach previous view and attach new
 	    if( view !== this._active ) {
-	      this._active.detach().done(function(){
-	        view.render().attach(this.container);
-	        this._active = view;
-	        deferred.resolve();
-	      });
+	      this._active
+	          .detach()
+	          .done(function(){
+	            view.render()
+	              .wrapLinks(router)
+	              .attach(container)
+	              .done(function(){
+	                router._active = view;
+	                router.navigate(view_name, {trigger: false, replace: false})
+	                deferred.resolve();
+	              });
+	          });
 	    } else {
 	      deferred.resolve();
 	    }
-
 	    return deferred;
 
 	  },
@@ -656,6 +668,8 @@
 
 	    var deferred = $.Deferred();
 	    var view_name = 'profile';
+	    var router = this;
+	    var container = this.container;
 
 	    // get view
 	    var view = this._cache[view_name];
@@ -663,18 +677,23 @@
 	      view = new ProfileView();
 	      this._cache[view_name] = view;
 	    }
-
 	    // detach previous view and attach new
 	    if( view !== this._active ) {
-	      this._active.detach().done(function(){
-	        view.render().attach(this.container);
-	        this._active = view;
-	        deferred.resolve();
-	      });
+	      this._active
+	          .detach()
+	          .done(function(){
+	            view.render()
+	              .wrapLinks(router)
+	              .attach(container)
+	              .done(function(){
+	                router._active = view;
+	                router.navigate(view_name, {trigger: false, replace: false})
+	                deferred.resolve();
+	              });
+	          });
 	    } else {
 	      deferred.resolve();
 	    }
-
 	    return deferred;
 
 	  },
@@ -685,11 +704,9 @@
 	    var result = false;
 	    if( !_.isEmpty(this.auth.attributes)
 	          && this.auth.get('status') === 'connected'
-	            && this.auth.get('userId') ) {
+	            && this.auth.get('id') ) {
 	      result = true;
 	    }
-	    console.log('>>> check auth - ', this.auth);
-	    console.log('>>> check auth - ', result);
 	    return result;
 	  },
 
@@ -705,9 +722,23 @@
 	  // },
 
 	  updateAuthData: function(object) {
+
+	    var _this = this;
+
 	    if( !_.isEmpty(object) ){
+	      // set new values
 	      this.auth.set(object);
+	      // unset values which not specified
+	      exists_keys = _(object).keys();
+	      to_remove_keys = _(this.auth.omit(exists_keys)).keys();
+	      _(to_remove_keys).each(function(key){
+	        if( key ) {
+	          _this.auth.unset(key);
+	        }
+	      });
 	    }
+	    
+
 	  },
 
 	  /*
@@ -721,12 +752,14 @@
 	        root: '/',
 	        //silent: true,
 	    });
+	//    var location = window.location.pathname || "/";
+	//    this.navigate(location, {trigger: true, replace: false});
 	  },
 
 	  /*
 	   * modify all links, to pass them through router
 	   */
-	  setupLinks: function(container){
+	  wrapLinks: function(container){
 	    var container = container ? $(container) : $(document.body);
 	    var links = container.find('a').filter(function(){
 	        var element = $(this);
@@ -769,7 +802,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	PUBLISH_STATUS = {
+	var AUTH_REFRESH_INTERVAL = 10000;
+
+	var PUBLISH_STATUS = {
 		PUBLISHED: 'published',
 		SCHEDULED: 'scheduled',
 		FAILED: 'failed',
@@ -778,6 +813,7 @@
 
 	module.exports = {
 		PUBLISH_STATUS: PUBLISH_STATUS,
+		AUTH_REFRESH_INTERVAL: AUTH_REFRESH_INTERVAL,
 
 	};
 
@@ -2273,7 +2309,6 @@
 		template: null,
 
 		render: function(attributes){
-
 			if( this.isAttached() ) {
 				this.detach();
 			}
@@ -2281,14 +2316,12 @@
 				this.$el = $('<div>').html(this.template(attributes));
 			}
 			return this;
-
 		},
 
 	  /*
 	   *	returns jQuery promise object
 	   */
 		attach: function(container) {
-
 	    container = $(container);
 	    var deferred = $.Deferred();
 	    if( container.length && !this.isAttached() ) {
@@ -2299,14 +2332,12 @@
 	    	deferred.resolve();
 	    }
 	    return deferred;
-
 		},
 
 	  /*
 	   *	returns jQuery promise object
 	   */
 		detach: function() {
-
 	    var deferred = $.Deferred();
 			if( this.isAttached() ) {
 				this.unbindEvents();
@@ -2316,13 +2347,10 @@
 	    	deferred.resolve();
 	    }
 	    return deferred;
-			
 		},
 
 		isAttached: function() {
-
 			return this.$el.length && this.$el.parents('body') ? true: false;
-
 		},
 
 		bindEvents: function() {
@@ -2334,14 +2362,21 @@
 		},
 
 		remove: function() {
-
 			var _super = this._super;
 			var _arguments = arguments;
 			if( this.isAttached() ) {
 				this.unbindEvents();
 				_supper.apply(this, _arguments);
 			}
+		},
 
+		wrapLinks: function(router) {
+			this.$el.length && router.wrapLinks(this.$el);
+			return this;
+		},
+
+		unwrapLinks: function() {
+			//?
 		},
 		
 	});
@@ -13419,7 +13454,7 @@
 	    };
 	    var __stack = {
 	        lineno: 1,
-	        input: '\n<div style="width: 100px; height: 100px; background: red;">\n	Index page\n</div>',
+	        input: '\n<div style="width: 100px; height: 100px; background: red;">\n	<a href="/profile">To profile</a>\n</div>',
 	        filename: undefined
 	    };
 	    function rethrow(err, str, filename, lineno) {
@@ -13436,7 +13471,7 @@
 	        var buf = [];
 	        with (locals || {}) {
 	            (function() {
-	                buf.push('\n<div style="width: 100px; height: 100px; background: red;">\n	Index page\n</div>');
+	                buf.push('\n<div style="width: 100px; height: 100px; background: red;">\n	<a href="/profile">To profile</a>\n</div>');
 	            })();
 	        }
 	        return buf.join("");
@@ -13478,7 +13513,7 @@
 	    };
 	    var __stack = {
 	        lineno: 1,
-	        input: '\n<div style="width: 100px; height: 100px; background: blue;">\n	Profile page\n</div>',
+	        input: '\n<div style="width: 100px; height: 100px; background: blue;">\n  <a href="/">To index</a>\n</div>',
 	        filename: undefined
 	    };
 	    function rethrow(err, str, filename, lineno) {
@@ -13495,7 +13530,7 @@
 	        var buf = [];
 	        with (locals || {}) {
 	            (function() {
-	                buf.push('\n<div style="width: 100px; height: 100px; background: blue;">\n	Profile page\n</div>');
+	                buf.push('\n<div style="width: 100px; height: 100px; background: blue;">\n  <a href="/">To index</a>\n</div>');
 	            })();
 	        }
 	        return buf.join("");

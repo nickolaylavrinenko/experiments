@@ -12,7 +12,6 @@ var BaseView = Backbone.View.extend({
 	template: null,
 
 	render: function(attributes){
-
 		if( this.isAttached() ) {
 			this.detach();
 		}
@@ -20,14 +19,12 @@ var BaseView = Backbone.View.extend({
 			this.$el = $('<div>').html(this.template(attributes));
 		}
 		return this;
-
 	},
 
   /*
    *	returns jQuery promise object
    */
 	attach: function(container) {
-
     container = $(container);
     var deferred = $.Deferred();
     if( container.length && !this.isAttached() ) {
@@ -38,14 +35,12 @@ var BaseView = Backbone.View.extend({
     	deferred.resolve();
     }
     return deferred;
-
 	},
 
   /*
    *	returns jQuery promise object
    */
 	detach: function() {
-
     var deferred = $.Deferred();
 		if( this.isAttached() ) {
 			this.unbindEvents();
@@ -55,13 +50,10 @@ var BaseView = Backbone.View.extend({
     	deferred.resolve();
     }
     return deferred;
-		
 	},
 
 	isAttached: function() {
-
 		return this.$el.length && this.$el.parents('body') ? true: false;
-
 	},
 
 	bindEvents: function() {
@@ -73,14 +65,21 @@ var BaseView = Backbone.View.extend({
 	},
 
 	remove: function() {
-
 		var _super = this._super;
 		var _arguments = arguments;
 		if( this.isAttached() ) {
 			this.unbindEvents();
 			_supper.apply(this, _arguments);
 		}
+	},
 
+	wrapLinks: function(router) {
+		this.$el.length && router.wrapLinks(this.$el);
+		return this;
+	},
+
+	unwrapLinks: function() {
+		//?
 	},
 	
 });

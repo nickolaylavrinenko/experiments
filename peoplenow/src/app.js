@@ -6,6 +6,7 @@ require('./styles/style.css')
 var $ = require('jquery');
 var _ = require('underscore');
 var config = require('./config');
+var constants = require('./constants');
 var structures = require('./structures');
 var errors = require('./errors');
 var utils = require('./utils');
@@ -123,15 +124,17 @@ $(function(){
 				auth: auth_options,
 				container: container,
 			});
+			router.wrapLinks();
 			router.startRouting();
 			setInterval(function(){
 				getAuthStatus(function(auth_options){
 					router.updateAuthData(auth_options)
 				});
-			}, 30000);
+			}, constants.AUTH_REFRESH_INTERVAL);
 
 
 			console.log('app: started');
+			console.log('app: user ' + (router.checkAuth() ? 'authorized': 'not authorized') );
 
 			//TODO temporary expose something to global context
 			//TODO remove

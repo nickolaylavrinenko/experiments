@@ -39,13 +39,14 @@ var Router = Backbone.Router.extend({
   },
 
   /*
-   * Routes handlers decorator
+   * Routes handlers hook
    */
   execute: function(callback, args) {
     // check auth
     if( !this.checkAuth() ) {
       this.queue.skipAll();
       this.queue.add(this, this.indexHandler);
+      return;
     }
     // add callback to queue
     if( _.isFunction(callback) ){
@@ -57,6 +58,7 @@ var Router = Backbone.Router.extend({
 
   routes: {
     '': 'indexHandler',
+    'index(/)': 'indexHandler',
     'profile(/)': 'profileHandler',
   },
 
@@ -72,6 +74,8 @@ var Router = Backbone.Router.extend({
 
     var deferred = $.Deferred();
     var view_name = 'index';
+    var router = this;
+    var container = this.container;
 
     // get view
     var view = this._cache[view_name];
@@ -79,18 +83,23 @@ var Router = Backbone.Router.extend({
       view = new IndexView();
       this._cache[view_name] = view;
     }
-
     // detach previous view and attach new
     if( view !== this._active ) {
-      this._active.detach().done(function(){
-        view.render().attach(this.container);
-        this._active = view;
-        deferred.resolve();
-      });
+      this._active
+          .detach()
+          .done(function(){
+            view.render()
+              .wrapLinks(router)
+              .attach(container)
+              .done(function(){
+                router._active = view;
+                router.navigate(view_name, {trigger: false, replace: false})
+                deferred.resolve();
+              });
+          });
     } else {
       deferred.resolve();
     }
-
     return deferred;
 
   },
@@ -101,6 +110,8 @@ var Router = Backbone.Router.extend({
 
     var deferred = $.Deferred();
     var view_name = 'profile';
+    var router = this;
+    var container = this.container;
 
     // get view
     var view = this._cache[view_name];
@@ -108,18 +119,23 @@ var Router = Backbone.Router.extend({
       view = new ProfileView();
       this._cache[view_name] = view;
     }
-
     // detach previous view and attach new
     if( view !== this._active ) {
-      this._active.detach().done(function(){
-        view.render().attach(this.container);
-        this._active = view;
-        deferred.resolve();
-      });
+      this._active
+          .detach()
+          .done(function(){
+            view.render()
+              .wrapLinks(router)
+              .attach(container)
+              .done(function(){
+                router._active = view;
+                router.navigate(view_name, {trigger: false, replace: false})
+                deferred.resolve();
+              });
+          });
     } else {
       deferred.resolve();
     }
-
     return deferred;
 
   },
@@ -130,11 +146,9 @@ var Router = Backbone.Router.extend({
     var result = false;
     if( !_.isEmpty(this.auth.attributes)
           && this.auth.get('status') === 'connected'
-            && this.auth.get('userId') ) {
+            && this.auth.get('id') ) {
       result = true;
     }
-    console.log('>>> check auth - ', this.auth);
-    console.log('>>> check auth - ', result);
     return result;
   },
 
@@ -150,9 +164,23 @@ var Router = Backbone.Router.extend({
   // },
 
   updateAuthData: function(object) {
+
+    var _this = this;
+
     if( !_.isEmpty(object) ){
+      // set new values
       this.auth.set(object);
+      // unset values which not specified
+      exists_keys = _(object).keys();
+      to_remove_keys = _(this.auth.omit(exists_keys)).keys();
+      _(to_remove_keys).each(function(key){
+        if( key ) {
+          _this.auth.unset(key);
+        }
+      });
     }
+    
+
   },
 
   /*
@@ -166,12 +194,14 @@ var Router = Backbone.Router.extend({
         root: '/',
         //silent: true,
     });
+//    var location = window.location.pathname || "/";
+//    this.navigate(location, {trigger: true, replace: false});
   },
 
   /*
    * modify all links, to pass them through router
    */
-  setupLinks: function(container){
+  wrapLinks: function(container){
     var container = container ? $(container) : $(document.body);
     var links = container.find('a').filter(function(){
         var element = $(this);
