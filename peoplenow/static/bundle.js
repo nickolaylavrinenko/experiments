@@ -216,6 +216,7 @@
 
 	
 	var Backbone = __webpack_require__(16);
+	var _ = __webpack_require__(12);
 
 	/*
 	 * Change backbone extend method with John Resig inheritence template.
@@ -13378,6 +13379,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
+	var Backbone = __webpack_require__(16);
+	var $ = __webpack_require__(15);
+
+
 	/*
 	 *	Base content view
 	 */

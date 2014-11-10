@@ -1,5 +1,6 @@
 
 var Backbone = require('backbone');
+var _ = require('underscore');
 
 /*
  * Change backbone extend method with John Resig inheritence template.
