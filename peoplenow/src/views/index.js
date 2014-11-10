@@ -14,6 +14,4 @@ var IndexView = BaseView.extend({
 });
 
 
-module.exports = {
-	'IndexView': IndexView,
-};
+module.exports = IndexView;

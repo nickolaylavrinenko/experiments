@@ -2360,9 +2360,7 @@
 	});
 
 
-	module.exports = {
-		'IndexView': IndexView,
-	};
+	module.exports = IndexView;
 
 /***/ },
 /* 14 */
