@@ -27,7 +27,7 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 }
 body {
 	line-height: 1;
-	color: black;
+	color: #333;
 	background: white;
 }
 ol, ul {
@@ -53,6 +53,7 @@ blockquote, q {
 
 /***** clear css end ********/
 
+
 .app-content-wrapper {
 	display: block;
 	text-align: center;
@@ -62,13 +63,21 @@ blockquote, q {
 	display: inline-block;
 	margin: 0 auto;
 	padding: 20px 10px 10px 10px;
+	text-align: initial;
 }
 
+.app-loader {
+	display: block;
+	font-weight: bold;
+	margin-top: 100px;
+}
+
+/*
 .field {
 	margin-top: 5px;
 }
 
-/*
+
 .user-register-form {
 	display: inline-block;
 	border: 1px solid #aaa;
@@ -84,7 +93,6 @@ blockquote, q {
 	padding: 10px;
 	margin: 20px 0;
 }
-*/
 
 .bordered-input {
 	width: 160px;
@@ -92,6 +100,9 @@ blockquote, q {
 	border: 1px solid #aaa;
 	border-radius: 4px;
 }
+*/
+
+/*	Top menu	*/
 
 .top-pannel {
 	display: block;
@@ -127,8 +138,11 @@ blockquote, q {
 	cursor: pointer;
 	text-decoration: none;
 	font-weight: bold;
-	color: black;
+	color: #333;
 }
+
+
+/*	Index page	*/
 
 .app-label {
 	display: block;
@@ -138,8 +152,63 @@ blockquote, q {
 	margin-top: 100px;
 }
 
-.app-loader {
-	display: block;
+
+/* 	Form	*/
+.form {
+
+}
+
+.form tr > td {
+  padding-bottom: 10px;
+}
+
+.form .field {
+
+}
+
+.form .field .label {
+
+}
+
+.form .field .input {
+	background: #f9f9f9;
+	padding: 10px;
+	border: 1px solid #eee;
+	border-radius: 5px;
+	min-width: 300px;
+	text-align: center;
+	width: auto;
+	margin-left: 10px;
+}
+
+.form .submit {
+
+}
+
+
+/* Button */
+
+.button {
+
+}
+
+
+/*	Profile page	*/
+
+.profile {
+
+}
+
+.profile section {
+	padding-top: 30px;
+}
+
+.profile .section-title {
 	font-weight: bold;
-	margin-top: 100px;
+	text-decoration: underline;
+}
+
+.profile .form {
+	padding-top: 20px;
+	padding-left: 40px;
 }

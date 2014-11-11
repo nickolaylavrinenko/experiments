@@ -11,6 +11,7 @@ var structures = require('./structures');
 var errors = require('./errors');
 var utils = require('./utils');
 var Router = require('./router');
+var backend = require('./backend');
 
 
 // window.subscribe_to_channel = function(channels) {
@@ -43,6 +44,7 @@ var Router = require('./router');
 // 		});
 // 	}
 // };
+
 
 
 /*
@@ -82,12 +84,47 @@ var getAuthStatus = window.checkLoginState = function(callback){
 
 };
 
+
+var initApp = function(auth_options) {
+
+	var queue = new utils.Queue({'start': true});
+	var container = $(constants.APP_CONTENT_SELECTOR).first();
+	if( !container.length ){
+		throw "Can't find application container element in DOM";
+	}
+
+	// init app router
+	var router = new Router({
+		queue: queue,
+		auth: auth_options,
+		container: container,
+	});
+	router.wrapLinks();
+	router.startRouting();
+
+	// update auth data from Facebook periodically
+	setInterval(function(){
+		getAuthStatus(function(auth_options){
+			router.updateAuthData(auth_options)
+		});
+	}, constants.AUTH_REFRESH_INTERVAL);
+
+	console.log('app: started');
+	console.log('app: user ' + (router.checkAuth() ? 'authorized': 'not authorized') );
+
+	//TODO temporary expose something to global context
+	//TODO remove
+	window.router = router;
+	window.auth_options = router.auth;
+	window.$ = $;
+	window._ = _;
+
+};
+
+
 // DOM loaded
 
 $(function(){
-
-	// init app global queue
-	var queue = new utils.Queue({'start': true});
 
 	// init facebook SDK and check get auth
   $.ajaxSetup({ cache: true });
@@ -102,92 +139,39 @@ $(function(){
     $('#fb-login-button').removeAttr('disabled');
 		getAuthStatus(function(auth_options){
 
-			// innit backendless
-			Backendless.initApp(config.APP_ID,
-													config.JS_KEY,
-													config.APP_VERSION);
+			// init backendless
+			Backendless.initApp(config.BACKENDLESS_APP_ID,
+													config.BACKENDLESS_JS_KEY,
+													config.BACKENDLESS_APP_VERSION);
 
-			// check if user is new
+			// authorized user
 			if( auth_options.status
-				    && auth_options.status === 'connected'
-				    	&& auth_options.id ) {
-				var query = {
-   				condition: ("fbuid = '" + auth_options.id + "'"),
-				};
-				Backendless.Persistence
-					.of(structures.CustomUser)
-					.find(query,
-								Backendless.Async(
-							  	function(users){
-							  		console.log('>>> serch users -', users);
-							  	},
-							  	function(error){
-							  		console.log('>>> search users error', error);
-							  	}
-							  )
-					);
+				    	&& auth_options.status === 'connected'
+				    				&& auth_options.id ) {
+
+				backend.findUserByFBId(auth_options.id)
+					.fail(function(error){
+						throw 'Cant fetch users from Backendless';
+					})
+					.done(function(response){
+						user = (_.isArray(response.data) && response.data.length) ?
+				  				response.data[0] : null;
+				  	// user not found in Backendless
+			  		if( !user ) {
+			  			backend.registerUser(auth_options)
+			  				.fail(function(error){
+			  					throw 'Cant register user in Backendless';
+			  				})
+			  				.done(function(){
+			  					initApp(auth_options);
+			  				})
+			  		}
+					});
+
 			}
-			
 
-
-
-
-			// // init app blocks
-			// var blocks = _.extend({},
-			// 	require('./userRegisterForm'),
-			// 	require('./sendMessageForm')
-			// );
-			// _.each(blocks, function(constructor, class_name){
-			// 	$('.' + class_name + ':not(.init-block)').each(function(ind, item){
-			// 		item = $(item);
-			// 		item.addClass('init-block');
-			// 		item.data('init-block', new constructor(item.first()));
-			// 	});
-			// });
-
-			// init app router
-			var container = $(constants.APP_CONTENT_SELECTOR).first();
-			if( !container.length ){
-				throw "Can't find application container element in DOM";
-			}
-			var router = new Router({
-				queue: queue,
-				auth: auth_options,
-				container: container,
-			});
-			router.wrapLinks();
-			router.startRouting();
-
-			// update auth data from Facebook periodically
-			setInterval(function(){
-				getAuthStatus(function(auth_options){
-					router.updateAuthData(auth_options)
-				});
-			}, constants.AUTH_REFRESH_INTERVAL);
-
-
-			console.log('app: started');
-			console.log('app: user ' + (router.checkAuth() ? 'authorized': 'not authorized') );
-
-			//TODO temporary expose something to global context
-			//TODO remove
-			window.router = router;
-			window.auth_options = router.auth;
-			window.$ = $;
-			window._ = _;
+			initApp(auth_options);
 
 		});
 	});
 });
-
-		  // get tags
-		  // var callback = Backendless.Async(
-		  // 	function(data){
-		  // 		console.log('>>> tags response success', data);
-		  // 	},
-		  // 	function(error){
-		  // 		console.log('>>> tags response error', error);
-		  // 	}
-		  // );
-		  // var users = Backendless.Persistence.of(structures.CustomUser).find(callback);
-		  // console.log('>>> users return', users);

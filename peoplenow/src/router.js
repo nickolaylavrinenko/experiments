@@ -91,6 +91,7 @@ var Router = Backbone.Router.extend({
           .done(function(){
             view.render()
               .wrapLinks(router)
+              .initControls()
               .attach(container)
               .done(function(){
                 router._active = view;
@@ -125,8 +126,9 @@ var Router = Backbone.Router.extend({
       this._active
           .detach()
           .done(function(){
-            view.render()
+            view.render(router.auth.attributes)
               .wrapLinks(router)
+              .initControls()
               .attach(container)
               .done(function(){
                 router._active = view;
@@ -163,6 +165,7 @@ var Router = Backbone.Router.extend({
           .done(function(){
             view.render()
               .wrapLinks(router)
+              .initControls()
               .attach(container)
               .done(function(){
                 router._active = view;

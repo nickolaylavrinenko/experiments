@@ -11,6 +11,7 @@ var constants = require('../constants');
 var BaseView = Backbone.View.extend({
 
 	template: null,
+	controls: {},
 
 	render: function(attributes){
 		if( this.isAttached() ) {
@@ -19,6 +20,17 @@ var BaseView = Backbone.View.extend({
 		if( _.isFunction(this.template) ) {
 			this.$el = $('<div>').html(this.template(attributes));
 		}
+		return this;
+	},
+
+	initControls: function(){
+		_.each(this.controls, function(constructor, class_name){
+			$('.' + class_name + ':not(.init-block)').each(function(ind, item){
+				item = $(item);
+				item.addClass('init-block');
+				item.data('init-block', new constructor(item.first()));
+			});
+		});
 		return this;
 	},
 

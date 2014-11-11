@@ -130,5 +130,5 @@ Queue.prototype.skipAll = function() {
 
 
 module.exports = {
-	'Queue': Queue,
+  'Queue': Queue,
 };
