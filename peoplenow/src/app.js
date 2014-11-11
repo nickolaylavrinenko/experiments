@@ -61,6 +61,9 @@ var getAuthStatus = window.checkLoginState = function(callback){
 		if( status && status.status ) {
 			auth_options.status = status.status;
 		}
+		if( auth_options.status !== 'connected' ) {
+			$('#auth-status').text('Please, log into app with Facebook');
+		}
 
 		// get profile data from FB
 		FB.api('/me', function(profile) {
@@ -104,6 +107,31 @@ $(function(){
 													config.JS_KEY,
 													config.APP_VERSION);
 
+			// check if user is new
+			if( auth_options.status
+				    && auth_options.status === 'connected'
+				    	&& auth_options.id ) {
+				var query = {
+   				condition: ("fbuid = '" + auth_options.id + "'"),
+				};
+				Backendless.Persistence
+					.of(structures.CustomUser)
+					.find(query,
+								Backendless.Async(
+							  	function(users){
+							  		console.log('>>> serch users -', users);
+							  	},
+							  	function(error){
+							  		console.log('>>> search users error', error);
+							  	}
+							  )
+					);
+			}
+			
+
+
+
+
 			// // init app blocks
 			// var blocks = _.extend({},
 			// 	require('./userRegisterForm'),
@@ -129,6 +157,8 @@ $(function(){
 			});
 			router.wrapLinks();
 			router.startRouting();
+
+			// update auth data from Facebook periodically
 			setInterval(function(){
 				getAuthStatus(function(auth_options){
 					router.updateAuthData(auth_options)
