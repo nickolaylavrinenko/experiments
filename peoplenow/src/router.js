@@ -70,8 +70,6 @@ var Router = Backbone.Router.extend({
 
   indexHandler: function(){
 
-    console.log('routing: index page');
-
     var deferred = $.Deferred();
     var view_name = 'index';
     var router = this;
@@ -85,6 +83,7 @@ var Router = Backbone.Router.extend({
     }
     // detach previous view and attach new
     if( view !== this._active ) {
+      console.log('routing: index page');
       this._active
           .detach()
           .done(function(){
@@ -93,11 +92,12 @@ var Router = Backbone.Router.extend({
               .attach(container)
               .done(function(){
                 router._active = view;
-                router.navigate(view_name, {trigger: false, replace: false})
+                router.navigate('', {trigger: false, replace: false})
                 deferred.resolve();
               });
           });
     } else {
+      router.navigate('', {trigger: false, replace: false})
       deferred.resolve();
     }
     return deferred;
@@ -105,8 +105,6 @@ var Router = Backbone.Router.extend({
   },
 
   profileHandler: function(){
-
-    console.log('routing: profile');
 
     var deferred = $.Deferred();
     var view_name = 'profile';
@@ -121,6 +119,7 @@ var Router = Backbone.Router.extend({
     }
     // detach previous view and attach new
     if( view !== this._active ) {
+      console.log('routing: profile');
       this._active
           .detach()
           .done(function(){
@@ -134,6 +133,7 @@ var Router = Backbone.Router.extend({
               });
           });
     } else {
+      router.navigate(view_name, {trigger: false, replace: false})
       deferred.resolve();
     }
     return deferred;
@@ -192,16 +192,14 @@ var Router = Backbone.Router.extend({
         pushState: true,
         hashChange: true,
         root: '/',
-        //silent: true,
     });
-//    var location = window.location.pathname || "/";
-//    this.navigate(location, {trigger: true, replace: false});
   },
 
   /*
    * modify all links, to pass them through router
    */
   wrapLinks: function(container){
+    var _this= this;
     var container = container ? $(container) : $(document.body);
     var links = container.find('a').filter(function(){
         var element = $(this);
@@ -210,22 +208,39 @@ var Router = Backbone.Router.extend({
         }
         var href = element.attr('href');
         //TODO need a regexp to check the path
-        return href && href != "" && href != "#";
+        return _.isString(href) && href != "#" && href != "?";
     });
 
-    // link may has other handlers, so we must turn off appropriate handler (see .../js/calendar.js)
-    links.off(constants.click_event, this._on_link_clicked_handler);
-    links.on(constants.click_event, this._on_link_clicked_handler);
+    links.off('click');
+    links.on('click', function(e) {
+      _this._on_link_clicked_handler(e);
+    });
+
+  },
+
+  unwrapLinks: function(container){
+    var container = container ? $(container) : $(document.body);
+    var links = container.find('a').filter(function(){
+        var element = $(this);
+        if( element.hasClass('no-proc') ) {
+            return false;
+        }
+        var href = element.attr('href');
+        //TODO need a regexp to check the path
+        return _.isString(href) && href != "#" && href != "?";
+    });
+
+    links.off('click');
   },
   
   _on_link_clicked_handler: function(e) {
     e.preventDefault();
-    this.navigateTo($(this).attr('href'),
+    el = $(e.target);
+    this.navigate(el.attr('href'),
                     {trigger: true, replace: false});
   },
 
   _on_auth_changed_handler: function() {
-    console.log('router: auth parameters changed', this.auth.changed);
     if( !_.isEmpty(this.auth.changed)
           && !this.checkAuth() ) {
       this.navigate('', {trigger: true, replace: false});

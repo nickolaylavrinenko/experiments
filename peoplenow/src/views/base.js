@@ -2,6 +2,7 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var constants = require('../constants');
 
 
 /*
@@ -53,7 +54,9 @@ var BaseView = Backbone.View.extend({
 	},
 
 	isAttached: function() {
-		return this.$el.length && this.$el.parents('body') ? true: false;
+		return this.$el.length 
+						&& this.$el.parent('body').length 
+							? true: false;
 	},
 
 	bindEvents: function() {
@@ -97,18 +100,52 @@ var EmptyView = BaseView.extend({
 
 var FadingMixIn = {
 
+	render: function(attributes){
+		var _super = this._super;
+		_super.apply(this, arguments);
+		this.$el.css({'display': 'none'});
+		return this;
+	},
+
 	/*
    *	returns jQuery promise object
    */
 	attach: function(container) {
-		//TODO
+		var _super = this._super;
+		var _arguments = arguments;
+		var _this = this;
+		var deferred = $.Deferred();
+		_super.apply(_this, _arguments).done(function(){
+			_this.$el.fadeIn(function(){
+				deferred.resolve();
+			});
+		});
+		return deferred;
 	},
 
 	/*
    *	returns jQuery promise object
    */
 	detach: function() {
-		//TODO
+		var _super = this._super;
+		var _arguments = arguments;
+		var _this = this;
+		var deferred = $.Deferred();
+		_this.$el.fadeOut(function(){
+			_super.apply(_this, _arguments).done(function(){
+				deferred.resolve();
+			});
+		});
+		return deferred;
+	},
+
+	remove: function() {
+		var _super = this._super;
+		var _arguments = arguments;
+		var _this = this;
+		_this.$el.fadeOut(function(){
+			_super.apply(_this, _arguments);
+		});
 	},
 
 };

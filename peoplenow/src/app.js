@@ -48,7 +48,7 @@ var Router = require('./router');
 /*
  *
  */
-var getAuthStatus = function(callback){
+var getAuthStatus = window.checkLoginState = function(callback){
 
   var auth_options = {};
 
@@ -115,7 +115,7 @@ $(function(){
 			// });
 
 			// init app router
-			var container = $('#app-container').first();
+			var container = $(constants.APP_CONTAINER_ID).first();
 			if( !container.length ){
 				throw "Can't find application container element in DOM";
 			}
@@ -140,6 +140,8 @@ $(function(){
 			//TODO remove
 			window.router = router;
 			window.auth_options = router.auth;
+			window.$ = $;
+			window._ = _;
 
 		});
 	});

@@ -6,9 +6,8 @@ var FadingMixIn = base.FadingMixIn;
 var template = require('../templates/profile.ejs');
 
 
-//var ProfileView = BaseView.extend(FadingMixIn)
-//						  .extend({
-var ProfileView = BaseView.extend({
+var ProfileView = BaseView.extend(FadingMixIn)
+						  .extend({
 
   template: template,
 

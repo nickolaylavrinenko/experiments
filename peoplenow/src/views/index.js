@@ -6,9 +6,8 @@ var FadingMixIn = base.FadingMixIn;
 var template = require('../templates/index.ejs');
 
 
-//var IndexView = BaseView.extend(FadingMixIn)
-//						  .extend({
-var IndexView = BaseView.extend({
+var IndexView = BaseView.extend(FadingMixIn)
+						  .extend({
 
   template: template,
 
