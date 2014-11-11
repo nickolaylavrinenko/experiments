@@ -1,51 +1,43 @@
 <div class="profile">
 
-	<section>
-		<h2 class="section-title">Facebook data (read only):</h2>
-		<form class="form">
-			<table>
-					<tr class="field">
-						<td><label class="label" for="name">User name</label></td>
-						<td>
-							<input class="input"
-										 type="text"
-										 name="name"
-										 value="<%= name %>"
-										 readonly>
-						</td>
-					</tr>
-					<tr class="field">
-					  <td><label class="label" for="email">E-mail</label></td>
-					  <td>
-					  	<input class="input"
-					  				 type="email"
-					  				 name="email"
-					  				 value="<%= email %>" 
-					  				 readonly>
-					  </td>
-					</tr>
-				</table>
-		</form>
-	</section>
+	<form class="form">
+		<table>
+			<tr class="section">
+				<td colspan="2"><h2 class="section-title">Facebook data (read only):</h2></td>
+			</tr>
+			<tr class="field">
+				<td><label class="label" for="name">User name</label></td>
+				<td>
+					<input class="input"
+								 type="text"
+								 name="name"
+								 value="<%= name %>"
+								 readonly>
+				</td>
+			</tr>
+			<tr class="field">
+			  <td><label class="label" for="email">E-mail</label></td>
+			  <td>
+			  	<input class="input"
+			  				 type="email"
+			  				 name="email"
+			  				 value="<%= email %>" 
+			  				 readonly>
+			  </td>
+			</tr>				
+			<tr class="section">
+				<td colspan="2"><h2 class="section-title">User tags:</h2></td>
+			</tr>
+			<tr class="field">
+			  <td><label class="label" for="tags">Tags</label></td>
+				<td>
+					<input class="tags-select" type="hidden" name="tags">
+				</td>
+			</tr>
+		</table>
 
-	<section>
-		<h2 class="section-title">User tags:</h2>
-		<form class="form">
-			<table>
-					<tr class="field">
-					  <td><label class="label" for="tags">Tags:</label></td>
-						<td>
-							<!--select class="input" name="tags" multiple required>
-  							<option value="flash">Flash</option>
-  							<option value="html">HTML</option>
-  							<option value="css">CSS</option>
-							</select-->
-							<input type="hidden" value="<%= tags_string %>">
-						</td>
-					</tr>
-			</table>
-			<input class="submit-button" type="submit" value="Save">
-		</form>
-	</section>
+		<input class="button submit-button" type="submit" value="Save profile">
+
+	</form>
 
 </div>

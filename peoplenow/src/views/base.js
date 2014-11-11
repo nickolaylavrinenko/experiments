@@ -12,8 +12,18 @@ var BaseView = Backbone.View.extend({
 
 	template: null,
 	controls: {},
+	router: null,
 
-	render: function(attributes){
+	initialize: function(options) {
+		var _super = this._super;
+		if( !options || !options.router ) {
+			throw 'Router must be provided to view constructor';
+		}
+		this.router = options.router;
+		return _super.apply(this, arguments);
+	},
+
+	render: function(attributes) {
 		if( this.isAttached() ) {
 			this.detach();
 		}
@@ -23,15 +33,18 @@ var BaseView = Backbone.View.extend({
 		return this;
 	},
 
-	initControls: function(){
-		_.each(this.controls, function(constructor, class_name){
-			$('.' + class_name + ':not(.init-block)').each(function(ind, item){
-				item = $(item);
+	initControls: function(options){
+		var _this = this;
+		options = options || {};
+		_.each(_this.controls, function(constructor, class_name){
+			_this.$('.' + class_name + ':not(.init-block)').each(function(ind, item){
+				item = _this.$(item);
 				item.addClass('init-block');
-				item.data('init-block', new constructor(item.first()));
+				var control = new constructor(item.first(), options[class_name] || {});
+				item.data('init-block', control);
 			});
 		});
-		return this;
+		return _this;
 	},
 
   /*

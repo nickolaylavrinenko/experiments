@@ -1,6 +1,7 @@
 
 var _ = require('underscore');
 var $ = require('jquery');
+var structures = require('./structures');
 
 
 /*
@@ -18,7 +19,9 @@ var findUserByFBId = function(fbuid) {
     .find(query,
           new Backendless.Async(
             function(response){
-              deferred.resolve(response);
+              var user = (_.isArray(response.data) && response.data.length) ?
+                response.data[0] : null;
+              deferred.resolve(user);  
             },
             function(error){
               deffered.reject(error);
@@ -68,6 +71,31 @@ var registerUser = function(user_options) {
     
 };
 
+/*
+ * returns jQuery promise object
+ */
+loadUserTags = function(fbuid) {
+  var deferred = $.Deferred();
+  findUserByFBId(fbuid)
+    .fail(function(error){
+      deferred.reject(error);
+    })
+    .done(function(user){
+      // get tags from user
+      var tags = (user && _.isString(user.tags)) ? user.tags.trim(): '';
+      tags = tags.split(',');
+      // filter empty
+      tags = _(tags).filter(function(tag){
+        return !!tag.trim();
+      });
+      deferred.resolve(tags);
+    });
+  return deferred;
+};
+
+/*
+ * returns jQuery promise object
+ */
 loadAllTags = function() {
   var deferred = $.Deferred();
   Backendless.Persistence
@@ -75,22 +103,60 @@ loadAllTags = function() {
     .find(new Backendless.Async(
             function(response){
               // get tags from response
-              var tags = _(response.data || [])
-                  .map(function(tag){
-                    return (_.isString(tag.title) && tag.title.trim()) ?
-                        tag.title : '';
-                  });
-              // filter empty tags
-              tags = _(tags).filter(function(tag){
-                return !!tag.trim();
+              var tags_array = response.data || [];
+              // var tags_hash = {};
+              // _(tags_array).each(function(tag){
+              //   if( _.isString(tag.title)
+              //         && tag.title.trim() ) {
+              //       tags_hash[tag.title.trim().toLowerCase()] = tag.title.trim();
+              //   }
+              // });
+              var tags_data = [];
+              _(tags_array).each(function(tag){
+                if( _(tag.title).isString()
+                      && tag.title.trim() ) {
+                    value = tag.title.trim().toLowerCase();
+                    title = tag.title.trim();
+                    tags_data.push({'id': value,
+                                    'text': title});
+                }
               });
-              deferred.resolve(tags);
+              deferred.resolve(tags_data);
             },
             function(error){
-              deffered.reject(error);
+              deferred.reject(error);
             }
           )
     );
+  return deferred;
+};
+
+/*
+ *  returns jQuery promise
+ */
+saveTags = function(fbuid, tags) {
+  tags = tags || '';
+  var deferred = $.Deferred();
+  // find user to update
+  findUserByFBId(fbuid)
+    .fail(function(error){
+      deferred.reject(error);
+    }).done(function(user){
+      if( user && user.fbuid === fbuid ) {
+        user.tags = tags;
+        // update user in backend
+        Backendless.Persistence
+                   .of(structures.CustomUser)
+                   .save(user,
+                         new Backendless.Async(
+                           function(){
+                             deferred.resolve();
+                           },
+                           function(error){
+                             deferred.reject(error);
+                           }));
+      }
+    });   
   return deferred;
 };
 
@@ -98,5 +164,7 @@ loadAllTags = function() {
 module.exports = {
   'findUserByFBId': findUserByFBId,
   'registerUser': registerUser,
-  'loadAllTags': loadAllTags
+  'loadUserTags': loadUserTags,
+  'loadAllTags': loadAllTags,
+  'saveTags': saveTags,
 };

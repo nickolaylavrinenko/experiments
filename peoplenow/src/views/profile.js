@@ -14,7 +14,31 @@ var ProfileView = BaseView.extend(FadingMixIn)
 
   template: template,
   controls: {
-  	'tags-select-field': TagsSelect,
+  	'tags-select': TagsSelect,
+  },
+
+  bindEvents: function() {
+    // bind submit event
+    var submit = this.$('.submit-button').first(),
+        form = submit.parent('form'),
+        _this = this;
+    if( submit.length && form.length ) {
+      submit.on('click', function(e){
+        e.preventDefault();
+        var tags = form[0].tags ? form[0].tags.value : '';
+        backend.saveTags(_this.router.auth.get('id'), tags)
+          .fail(function(error){
+            alert("Error");
+          })
+          .done(function(){
+            alert("Saved");
+          })
+      });
+    }
+  },
+
+  unbindEvents: function() {
+    this.$('.submit-button').first().off('click');
   },
 
   /*
@@ -28,24 +52,7 @@ var ProfileView = BaseView.extend(FadingMixIn)
    * returns jQuery promise object
    */
   loadUserTags: function(fbuid) {
-  	var deferred = $.Deferred();
-  	backend.findUserByFBId(fbuid)
-  		.fail(function(error){
-  			deferred.reject(error);
-  		})
-  		.done(function(response){
-        // get tags from response
-  			user = (_.isArray(response.data) && response.data.length) ?
-				  				response.data[0] : null;
-        var tags = (user && _.isString(user.tags)) ? user.tags.trim(): '';
-        tags = tags.split(',');
-        // filter empty
-        tags = _(tags).filter(function(tag){
-          return !!tag.trim();
-        });
-        deferred.resolve(tags);
-  		});
-  	return deferred;
+  	return backend.loadUserTags(fbuid);
   },
 
 });

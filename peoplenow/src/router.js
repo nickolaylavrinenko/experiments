@@ -26,7 +26,7 @@ var Router = Backbone.Router.extend({
     this.container = $(options.container);
     this.auth.set(options.auth, {silent: true});
     // add emty view as active
-    this._active = new EmptyView();
+    this._active = new EmptyView({'router': this});
     this._active.render()
                 .attach(this.container);
     this.bindEvents();
@@ -80,7 +80,7 @@ var Router = Backbone.Router.extend({
     // get view
     var view = this._cache[view_name];
     if( !view ) {
-      view = new IndexView();
+      view = new IndexView({'router': router});
       this._cache[view_name] = view;
     }
     // detach previous view and attach new
@@ -117,7 +117,7 @@ var Router = Backbone.Router.extend({
     // get view
     var view = this._cache[view_name];
     if( !view ) {
-      view = new ProfileView();
+      view = new ProfileView({'router': router});
       this._cache[view_name] = view;
     }
     // detach previous view and attach new
@@ -126,15 +126,23 @@ var Router = Backbone.Router.extend({
       this._active
           .detach()
           .done(function(){
-            view.render(router.auth.attributes)
-              .wrapLinks(router)
-              .initControls()
-              .attach(container)
-              .done(function(){
-                router._active = view;
-                router.navigate(view_name, {trigger: false, replace: false})
-                deferred.resolve();
-              });
+            view.loadAllTags().done(function(all_tags){
+                view.loadUserTags(router.auth.get('id'))
+                  .done(function(user_tags){
+                    view.render(router.auth.attributes)
+                        .wrapLinks(router)
+                        .initControls({
+                          'tags-select': {'data': all_tags,
+                                          'values': user_tags}
+                        })
+                        .attach(container)
+                        .done(function(){
+                          router._active = view;
+                          router.navigate(view_name, {trigger: false, replace: false})
+                          deferred.resolve();
+                        });
+                });
+            });  
           });
     } else {
       router.navigate(view_name, {trigger: false, replace: false})
@@ -154,7 +162,7 @@ var Router = Backbone.Router.extend({
     // get view
     var view = this._cache[view_name];
     if( !view ) {
-      view = new SendMessageView();
+      view = new SendMessageView({'router': router});
       this._cache[view_name] = view;
     }
     // detach previous view and attach new

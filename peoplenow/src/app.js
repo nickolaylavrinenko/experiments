@@ -7,7 +7,6 @@ var $ = require('jquery');
 var _ = require('underscore');
 var config = require('./config');
 var constants = require('./constants');
-var structures = require('./structures');
 var errors = require('./errors');
 var utils = require('./utils');
 var Router = require('./router');
@@ -153,9 +152,7 @@ $(function(){
 					.fail(function(error){
 						throw 'Cant fetch users from Backendless';
 					})
-					.done(function(response){
-						user = (_.isArray(response.data) && response.data.length) ?
-				  				response.data[0] : null;
+					.done(function(user){
 				  	// user not found in Backendless
 			  		if( !user ) {
 			  			backend.registerUser(auth_options)
