@@ -46,8 +46,8 @@
 
 	
 	// patch backbone extend method
-	__webpack_require__(1)
-	__webpack_require__(8)
+	__webpack_require__(1);
+	__webpack_require__(8);
 
 	var $ = __webpack_require__(15);
 	var _ = __webpack_require__(10);
@@ -113,11 +113,14 @@
 			  if( !_.isEmpty(profile) ) {
 			    auth_options = _.extend(auth_options, profile);
 			  }
+			  if( _.isString(auth_options.name) ) {
+					$('#auth-status').text(auth_options.name);
+				}
 			  if( _.isFunction(callback) ) {
 					callback(auth_options);
 				}
 			});
-		  
+
 		});
 
 	};
@@ -161,7 +164,7 @@
 				// });
 
 				// init app router
-				var container = $(constants.APP_CONTAINER_ID).first();
+				var container = $(constants.APP_CONTENT_SELECTOR).first();
 				if( !container.length ){
 					throw "Can't find application container element in DOM";
 				}
@@ -319,7 +322,7 @@
 
 	
 	var AUTH_REFRESH_INTERVAL = 10000;
-	var APP_CONTAINER_ID = '#app-container';
+	var APP_CONTENT_SELECTOR = '.app-content';
 
 	var PUBLISH_STATUS = {
 		PUBLISHED: 'published',
@@ -331,7 +334,7 @@
 	module.exports = {
 		PUBLISH_STATUS: PUBLISH_STATUS,
 		AUTH_REFRESH_INTERVAL: AUTH_REFRESH_INTERVAL,
-		APP_CONTAINER_ID: APP_CONTAINER_ID,
+		APP_CONTENT_SELECTOR: APP_CONTENT_SELECTOR,
 	};
 
 /***/ },
@@ -587,6 +590,7 @@
 	var constants = __webpack_require__(3);
 	var EmptyView = __webpack_require__(11).EmptyView;
 	var IndexView = __webpack_require__(12);
+	var SendMessageView = __webpack_require__(20);
 	var ProfileView = __webpack_require__(13);
 
 
@@ -641,6 +645,7 @@
 	    '': 'indexHandler',
 	    'index(/)': 'indexHandler',
 	    'profile(/)': 'profileHandler',
+	    'send_message(/)': 'sendMessageHandler',
 	  },
 
 	  /****************** URL-callbacks *****************/
@@ -652,7 +657,7 @@
 	  indexHandler: function(){
 
 	    var deferred = $.Deferred();
-	    var view_name = 'index';
+	    var view_name = '/';
 	    var router = this;
 	    var container = this.container;
 
@@ -673,12 +678,12 @@
 	              .attach(container)
 	              .done(function(){
 	                router._active = view;
-	                router.navigate('', {trigger: false, replace: false})
+	                router.navigate(view_name, {trigger: false, replace: false})
 	                deferred.resolve();
 	              });
 	          });
 	    } else {
-	      router.navigate('', {trigger: false, replace: false})
+	      router.navigate(view_name, {trigger: false, replace: false})
 	      deferred.resolve();
 	    }
 	    return deferred;
@@ -701,6 +706,42 @@
 	    // detach previous view and attach new
 	    if( view !== this._active ) {
 	      console.log('routing: profile');
+	      this._active
+	          .detach()
+	          .done(function(){
+	            view.render()
+	              .wrapLinks(router)
+	              .attach(container)
+	              .done(function(){
+	                router._active = view;
+	                router.navigate(view_name, {trigger: false, replace: false})
+	                deferred.resolve();
+	              });
+	          });
+	    } else {
+	      router.navigate(view_name, {trigger: false, replace: false})
+	      deferred.resolve();
+	    }
+	    return deferred;
+
+	  },
+
+	  sendMessageHandler: function(){
+
+	    var deferred = $.Deferred();
+	    var view_name = 'send_messgae';
+	    var router = this;
+	    var container = this.container;
+
+	    // get view
+	    var view = this._cache[view_name];
+	    if( !view ) {
+	      view = new SendMessageView();
+	      this._cache[view_name] = view;
+	    }
+	    // detach previous view and attach new
+	    if( view !== this._active ) {
+	      console.log('routing: send message page');
 	      this._active
 	          .detach()
 	          .done(function(){
@@ -861,7 +902,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(17)();
-	exports.push([module.id, "\n\n/***** clear css start ********/\n\n\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, font, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td {\n\tmargin: 0;\n\tpadding: 0;\n\tborder: 0;\n\toutline: 0;\n\tfont-weight: inherit;\n\tfont-style: inherit;\n\tfont-size: 100%;\n\tfont-family: inherit;\n\tvertical-align: baseline;\n}\n/* remember to define focus styles! */\n:focus {\n\toutline: 0;\n}\nbody {\n\tline-height: 1;\n\tcolor: black;\n\tbackground: white;\n}\nol, ul {\n\tlist-style: none;\n}\n/* tables still need 'cellspacing=\"0\"' in the markup */\ntable {\n\tborder-collapse: separate;\n\tborder-spacing: 0;\n}\ncaption, th, td {\n\ttext-align: left;\n\tfont-weight: normal;\n}\nblockquote:before, blockquote:after,\nq:before, q:after {\n\tcontent: \"\";\n}\nblockquote, q {\n\tquotes: \"\" \"\";\n}\n\n\n/***** clear css end ********/\n\n\n.content {\n\twidth: 100%;\n\tpadding: 20px 10px 10px 10px;\n}\n\n.field {\n\tmargin-top: 5px;\n}\n\n.user-register-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.send-message-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.bordered-input {\n\twidth: 160px;\n\toverflow: hidden;\n\tborder: 1px solid #aaa;\n\tborder-radius: 4px;\n}\n\n.top-pannel {\n\tdisplay: block;\n\twidth: 100%;\n\theight: 40px;\n\tline-height: 30px;\n\tbackground: #eee;\n\tpadding: 0 20px;\n}\n\n.top-pannel-item {\n\tdisplay: inline-block;\n\tpadding: 0 5px;\n}\n\n.top-pannel-item.status {\n\tcolor: #aaa;\n\tfont-size: 15px;\n\tvertical-align: middle;\n}", ""]);
+	exports.push([module.id, "\n\n/***** clear css start ********/\n\n\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, font, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td {\n\tmargin: 0;\n\tpadding: 0;\n\tborder: 0;\n\toutline: 0;\n\tfont-weight: inherit;\n\tfont-style: inherit;\n\tfont-size: 100%;\n\tfont-family: inherit;\n\tvertical-align: baseline;\n}\n/* remember to define focus styles! */\n:focus {\n\toutline: 0;\n}\nbody {\n\tline-height: 1;\n\tcolor: black;\n\tbackground: white;\n}\nol, ul {\n\tlist-style: none;\n}\n/* tables still need 'cellspacing=\"0\"' in the markup */\ntable {\n\tborder-collapse: separate;\n\tborder-spacing: 0;\n}\ncaption, th, td {\n\ttext-align: left;\n\tfont-weight: normal;\n}\nblockquote:before, blockquote:after,\nq:before, q:after {\n\tcontent: \"\";\n}\nblockquote, q {\n\tquotes: \"\" \"\";\n}\n\n\n/***** clear css end ********/\n\n.app-content-wrapper {\n\tdisplay: block;\n\ttext-align: center;\n}\n\n.app-content {\n\tdisplay: inline-block;\n\tmargin: 0 auto;\n\tpadding: 20px 10px 10px 10px;\n}\n\n.field {\n\tmargin-top: 5px;\n}\n\n/*\n.user-register-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.send-message-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n*/\n\n.bordered-input {\n\twidth: 160px;\n\toverflow: hidden;\n\tborder: 1px solid #aaa;\n\tborder-radius: 4px;\n}\n\n.top-pannel {\n\tdisplay: block;\n\theight: 40px;\n\tline-height: 30px;\n\tbackground: #eee;\n\tpadding: 0 20px;\n}\n\n.top-pannel-item {\n\tdisplay: inline-block;\n\tpadding: 0 5px;\n}\n\n.top-pannel-item.vcenter {\n\theight: 40px;\n\tline-height:40px;\n\tvertical-align: middle;\n}\n\n.top-pannel-item.hright {\n\tfloat: right;\n}\n\n.top-pannel-item.status {\n\tcolor: #aaa;\n\tfont-size: 15px;\n\tfont-weight: bold;\n\tpadding-right: 20px;\n}\n\n.top-pannel-item.menu-item {\n\tcursor: pointer;\n\ttext-decoration: none;\n\tfont-weight: bold;\n\tcolor: black;\n}\n\n.app-label {\n\tdisplay: block;\n\tfont-family: \"Times New Roman\", Times, serif;\n\tfont-size: 40px;\n\tfont-weight: bold;\n\tmargin-top: 100px;\n}\n\n.app-loader {\n\tdisplay: block;\n\tfont-weight: bold;\n\tmargin-top: 100px;\n}", ""]);
 
 /***/ },
 /* 10 */
@@ -13528,7 +13569,7 @@
 	    };
 	    var __stack = {
 	        lineno: 1,
-	        input: '\n<div style="width: 100px; height: 100px; background: red;">\n	<a href="/profile">To profile</a>\n</div>',
+	        input: '\n<span class="app-label">\n	People now!\n</span>',
 	        filename: undefined
 	    };
 	    function rethrow(err, str, filename, lineno) {
@@ -13545,7 +13586,7 @@
 	        var buf = [];
 	        with (locals || {}) {
 	            (function() {
-	                buf.push('\n<div style="width: 100px; height: 100px; background: red;">\n	<a href="/profile">To profile</a>\n</div>');
+	                buf.push('\n<span class="app-label">\n	People now!\n</span>');
 	            })();
 	        }
 	        return buf.join("");
@@ -13564,7 +13605,7 @@
 	    };
 	    var __stack = {
 	        lineno: 1,
-	        input: '\n<div style="width: 100px; height: 100px; background: blue;">\n  <a href="/">To index</a>\n</div>',
+	        input: "\n<span>Profile page</span>",
 	        filename: undefined
 	    };
 	    function rethrow(err, str, filename, lineno) {
@@ -13581,7 +13622,65 @@
 	        var buf = [];
 	        with (locals || {}) {
 	            (function() {
-	                buf.push('\n<div style="width: 100px; height: 100px; background: blue;">\n  <a href="/">To index</a>\n</div>');
+	                buf.push("\n<span>Profile page</span>");
+	            })();
+	        }
+	        return buf.join("");
+	    } catch (err) {
+	        rethrow(err, __stack.input, __stack.filename, __stack.lineno);
+	    }
+	}
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var _ = __webpack_require__(10);
+	var base = __webpack_require__(11);
+	var BaseView = base.BaseView;
+	var FadingMixIn = base.FadingMixIn;
+	var template = __webpack_require__(21);
+
+
+	var SendMessageView = BaseView.extend(FadingMixIn)
+							  .extend({
+
+	  template: template,
+
+	});
+
+
+	module.exports = SendMessageView;
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function anonymous(locals, filters, escape, rethrow) {
+	    escape = escape || function(html) {
+	        return String(html).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+	    };
+	    var __stack = {
+	        lineno: 1,
+	        input: "\n<span>Send message page</span>",
+	        filename: undefined
+	    };
+	    function rethrow(err, str, filename, lineno) {
+	        var lines = str.split("\n"), start = Math.max(lineno - 3, 0), end = Math.min(lines.length, lineno + 3);
+	        var context = lines.slice(start, end).map(function(line, i) {
+	            var curr = i + start + 1;
+	            return (curr == lineno ? " >> " : "    ") + curr + "| " + line;
+	        }).join("\n");
+	        err.path = filename;
+	        err.message = (filename || "ejs") + ":" + lineno + "\n" + context + "\n\n" + err.message;
+	        throw err;
+	    }
+	    try {
+	        var buf = [];
+	        with (locals || {}) {
+	            (function() {
+	                buf.push("\n<span>Send message page</span>");
 	            })();
 	        }
 	        return buf.join("");

@@ -6,6 +6,7 @@ var Backbone = require('backbone');
 var constants = require('./constants');
 var EmptyView = require('./views/base').EmptyView;
 var IndexView = require('./views/index');
+var SendMessageView = require('./views/send_message');
 var ProfileView = require('./views/profile');
 
 
@@ -60,6 +61,7 @@ var Router = Backbone.Router.extend({
     '': 'indexHandler',
     'index(/)': 'indexHandler',
     'profile(/)': 'profileHandler',
+    'send_message(/)': 'sendMessageHandler',
   },
 
   /****************** URL-callbacks *****************/
@@ -71,7 +73,7 @@ var Router = Backbone.Router.extend({
   indexHandler: function(){
 
     var deferred = $.Deferred();
-    var view_name = 'index';
+    var view_name = '/';
     var router = this;
     var container = this.container;
 
@@ -92,12 +94,12 @@ var Router = Backbone.Router.extend({
               .attach(container)
               .done(function(){
                 router._active = view;
-                router.navigate('', {trigger: false, replace: false})
+                router.navigate(view_name, {trigger: false, replace: false})
                 deferred.resolve();
               });
           });
     } else {
-      router.navigate('', {trigger: false, replace: false})
+      router.navigate(view_name, {trigger: false, replace: false})
       deferred.resolve();
     }
     return deferred;
@@ -120,6 +122,42 @@ var Router = Backbone.Router.extend({
     // detach previous view and attach new
     if( view !== this._active ) {
       console.log('routing: profile');
+      this._active
+          .detach()
+          .done(function(){
+            view.render()
+              .wrapLinks(router)
+              .attach(container)
+              .done(function(){
+                router._active = view;
+                router.navigate(view_name, {trigger: false, replace: false})
+                deferred.resolve();
+              });
+          });
+    } else {
+      router.navigate(view_name, {trigger: false, replace: false})
+      deferred.resolve();
+    }
+    return deferred;
+
+  },
+
+  sendMessageHandler: function(){
+
+    var deferred = $.Deferred();
+    var view_name = 'send_messgae';
+    var router = this;
+    var container = this.container;
+
+    // get view
+    var view = this._cache[view_name];
+    if( !view ) {
+      view = new SendMessageView();
+      this._cache[view_name] = view;
+    }
+    // detach previous view and attach new
+    if( view !== this._active ) {
+      console.log('routing: send message page');
       this._active
           .detach()
           .done(function(){

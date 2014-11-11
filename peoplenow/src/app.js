@@ -1,7 +1,7 @@
 
 // patch backbone extend method
-require('./backbone_patch')
-require('./styles/style.css')
+require('./backbone_patch');
+require('./styles/style.css');
 
 var $ = require('jquery');
 var _ = require('underscore');
@@ -67,11 +67,14 @@ var getAuthStatus = window.checkLoginState = function(callback){
 		  if( !_.isEmpty(profile) ) {
 		    auth_options = _.extend(auth_options, profile);
 		  }
+		  if( _.isString(auth_options.name) ) {
+				$('#auth-status').text(auth_options.name);
+			}
 		  if( _.isFunction(callback) ) {
 				callback(auth_options);
 			}
 		});
-	  
+
 	});
 
 };
@@ -115,7 +118,7 @@ $(function(){
 			// });
 
 			// init app router
-			var container = $(constants.APP_CONTAINER_ID).first();
+			var container = $(constants.APP_CONTENT_SELECTOR).first();
 			if( !container.length ){
 				throw "Can't find application container element in DOM";
 			}

@@ -53,9 +53,14 @@ blockquote, q {
 
 /***** clear css end ********/
 
+.app-content-wrapper {
+	display: block;
+	text-align: center;
+}
 
-.content {
-	width: 100%;
+.app-content {
+	display: inline-block;
+	margin: 0 auto;
 	padding: 20px 10px 10px 10px;
 }
 
@@ -63,6 +68,7 @@ blockquote, q {
 	margin-top: 5px;
 }
 
+/*
 .user-register-form {
 	display: inline-block;
 	border: 1px solid #aaa;
@@ -78,6 +84,7 @@ blockquote, q {
 	padding: 10px;
 	margin: 20px 0;
 }
+*/
 
 .bordered-input {
 	width: 160px;
@@ -88,7 +95,6 @@ blockquote, q {
 
 .top-pannel {
 	display: block;
-	width: 100%;
 	height: 40px;
 	line-height: 30px;
 	background: #eee;
@@ -100,8 +106,40 @@ blockquote, q {
 	padding: 0 5px;
 }
 
+.top-pannel-item.vcenter {
+	height: 40px;
+	line-height:40px;
+	vertical-align: middle;
+}
+
+.top-pannel-item.hright {
+	float: right;
+}
+
 .top-pannel-item.status {
 	color: #aaa;
 	font-size: 15px;
-	vertical-align: middle;
+	font-weight: bold;
+	padding-right: 20px;
+}
+
+.top-pannel-item.menu-item {
+	cursor: pointer;
+	text-decoration: none;
+	font-weight: bold;
+	color: black;
+}
+
+.app-label {
+	display: block;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 40px;
+	font-weight: bold;
+	margin-top: 100px;
+}
+
+.app-loader {
+	display: block;
+	font-weight: bold;
+	margin-top: 100px;
 }
