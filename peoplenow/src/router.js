@@ -8,6 +8,7 @@ var EmptyView = require('./views/base').EmptyView;
 var IndexView = require('./views/index');
 var SendMessageView = require('./views/send_message');
 var ProfileView = require('./views/profile');
+var ChatRoomView = require('./views/chat_room');
 
 
 var Router = Backbone.Router.extend({
@@ -62,6 +63,7 @@ var Router = Backbone.Router.extend({
     'index(/)': 'indexHandler',
     'profile(/)': 'profileHandler',
     'send_message(/)': 'sendMessageHandler',
+    'chat_room/:room_id': 'chatRoomHandler',
   },
 
   /****************** URL-callbacks *****************/
@@ -184,6 +186,46 @@ var Router = Backbone.Router.extend({
                     deferred.resolve();
                   });
             });  
+          });
+    } else {
+      router.navigate(view_name, {trigger: false, replace: false})
+      deferred.resolve();
+    }
+    return deferred;
+
+  },
+
+  chatRoomHandler: function(room_id){
+
+    var deferred = $.Deferred();
+    var view_name = 'chat_room';
+    var router = this;
+    var container = this.container;
+
+    // get view
+    var path = ['',view_name, room_id].join('/');
+    var view = this._cache[view_name];
+    if( !view ) {
+      view = new ChatRoomView({'router': router,
+                               'room_id': room_id,
+                               'path': path});
+      this._cache[view_name] = view;
+    }
+    // detach previous view and attach new
+    if( view !== this._active ) {
+      console.log('routing: chat room');
+      this._active
+          .detach()
+          .done(function(){
+            view.render()
+              .wrapLinks(router)
+              .initControls()
+              .attach(container)
+              .done(function(){
+                router._active = view;
+                router.navigate(path, {trigger: false, replace: false})
+                deferred.resolve();
+              });
           });
     } else {
       router.navigate(view_name, {trigger: false, replace: false})

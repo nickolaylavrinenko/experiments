@@ -1,0 +1,6 @@
+bpython==0.13.1
+click==3.1
+progress==1.2
+ujson==1.33
+redis==2.10.3
+tornado==4.0.1

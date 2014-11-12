@@ -148,6 +148,8 @@ $(function(){
 				    	&& auth_options.status === 'connected'
 				    				&& auth_options.id ) {
 
+				console.log('>>> User data', auth_options);
+
 				backend.findUserByFBId(auth_options.id)
 					.fail(function(error){
 						throw 'Cant fetch users from Backendless';
