@@ -165,7 +165,6 @@ sendMessage = function(messages, tags) {
   tags = utils.forceArray(tags);
   all_deferreds = [];
   if( tags.length && messages.length ) {
-    console.log('Send messages', tags, messages);
     _(tags).each(function(channel){
       _(messages).each(function(message){
         if( channel && message ) {

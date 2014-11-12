@@ -149,6 +149,9 @@ arrayToCsv = function(array) {
 };
 
 forceArray = function(value) {
+  if( !value ) {
+    value = [];
+  }
   if( value && !_(value).isArray() ) {
     value = [value];
   }

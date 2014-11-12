@@ -10,7 +10,7 @@ var TagsSelect = require('../controls/tagsSelect');
 
 
 var ProfileView = BaseView.extend(FadingMixIn)
-						  .extend({
+						              .extend({
 
   template: template,
   controls: {
@@ -19,9 +19,9 @@ var ProfileView = BaseView.extend(FadingMixIn)
 
   bindEvents: function() {
     // bind submit event
-    var submit = this.$('.submit-button').first(),
-        form = submit.parent('form'),
-        _this = this;
+    var submit = this.$('.submit-button').first();
+    var form = submit.parent('form');
+    var _this = this;
     if( submit.length && form.length ) {
       submit.on('click', function(e){
         e.preventDefault();

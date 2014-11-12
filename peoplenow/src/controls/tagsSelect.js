@@ -1,6 +1,7 @@
 
 var $ = require('jquery');
 var _ = require('underscore');
+var utils = require('../utils');
 
 require('select2/select2.css');
 require('select2');
@@ -36,10 +37,8 @@ TagsSelect.prototype.initWithData = function(data) {
 
 TagsSelect.prototype.chooseValues = function(values) {
 
-	if( values && this.el.length ) {
-		if( !_.isArray(values) ) {
-			values = [values,];
-		}
+	if( this.el.length ) {
+		values = utils.forceArray(values);
 		this.el.select2('val', values);
 	}
 

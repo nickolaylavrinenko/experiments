@@ -9,6 +9,9 @@ var config = {
 	// FB API
 	FB_APP_ID: '539608609507908',
 	FB_SDK_URL: '//connect.facebook.net/en_UK/all.js',
+
+	// SAVE TO LOCALSTORAGE
+	SAVE_FORM_INTERVAL: 5000,
 	
 };
 

@@ -176,8 +176,47 @@ var FadingMixIn = {
 };
 
 
+LocalStorageMixIn = {
+
+	storage_key: null,
+
+	setToStorage: function(key, data) {
+		if( this.isStorageAvailable()
+						&& key
+								&& data && _.isString(data) ) {
+			window.localStorage.setItem(key, data);
+		}
+	},
+
+	getFromStorage: function(key) {
+		if( this.isStorageAvailable() && key ) {
+			return window.localStorage.getItem(key);
+		}
+	},
+
+	removeFromStorage: function(key) {
+		if( this.isStorageAvailable() && key ) {
+			window.localStorage.removeItem(key);
+		}
+	},
+
+	isStorageAvailable: function() {
+		var key = val = '__test';
+		try {
+      localStorage.setItem(key, val);
+      localStorage.removeItem(key);
+      return true;
+    } catch(e) {
+        return false;
+    }
+	},
+
+};
+
+
 module.exports = {
 	'BaseView': BaseView,
 	'FadingMixIn': FadingMixIn,
 	'EmptyView': EmptyView,
+	'LocalStorageMixIn': LocalStorageMixIn,
 };
