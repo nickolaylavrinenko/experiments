@@ -155,7 +155,7 @@ var Router = Backbone.Router.extend({
   sendMessageHandler: function(){
 
     var deferred = $.Deferred();
-    var view_name = 'send_messgae';
+    var view_name = 'send_message';
     var router = this;
     var container = this.container;
 

@@ -15,7 +15,7 @@ var SendMessageView = BaseView.extend(FadingMixIn)
 
   template: template,
   controls: {
-  	'tags-select': TagsSelect,
+  	'tags-input': TagsSelect,
   },
 
   bindEvents: function() {
@@ -28,7 +28,7 @@ var SendMessageView = BaseView.extend(FadingMixIn)
         e.preventDefault();
         // get data from form
         var tags = form[0].tags ? form[0].tags.value : '';
-        tags = utils.csvStringToArray(tags);
+        tags = utils.csvToArray(tags);
         var message = form[0].message ? form[0].message.value : '';
         backend.sendMessage(message, tags)
           .fail(function(error){

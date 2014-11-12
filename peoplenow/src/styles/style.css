@@ -143,18 +143,8 @@ blockquote, q {
 }
 
 
-/*	Index page	*/
-
-.app-label {
-	display: block;
-	font-family: "Times New Roman", Times, serif;
-	font-size: 40px;
-	font-weight: bold;
-	margin-top: 100px;
-}
-
-
 /* 	Form	*/
+
 .form {
 
 }
@@ -167,11 +157,13 @@ blockquote, q {
 }
 .form .field > td {
 	padding-bottom: 10px;
+	vertical-align: top;
 }
 .form .field .label {
 	display: block;
 	min-width: 100px;
 	text-align: right;
+	margin-top: 8px;
 }
 .form .field .input {
 	background: #f5f5f5;
@@ -182,24 +174,15 @@ blockquote, q {
 	text-align: center;
 	margin-left: 10px;
 }
-
-
-/*	Profile page	*/
-
-.profile {
-}
-.profile .select2-container {
+.form .field .select2-container {
 	margin-left: 10px;
 	width: 322px;
 }
-.profile .select2-container-multi ul.select2-choices {
+.form .field .select2-container-multi ul.select2-choices {
 	background: #f5f5f5;
 	border: 1px solid #ddd;
 	border-radius: 5px;
 	
-}
-.profile .form .submit-button {
-	margin-top: 20px;
 }
 
 
@@ -213,3 +196,39 @@ blockquote, q {
 	cursor: pointer;
 }
 
+
+/*	Index page	*/
+
+.app-label {
+	display: block;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 40px;
+	font-weight: bold;
+	margin-top: 100px;
+}
+
+
+/*	Profile page	*/
+
+.profile {
+}
+.profile .form .submit-button {
+	margin-top: 20px;
+}
+
+
+/*	Send message page	*/
+
+.send-message .form .input {
+	width: 500px;
+}
+.send-message .form textarea.input {
+	text-align: left;
+	min-height:	150px;
+}
+.send-message .form .select2-container {
+	width: 522px;
+}
+.send-message .form .submit-button {
+	margin-top: 20px;
+}
