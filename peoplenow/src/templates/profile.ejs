@@ -19,7 +19,7 @@
 			  <td><label class="label" for="email">E-mail</label></td>
 			  <td>
 			  	<input class="input"
-			  				 type="email"
+			  				 type="text"
 			  				 name="email"
 			  				 value="<%= email %>" 
 			  				 readonly>
@@ -31,12 +31,16 @@
 			<tr class="field">
 			  <td><label class="label" for="tags">Tags</label></td>
 				<td>
-					<input class="tags-select" type="hidden" name="tags">
+					<input class="tags-input"
+								 type="hidden"
+								 name="tags">
 				</td>
 			</tr>
 		</table>
 
-		<input class="button submit-button" type="submit" value="Save profile">
+		<input class="button submit-button"
+					 type="submit"
+					 value="Save profile">
 
 	</form>
 

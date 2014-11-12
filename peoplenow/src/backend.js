@@ -2,6 +2,7 @@
 var _ = require('underscore');
 var $ = require('jquery');
 var structures = require('./structures');
+var utils = require('./utils');
 
 
 /*
@@ -83,11 +84,7 @@ loadUserTags = function(fbuid) {
     .done(function(user){
       // get tags from user
       var tags = (user && _.isString(user.tags)) ? user.tags.trim(): '';
-      tags = tags.split(',');
-      // filter empty
-      tags = _(tags).filter(function(tag){
-        return !!tag.trim();
-      });
+      tags = utils.csvToArray(tags);
       deferred.resolve(tags);
     });
   return deferred;
@@ -160,6 +157,41 @@ saveTags = function(fbuid, tags) {
   return deferred;
 };
 
+/*
+ *  returns jQuery promise
+ */
+sendMessage = function(messages, tags) {
+  messages = utils.forceArray(messages);
+  tags = utils.forceArray(tags);
+  all_deferreds = [];
+  if( tags.length && messages.length ) {
+    console.log('Send messages', tags, messages);
+    _(tags).each(function(channel){
+      _(messages).each(function(message){
+        if( channel && message ) {
+          var deferred = $.Deferred();
+          all_deferreds.push(deferred);
+          Backendless
+            .Messaging
+            .publish(
+                channel,
+                message,
+                null,
+                null,
+                new Backendless.Async(
+                  function(response) {
+                    deferred.resolve(response);
+                  }, function(error) {
+                    deferred.reject(error);
+                  }
+                ));
+        }
+      });
+    });
+  }
+  return $.when.apply($, all_deferreds);
+};
+
 
 module.exports = {
   'findUserByFBId': findUserByFBId,
@@ -167,4 +199,5 @@ module.exports = {
   'loadUserTags': loadUserTags,
   'loadAllTags': loadAllTags,
   'saveTags': saveTags,
+  'sendMessage': sendMessage,
 };

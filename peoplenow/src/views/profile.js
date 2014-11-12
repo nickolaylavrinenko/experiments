@@ -14,7 +14,7 @@ var ProfileView = BaseView.extend(FadingMixIn)
 
   template: template,
   controls: {
-  	'tags-select': TagsSelect,
+  	'tags-input': TagsSelect,
   },
 
   bindEvents: function() {
@@ -26,7 +26,7 @@ var ProfileView = BaseView.extend(FadingMixIn)
       submit.on('click', function(e){
         e.preventDefault();
         var tags = form[0].tags ? form[0].tags.value : '';
-        backend.saveTags(_this.router.auth.get('id'), tags)
+        backend.saveTags(_this.router.auth.get('id'), tags.trim())
           .fail(function(error){
             alert("Error");
           })

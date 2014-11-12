@@ -132,7 +132,7 @@ var Router = Backbone.Router.extend({
                     view.render(router.auth.attributes)
                         .wrapLinks(router)
                         .initControls({
-                          'tags-select': {'data': all_tags,
+                          'tags-input': {'data': all_tags,
                                           'values': user_tags}
                         })
                         .attach(container)
@@ -167,19 +167,23 @@ var Router = Backbone.Router.extend({
     }
     // detach previous view and attach new
     if( view !== this._active ) {
-      console.log('routing: send message page');
+      console.log('routing: send message');
       this._active
           .detach()
           .done(function(){
-            view.render()
-              .wrapLinks(router)
-              .initControls()
-              .attach(container)
-              .done(function(){
-                router._active = view;
-                router.navigate(view_name, {trigger: false, replace: false})
-                deferred.resolve();
-              });
+            view.loadAllTags().done(function(all_tags){
+              view.render()
+                  .wrapLinks(router)
+                  .initControls({
+                    'tags-input': {'data': all_tags}
+                  })
+                  .attach(container)
+                  .done(function(){
+                    router._active = view;
+                    router.navigate(view_name, {trigger: false, replace: false})
+                    deferred.resolve();
+                  });
+            });  
           });
     } else {
       router.navigate(view_name, {trigger: false, replace: false})

@@ -128,7 +128,37 @@ Queue.prototype.skipAll = function() {
   }
 };
 
+csvToArray = function(string) {
+  var result = [];
+  if( _.isString(string) && string.trim() ) {
+    result = string.split(',');
+    // filter empty
+    result = _(result).filter(function(item){
+      return !!item.trim();
+    });
+  }
+  return result;
+};
+
+arrayToCsv = function(array) {
+  var result = '';
+  if( _.isArray(array) ) {
+    result = array.join(',');
+  }
+  return result;
+};
+
+forceArray = function(value) {
+  if( value && !_(value).isArray() ) {
+    value = [value];
+  }
+  return value;
+};
+
 
 module.exports = {
   'Queue': Queue,
+  'csvToArray': csvToArray,
+  'arrayToCsv': arrayToCsv,
+  'forceArray': forceArray,
 };
