@@ -166,8 +166,8 @@ sendMessage = function(messages, tags) {
   all_deferreds = [];
   if( tags.length && messages.length ) {
     _(messages).each(function(message){
-      var message = {'uid': genUID.token(),
-                     'message': message};
+      var message = JSON.stringify({'uid': genUID.token(),
+                                    'message': message});
       _(tags).each(function(channel){
         if( channel && message ) {
           var deferred = $.Deferred();
