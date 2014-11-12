@@ -31,11 +31,13 @@ var SendMessageView = BaseView.extend(FadingMixIn)
   },
 
   bindEvents: function() {
-    // bind submit event
+
     var submit = this.$('.submit-button').first();
     var clear = this.$('.clear-button').first();
     var form = submit.parent('form');
     var _this = this;
+
+    // bind submit event
     if( submit.length && form.length ) {
       submit.on('click', function(e){
         e.preventDefault();
@@ -44,37 +46,47 @@ var SendMessageView = BaseView.extend(FadingMixIn)
         tags = utils.csvToArray(tags);
         var message = form[0].message ? form[0].message.value : '';
         // send message
-        backend.sendMessage(message, tags)
-          .fail(function(error){
-            alert("Error");
-          })
-          .done(function(){
-            alert("Sended");
-          });
+        if( message && tags.length ) {
+          backend.sendMessage(message, tags)
+            .fail(function(error){
+              alert("Error");
+            })
+            .done(function(){
+              alert("Sended");
+            });
+        }
       });
     }
+
     // bind clear event
-    clear.on('click', function(e){
-      e.preventDefault();
-      _this.clearForm();
-    });
+    if( clear.length ) {
+      clear.on('click', function(e){
+        e.preventDefault();
+        _this.clearForm();
+      });
+    }
+      
     // bind save form interval
     if( !this._save_form_interval_id ) {
       this._save_form_interval_id = window.setInterval(function(){
         _this.saveFormToStorage();
       }, config.SAVE_FORM_INTERVAL);
     }
+
   },
 
   unbindEvents: function() {
-    // unbind buttons click
+
+    // unbind buttons clicks
     this.$('.submit-button').first().off('click');
     this.$('.clear-button').first().off('click');
+
     // unbind save form interval
     if( this._save_form_interval_id ) {
       window.clearInterval(this._save_form_interval_id);
       delete this._save_form_interval_id;
     }
+
   },
 
   saveFormToStorage: function() {
@@ -90,9 +102,11 @@ var SendMessageView = BaseView.extend(FadingMixIn)
   },
 
   loadFormFromStorage: function() {
+
     var submit = this.$('.submit-button').first();
     var form = submit.parent('form');
     var _this = this;
+
     if( form.length ) {
       // load form data
       var data = _this.getFromStorage(_this.formStorageKey) || '{}';
@@ -115,12 +129,15 @@ var SendMessageView = BaseView.extend(FadingMixIn)
         });
       }
     }
+
   },
 
   clearForm: function() {
+
     var submit = this.$('.submit-button').first();
     var form = submit.parent('form');
     var _this = this;
+
     if( form.length ) {
       // clear form inputs
       form.find('.input').val('');
@@ -128,6 +145,7 @@ var SendMessageView = BaseView.extend(FadingMixIn)
       // remove form data from storage
       _this.removeFromStorage(_this.formStorageKey);
     }
+
   },
 
   /*

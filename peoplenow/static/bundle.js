@@ -49,8 +49,8 @@
 	__webpack_require__(1);
 	__webpack_require__(10);
 
-	var $ = __webpack_require__(16);
-	var _ = __webpack_require__(9);
+	var $ = __webpack_require__(14);
+	var _ = __webpack_require__(12);
 	var config = __webpack_require__(2);
 	var constants = __webpack_require__(3);
 	var errors = __webpack_require__(4);
@@ -225,8 +225,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var Backbone = __webpack_require__(18);
-	var _ = __webpack_require__(9);
+	var Backbone = __webpack_require__(19);
+	var _ = __webpack_require__(12);
 
 	/*
 	 * Change backbone extend method with John Resig inheritence template.
@@ -356,7 +356,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var _ = __webpack_require__(9);
+	var _ = __webpack_require__(12);
 
 	var handler = Backendless.Async(
 	  function (data) {
@@ -380,8 +380,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var _ = __webpack_require__(9);
-	var $ = __webpack_require__(16);
+	var _ = __webpack_require__(12);
+	var $ = __webpack_require__(14);
 
 
 	/*
@@ -552,15 +552,15 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var $ = __webpack_require__(16);
-	var _ = __webpack_require__(9);
-	var Backbone = __webpack_require__(18);
+	var $ = __webpack_require__(14);
+	var _ = __webpack_require__(12);
+	var Backbone = __webpack_require__(19);
 
 	var constants = __webpack_require__(3);
-	var EmptyView = __webpack_require__(12).EmptyView;
-	var IndexView = __webpack_require__(13);
-	var SendMessageView = __webpack_require__(14);
-	var ProfileView = __webpack_require__(15);
+	var EmptyView = __webpack_require__(15).EmptyView;
+	var IndexView = __webpack_require__(16);
+	var SendMessageView = __webpack_require__(17);
+	var ProfileView = __webpack_require__(18);
 
 
 	var Router = Backbone.Router.extend({
@@ -863,11 +863,11 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var _ = __webpack_require__(9);
-	var $ = __webpack_require__(16);
-	var structures = __webpack_require__(8);
+	var _ = __webpack_require__(12);
+	var $ = __webpack_require__(14);
+	var structures = __webpack_require__(9);
 	var utils = __webpack_require__(5);
-
+	var genUID = __webpack_require__(8);
 
 	/*
 	 *  returns jQuery promise object
@@ -1029,8 +1029,10 @@
 	  tags = utils.forceArray(tags);
 	  all_deferreds = [];
 	  if( tags.length && messages.length ) {
-	    _(tags).each(function(channel){
-	      _(messages).each(function(message){
+	    _(messages).each(function(message){
+	      var message = {'uid': genUID.token(),
+	                     'message': message};
+	      _(tags).each(function(channel){
 	        if( channel && message ) {
 	          var deferred = $.Deferred();
 	          all_deferreds.push(deferred);
@@ -1067,6 +1069,50 @@
 
 /***/ },
 /* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var lut = [];
+
+	for (var i = 0; i < 256; i++) {
+	    lut[i] = (i < 16 ? '0' : '' ) + (i).toString(16);
+	}
+
+	/**
+	* Fast UUID generator, RFC4122 version 4 compliant.
+	* @author Jeff Ward (jcward.com).
+	* @license MIT license
+	* @link http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
+	**/
+	function guidV4() {
+	    var d0 = Math.random()*0xffffffff|0;
+	    var d1 = Math.random()*0xffffffff|0;
+	    var d2 = Math.random()*0xffffffff|0;
+	    var d3 = Math.random()*0xffffffff|0;
+
+	    return lut[d0&0xff] + lut[d0>>8&0xff] + lut[d0>>16&0xff] + lut[d0>>24&0xff] +
+	        '-' +lut[d1&0xff] + lut[d1>>8&0xff] +
+	        '-' + lut[d1>>16&0x0f|0x40] + lut[d1>>24&0xff] +
+	        '-' + lut[d2&0x3f|0x80] + lut[d2>>8&0xff] +
+	        '-' + lut[d2>>16&0xff] + lut[d2>>24&0xff] + lut[d3&0xff] + lut[d3>>8&0xff] + lut[d3>>16&0xff] + lut[d3>>24&0xff];
+	}
+
+	function genToken(isShort) {
+	    var d0 = Math.random()*0xffffffff|0;
+	    var d1 = Math.random()*0xffffffff|0;
+
+	    var short = lut[d0>>16&0xff] + lut[d0>>24&0xff] + lut[d1&0xff] + lut[d1>>8&0xff];
+
+	    return isShort ? short : short + lut[d1>>16&0xff] + lut[d1>>24&0xff];
+	}
+
+	module.exports = {
+	    v4: guidV4,
+	    token: genToken
+	};
+
+
+/***/ },
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -1143,7 +1189,37 @@
 	};
 
 /***/ },
-/* 9 */
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(11);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(13)(content, {});
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		module.hot.accept("!!/home/nick/dev/experiments/peoplenow/node_modules/css-loader/index.js!/home/nick/dev/experiments/peoplenow/src/styles/style.css", function() {
+			var newContent = require("!!/home/nick/dev/experiments/peoplenow/node_modules/css-loader/index.js!/home/nick/dev/experiments/peoplenow/src/styles/style.css");
+			if(typeof newContent === 'string') newContent = [module.id, newContent, ''];
+			update(newContent);
+		});
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(20)();
+	exports.push([module.id, "\n\n/***** clear css start ********/\n\n\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, font, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td {\n\tmargin: 0;\n\tpadding: 0;\n\tborder: 0;\n\toutline: 0;\n\tfont-weight: inherit;\n\tfont-style: inherit;\n\tfont-size: 100%;\n\tfont-family: inherit;\n\tvertical-align: baseline;\n}\n/* remember to define focus styles! */\n:focus {\n\toutline: 0;\n}\nbody {\n\tline-height: 1;\n\tcolor: #333;\n\tbackground: white;\n}\nol, ul {\n\tlist-style: none;\n}\n/* tables still need 'cellspacing=\"0\"' in the markup */\ntable {\n\tborder-collapse: separate;\n\tborder-spacing: 0;\n}\ncaption, th, td {\n\ttext-align: left;\n\tfont-weight: normal;\n}\nblockquote:before, blockquote:after,\nq:before, q:after {\n\tcontent: \"\";\n}\nblockquote, q {\n\tquotes: \"\" \"\";\n}\n\n\n/***** clear css end ********/\n\n\n.app-content-wrapper {\n\tdisplay: block;\n\ttext-align: center;\n}\n\n.app-content {\n\tdisplay: inline-block;\n\tmargin: 0 auto;\n\tpadding: 20px 10px 10px 10px;\n\ttext-align: initial;\n}\n\n.app-loader {\n\tdisplay: block;\n\tfont-weight: bold;\n\tmargin-top: 100px;\n}\n\n/*\n.field {\n\tmargin-top: 5px;\n}\n\n\n.user-register-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.send-message-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.bordered-input {\n\twidth: 160px;\n\toverflow: hidden;\n\tborder: 1px solid #aaa;\n\tborder-radius: 4px;\n}\n*/\n\n/*\tTop menu\t*/\n\n.top-pannel {\n\tdisplay: block;\n\theight: 40px;\n\tline-height: 30px;\n\tbackground: #eee;\n\tborder-bottom: 1px solid #ddd;\n\tpadding: 0 20px;\n}\n\n.top-pannel-item {\n\tdisplay: inline-block;\n\tpadding: 0 5px;\n}\n\n.top-pannel-item.vcenter {\n\theight: 40px;\n\tline-height:40px;\n\tvertical-align: middle;\n}\n\n.top-pannel-item.hright {\n\tfloat: right;\n}\n\n.top-pannel-item.status {\n\tcolor: #aaa;\n\tfont-size: 15px;\n\tfont-weight: bold;\n\tpadding-right: 20px;\n}\n\n.top-pannel-item.menu-item {\n\tcursor: pointer;\n\ttext-decoration: none;\n\tfont-weight: bold;\n\tcolor: #333;\n}\n\n\n/* \tForm\t*/\n\n.form {\n\n}\n.form .section > td {\n\tpadding: 30px 0;\n}\n.form .section-title {\n\tfont-weight: bold;\n\ttext-decoration: underline;\n}\n.form .field > td {\n\tpadding-bottom: 10px;\n\tvertical-align: top;\n}\n.form .field .label {\n\tdisplay: block;\n\tmin-width: 100px;\n\ttext-align: right;\n\tmargin-top: 8px;\n}\n.form .field .input {\n\tbackground: #f5f5f5;\n\tpadding: 10px;\n\tborder: 1px solid #ddd;\n\tborder-radius: 5px;\n\twidth: 300px;\n\ttext-align: center;\n\tmargin-left: 10px;\n}\n.form .field .select2-container {\n\tmargin-left: 10px;\n\twidth: 322px;\n}\n.form .field .select2-container-multi ul.select2-choices {\n\tbackground: #f5f5f5;\n\tborder: 1px solid #ddd;\n\tborder-radius: 5px;\n\t\n}\n\n\n/* Controls */\n\n.button {\n\tdisplay: inline-block;\n\tpadding: 5px 10px;\n\tborder-radius: 5px;\n\tfont-weight: bold;\n\tcursor: pointer;\n}\n\n\n/*\tIndex page\t*/\n\n.app-label {\n\tdisplay: block;\n\tfont-family: \"Times New Roman\", Times, serif;\n\tfont-size: 40px;\n\tfont-weight: bold;\n\tmargin-top: 100px;\n}\n\n\n/*\tProfile page\t*/\n\n.profile {\n}\n.profile .form .submit-button {\n\tmargin-top: 20px;\n}\n\n\n/*\tSend message page\t*/\n\n.send-message .form .input {\n\twidth: 500px;\n}\n.send-message .form textarea.input {\n\ttext-align: left;\n\tmin-height:\t150px;\n}\n.send-message .form .select2-container {\n\twidth: 522px;\n}\n.send-message .form .submit-button {\n\tmargin-top: 20px;\n\tmargin-right: 10px;\n}\n", ""]);
+
+/***/ },
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.7.0
@@ -2564,500 +2640,203 @@
 
 
 /***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(11);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(17)(content, {});
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		module.hot.accept("!!/home/nick/dev/experiments/peoplenow/node_modules/css-loader/index.js!/home/nick/dev/experiments/peoplenow/src/styles/style.css", function() {
-			var newContent = require("!!/home/nick/dev/experiments/peoplenow/node_modules/css-loader/index.js!/home/nick/dev/experiments/peoplenow/src/styles/style.css");
-			if(typeof newContent === 'string') newContent = [module.id, newContent, ''];
-			update(newContent);
-		});
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(19)();
-	exports.push([module.id, "\n\n/***** clear css start ********/\n\n\nhtml, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, font, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td {\n\tmargin: 0;\n\tpadding: 0;\n\tborder: 0;\n\toutline: 0;\n\tfont-weight: inherit;\n\tfont-style: inherit;\n\tfont-size: 100%;\n\tfont-family: inherit;\n\tvertical-align: baseline;\n}\n/* remember to define focus styles! */\n:focus {\n\toutline: 0;\n}\nbody {\n\tline-height: 1;\n\tcolor: #333;\n\tbackground: white;\n}\nol, ul {\n\tlist-style: none;\n}\n/* tables still need 'cellspacing=\"0\"' in the markup */\ntable {\n\tborder-collapse: separate;\n\tborder-spacing: 0;\n}\ncaption, th, td {\n\ttext-align: left;\n\tfont-weight: normal;\n}\nblockquote:before, blockquote:after,\nq:before, q:after {\n\tcontent: \"\";\n}\nblockquote, q {\n\tquotes: \"\" \"\";\n}\n\n\n/***** clear css end ********/\n\n\n.app-content-wrapper {\n\tdisplay: block;\n\ttext-align: center;\n}\n\n.app-content {\n\tdisplay: inline-block;\n\tmargin: 0 auto;\n\tpadding: 20px 10px 10px 10px;\n\ttext-align: initial;\n}\n\n.app-loader {\n\tdisplay: block;\n\tfont-weight: bold;\n\tmargin-top: 100px;\n}\n\n/*\n.field {\n\tmargin-top: 5px;\n}\n\n\n.user-register-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.send-message-form {\n\tdisplay: inline-block;\n\tborder: 1px solid #aaa;\n\tborder-radius: 10px;\n\tpadding: 10px;\n\tmargin: 20px 0;\n}\n\n.bordered-input {\n\twidth: 160px;\n\toverflow: hidden;\n\tborder: 1px solid #aaa;\n\tborder-radius: 4px;\n}\n*/\n\n/*\tTop menu\t*/\n\n.top-pannel {\n\tdisplay: block;\n\theight: 40px;\n\tline-height: 30px;\n\tbackground: #eee;\n\tborder-bottom: 1px solid #ddd;\n\tpadding: 0 20px;\n}\n\n.top-pannel-item {\n\tdisplay: inline-block;\n\tpadding: 0 5px;\n}\n\n.top-pannel-item.vcenter {\n\theight: 40px;\n\tline-height:40px;\n\tvertical-align: middle;\n}\n\n.top-pannel-item.hright {\n\tfloat: right;\n}\n\n.top-pannel-item.status {\n\tcolor: #aaa;\n\tfont-size: 15px;\n\tfont-weight: bold;\n\tpadding-right: 20px;\n}\n\n.top-pannel-item.menu-item {\n\tcursor: pointer;\n\ttext-decoration: none;\n\tfont-weight: bold;\n\tcolor: #333;\n}\n\n\n/* \tForm\t*/\n\n.form {\n\n}\n.form .section > td {\n\tpadding: 30px 0;\n}\n.form .section-title {\n\tfont-weight: bold;\n\ttext-decoration: underline;\n}\n.form .field > td {\n\tpadding-bottom: 10px;\n\tvertical-align: top;\n}\n.form .field .label {\n\tdisplay: block;\n\tmin-width: 100px;\n\ttext-align: right;\n\tmargin-top: 8px;\n}\n.form .field .input {\n\tbackground: #f5f5f5;\n\tpadding: 10px;\n\tborder: 1px solid #ddd;\n\tborder-radius: 5px;\n\twidth: 300px;\n\ttext-align: center;\n\tmargin-left: 10px;\n}\n.form .field .select2-container {\n\tmargin-left: 10px;\n\twidth: 322px;\n}\n.form .field .select2-container-multi ul.select2-choices {\n\tbackground: #f5f5f5;\n\tborder: 1px solid #ddd;\n\tborder-radius: 5px;\n\t\n}\n\n\n/* Controls */\n\n.button {\n\tdisplay: inline-block;\n\tpadding: 5px 10px;\n\tborder-radius: 5px;\n\tfont-weight: bold;\n\tcursor: pointer;\n}\n\n\n/*\tIndex page\t*/\n\n.app-label {\n\tdisplay: block;\n\tfont-family: \"Times New Roman\", Times, serif;\n\tfont-size: 40px;\n\tfont-weight: bold;\n\tmargin-top: 100px;\n}\n\n\n/*\tProfile page\t*/\n\n.profile {\n}\n.profile .form .submit-button {\n\tmargin-top: 20px;\n}\n\n\n/*\tSend message page\t*/\n\n.send-message .form .input {\n\twidth: 500px;\n}\n.send-message .form textarea.input {\n\ttext-align: left;\n\tmin-height:\t150px;\n}\n.send-message .form .select2-container {\n\twidth: 522px;\n}\n.send-message .form .submit-button {\n\tmargin-top: 20px;\n\tmargin-right: 10px;\n}\n", ""]);
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	var $ = __webpack_require__(16);
-	var _ = __webpack_require__(9);
-	var Backbone = __webpack_require__(18);
-	var constants = __webpack_require__(3);
-
-
-	/*
-	 *	Base content view
-	 */
-	var BaseView = Backbone.View.extend({
-
-		template: null,
-		controls: {},
-		router: null,
-
-		initialize: function(options) {
-			var _super = this._super;
-			if( !options || !options.router ) {
-				throw 'Router must be provided to view constructor';
-			}
-			this.router = options.router;
-			return _super.apply(this, arguments);
-		},
-
-		render: function(attributes) {
-			if( this.isAttached() ) {
-				this.detach();
-			}
-			if( _.isFunction(this.template) ) {
-				this.$el = $('<div>').html(this.template(attributes));
-			}
-			return this;
-		},
-
-		initControls: function(options){
-			var _this = this;
-			options = options || {};
-			_.each(_this.controls, function(constructor, class_name){
-				_this.$('.' + class_name + ':not(.init-block)').each(function(ind, item){
-					item = _this.$(item);
-					item.addClass('init-block');
-					var control = new constructor(item.first(), options[class_name] || {});
-					item.data('init-block', control);
-				});
-			});
-			return _this;
-		},
-
-	  /*
-	   *	returns jQuery promise object
-	   */
-		attach: function(container) {
-	    container = $(container);
-	    var deferred = $.Deferred();
-	    if( container.length && !this.isAttached() ) {
-	    	container.html(this.$el);
-	    	this.bindEvents();
-	    	deferred.resolve();
-	    } else {
-	    	deferred.resolve();
-	    }
-	    return deferred;
-		},
-
-	  /*
-	   *	returns jQuery promise object
-	   */
-		detach: function() {
-	    var deferred = $.Deferred();
-			if( this.isAttached() ) {
-				this.unbindEvents();
-				this.$el.detach();
-				deferred.resolve();
-			} else {
-	    	deferred.resolve();
-	    }
-	    return deferred;
-		},
-
-		isAttached: function() {
-			return this.$el.length 
-							&& this.$el.parent('body').length 
-								? true: false;
-		},
-
-		bindEvents: function() {
-			// Empty
-		},
-
-		unbindEvents: function() {
-			// Empty
-		},
-
-		remove: function() {
-			var _super = this._super;
-			var _arguments = arguments;
-			if( this.isAttached() ) {
-				this.unbindEvents();
-				_supper.apply(this, _arguments);
-			}
-		},
-
-		wrapLinks: function(router) {
-			this.$el.length && router.wrapLinks(this.$el);
-			return this;
-		},
-
-		unwrapLinks: function() {
-			//?
-		},
-		
-	});
-
-
-	var EmptyView = BaseView.extend({
-
-		render: function(attributes) {
-			this.$el = $('<div>');
-			return this;
-		},
-
-	});
-
-
-	var FadingMixIn = {
-
-		render: function(attributes){
-			var _super = this._super;
-			_super.apply(this, arguments);
-			this.$el.css({'display': 'none'});
-			return this;
-		},
-
-		/*
-	   *	returns jQuery promise object
-	   */
-		attach: function(container) {
-			var _super = this._super;
-			var _arguments = arguments;
-			var _this = this;
-			var deferred = $.Deferred();
-			_super.apply(_this, _arguments).done(function(){
-				_this.$el.fadeIn(function(){
-					deferred.resolve();
-				});
-			});
-			return deferred;
-		},
-
-		/*
-	   *	returns jQuery promise object
-	   */
-		detach: function() {
-			var _super = this._super;
-			var _arguments = arguments;
-			var _this = this;
-			var deferred = $.Deferred();
-			_this.$el.fadeOut(function(){
-				_super.apply(_this, _arguments).done(function(){
-					deferred.resolve();
-				});
-			});
-			return deferred;
-		},
-
-		remove: function() {
-			var _super = this._super;
-			var _arguments = arguments;
-			var _this = this;
-			_this.$el.fadeOut(function(){
-				_super.apply(_this, _arguments);
-			});
-		},
-
-	};
-
-
-	LocalStorageMixIn = {
-
-		storage_key: null,
-
-		setToStorage: function(key, data) {
-			if( this.isStorageAvailable()
-							&& key
-									&& data && _.isString(data) ) {
-				window.localStorage.setItem(key, data);
-			}
-		},
-
-		getFromStorage: function(key) {
-			if( this.isStorageAvailable() && key ) {
-				return window.localStorage.getItem(key);
-			}
-		},
-
-		removeFromStorage: function(key) {
-			if( this.isStorageAvailable() && key ) {
-				window.localStorage.removeItem(key);
-			}
-		},
-
-		isStorageAvailable: function() {
-			var key = val = '__test';
-			try {
-	      localStorage.setItem(key, val);
-	      localStorage.removeItem(key);
-	      return true;
-	    } catch(e) {
-	        return false;
-	    }
-		},
-
-	};
-
-
-	module.exports = {
-		'BaseView': BaseView,
-		'FadingMixIn': FadingMixIn,
-		'EmptyView': EmptyView,
-		'LocalStorageMixIn': LocalStorageMixIn,
-	};
-
-/***/ },
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
-	var _ = __webpack_require__(9);
-	var base = __webpack_require__(12);
-	var BaseView = base.BaseView;
-	var FadingMixIn = base.FadingMixIn;
-	var template = __webpack_require__(23);
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isIE9 = memoize(function() {
+			return /msie 9\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0;
 
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
 
-	var IndexView = BaseView.extend(FadingMixIn)
-							  .extend({
+		options = options || {};
+		// Force single-tag solution on IE9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isIE9();
 
-	  template: template,
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
 
-	});
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
 
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
 
-	module.exports = IndexView;
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function createStyleElement() {
+		var styleElement = document.createElement("style");
+		var head = getHeadElement();
+		styleElement.type = "text/css";
+		head.appendChild(styleElement);
+		return styleElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement());
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else {
+			styleElement = createStyleElement();
+			update = applyToTag.bind(null, styleElement);
+			remove = function () {
+				styleElement.parentNode.removeChild(styleElement);
+			};
+		}
+
+		update(obj);
+
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+
+	function replaceText(source, id, replacement) {
+		var boundaries = ["/** >>" + id + " **/", "/** " + id + "<< **/"];
+		var start = source.lastIndexOf(boundaries[0]);
+		var wrappedReplacement = replacement
+			? (boundaries[0] + replacement + boundaries[1])
+			: "";
+		if (source.lastIndexOf(boundaries[0]) >= 0) {
+			var end = source.lastIndexOf(boundaries[1]) + boundaries[1].length;
+			return source.slice(0, start) + wrappedReplacement + source.slice(end);
+		} else {
+			return source + wrappedReplacement;
+		}
+	}
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(styleElement.styleSheet.cssText, index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+
+		if(sourceMap && typeof btoa === "function") {
+			try {
+				css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(JSON.stringify(sourceMap)) + " */";
+				css = "@import url(\"data:stylesheet/css;base64," + btoa(css) + "\")";
+			} catch(e) {}
+		}
+
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
 
 /***/ },
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	var $ = __webpack_require__(16);
-	var _ = __webpack_require__(9);
-	var backend = __webpack_require__(7);
-	var base = __webpack_require__(12);
-	var utils = __webpack_require__(5);
-	var config = __webpack_require__(2);
-	var BaseView = base.BaseView;
-	var FadingMixIn = base.FadingMixIn;
-	var LocalStorageMixIn = base.LocalStorageMixIn;
-	var template = __webpack_require__(21);
-	var TagsSelect = __webpack_require__(20);
-
-
-	var SendMessageView = BaseView.extend(FadingMixIn)
-	                              .extend(LocalStorageMixIn)
-							                  .extend({
-
-	  formStorageKey: 'send_message.form',
-	  template: template,
-	  controls: {
-	  	'tags-input': TagsSelect,
-	  },
-
-	  render: function(attributes) {
-	    var _super = this._super;
-	    var _arguments = arguments;
-	    _super.apply(this, _arguments);
-	    this.loadFormFromStorage();
-	    return this;
-	  },
-
-	  bindEvents: function() {
-	    // bind submit event
-	    var submit = this.$('.submit-button').first();
-	    var clear = this.$('.clear-button').first();
-	    var form = submit.parent('form');
-	    var _this = this;
-	    if( submit.length && form.length ) {
-	      submit.on('click', function(e){
-	        e.preventDefault();
-	        // get data from form
-	        var tags = form[0].tags ? form[0].tags.value : '';
-	        tags = utils.csvToArray(tags);
-	        var message = form[0].message ? form[0].message.value : '';
-	        // send message
-	        backend.sendMessage(message, tags)
-	          .fail(function(error){
-	            alert("Error");
-	          })
-	          .done(function(){
-	            alert("Sended");
-	          });
-	      });
-	    }
-	    // bind clear event
-	    clear.on('click', function(e){
-	      e.preventDefault();
-	      _this.clearForm();
-	    });
-	    // bind save form interval
-	    if( !this._save_form_interval_id ) {
-	      this._save_form_interval_id = window.setInterval(function(){
-	        _this.saveFormToStorage();
-	      }, config.SAVE_FORM_INTERVAL);
-	    }
-	  },
-
-	  unbindEvents: function() {
-	    // unbind buttons click
-	    this.$('.submit-button').first().off('click');
-	    this.$('.clear-button').first().off('click');
-	    // unbind save form interval
-	    if( this._save_form_interval_id ) {
-	      window.clearInterval(this._save_form_interval_id);
-	      delete this._save_form_interval_id;
-	    }
-	  },
-
-	  saveFormToStorage: function() {
-
-	    var submit = this.$('.submit-button').first();
-	    var form = submit.parent('form');
-	    if( form.length ) {
-	      var data = JSON.stringify(form.serializeArray());
-	      if( data ) {
-	        this.setToStorage(this.formStorageKey, data);
-	      }
-	    }
-	  },
-
-	  loadFormFromStorage: function() {
-	    var submit = this.$('.submit-button').first();
-	    var form = submit.parent('form');
-	    var _this = this;
-	    if( form.length ) {
-	      // load form data
-	      var data = _this.getFromStorage(_this.formStorageKey) || '{}';
-	      try {
-	        data = $.parseJSON(data);
-	      } catch(e) {
-	        data = {};
-	      }
-	      // set form inputs
-	      if( !_.isEmpty(data) ) {
-	        _(data).each(function(options){
-	          var key = options.name;
-	          var value = options.value;
-	          if( key && value ) {
-	            var input = form[0][key];
-	            if( input ) {
-	              input.value = value;
-	            }
-	          }
-	        });
-	      }
-	    }
-	  },
-
-	  clearForm: function() {
-	    var submit = this.$('.submit-button').first();
-	    var form = submit.parent('form');
-	    var _this = this;
-	    if( form.length ) {
-	      // clear form inputs
-	      form.find('.input').val('');
-	      form.find('.tags-input').select2('val', []);
-	      // remove form data from storage
-	      _this.removeFromStorage(_this.formStorageKey);
-	    }
-	  },
-
-	  /*
-	   * returns jQuery promise object
-	   */
-	  loadAllTags: function() {
-	  	return backend.loadAllTags();
-	  },
-
-	});
-
-
-	module.exports = SendMessageView;
-
-/***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	var $ = __webpack_require__(16);
-	var _ = __webpack_require__(9);
-	var backend = __webpack_require__(7);
-	var base = __webpack_require__(12);
-	var BaseView = base.BaseView;
-	var FadingMixIn = base.FadingMixIn;
-	var template = __webpack_require__(22);
-	var TagsSelect = __webpack_require__(20);
-
-
-	var ProfileView = BaseView.extend(FadingMixIn)
-							              .extend({
-
-	  template: template,
-	  controls: {
-	  	'tags-input': TagsSelect,
-	  },
-
-	  bindEvents: function() {
-	    // bind submit event
-	    var submit = this.$('.submit-button').first();
-	    var form = submit.parent('form');
-	    var _this = this;
-	    if( submit.length && form.length ) {
-	      submit.on('click', function(e){
-	        e.preventDefault();
-	        var tags = form[0].tags ? form[0].tags.value : '';
-	        backend.saveTags(_this.router.auth.get('id'), tags.trim())
-	          .fail(function(error){
-	            alert("Error");
-	          })
-	          .done(function(){
-	            alert("Saved");
-	          })
-	      });
-	    }
-	  },
-
-	  unbindEvents: function() {
-	    this.$('.submit-button').first().off('click');
-	  },
-
-	  /*
-	   * returns jQuery promise object
-	   */
-	  loadAllTags: function() {
-	  	return backend.loadAllTags();
-	  },
-
-	  /*
-	   * returns jQuery promise object
-	   */
-	  loadUserTags: function(fbuid) {
-	  	return backend.loadUserTags(fbuid);
-	  },
-
-	});
-
-
-	module.exports = ProfileView;
-
-/***/ },
-/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -12253,203 +12032,488 @@
 
 
 /***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var $ = __webpack_require__(14);
+	var _ = __webpack_require__(12);
+	var Backbone = __webpack_require__(19);
+	var constants = __webpack_require__(3);
+
+
+	/*
+	 *	Base content view
+	 */
+	var BaseView = Backbone.View.extend({
+
+		template: null,
+		controls: {},
+		router: null,
+
+		initialize: function(options) {
+			var _super = this._super;
+			if( !options || !options.router ) {
+				throw 'Router must be provided to view constructor';
+			}
+			this.router = options.router;
+			return _super.apply(this, arguments);
+		},
+
+		render: function(attributes) {
+			if( this.isAttached() ) {
+				this.detach();
+			}
+			if( _.isFunction(this.template) ) {
+				this.$el = $('<div>').html(this.template(attributes));
+			}
+			return this;
+		},
+
+		initControls: function(options){
+			var _this = this;
+			options = options || {};
+			_.each(_this.controls, function(constructor, class_name){
+				_this.$('.' + class_name + ':not(.init-block)').each(function(ind, item){
+					item = _this.$(item);
+					item.addClass('init-block');
+					var control = new constructor(item.first(), options[class_name] || {});
+					item.data('init-block', control);
+				});
+			});
+			return _this;
+		},
+
+	  /*
+	   *	returns jQuery promise object
+	   */
+		attach: function(container) {
+	    container = $(container);
+	    var deferred = $.Deferred();
+	    if( container.length && !this.isAttached() ) {
+	    	container.html(this.$el);
+	    	this.bindEvents();
+	    	deferred.resolve();
+	    } else {
+	    	deferred.resolve();
+	    }
+	    return deferred;
+		},
+
+	  /*
+	   *	returns jQuery promise object
+	   */
+		detach: function() {
+	    var deferred = $.Deferred();
+			if( this.isAttached() ) {
+				this.unbindEvents();
+				this.$el.detach();
+				deferred.resolve();
+			} else {
+	    	deferred.resolve();
+	    }
+	    return deferred;
+		},
+
+		isAttached: function() {
+			return this.$el.length 
+							&& this.$el.parent('body').length 
+								? true: false;
+		},
+
+		bindEvents: function() {
+			// Empty
+		},
+
+		unbindEvents: function() {
+			// Empty
+		},
+
+		remove: function() {
+			var _super = this._super;
+			var _arguments = arguments;
+			if( this.isAttached() ) {
+				this.unbindEvents();
+				_supper.apply(this, _arguments);
+			}
+		},
+
+		wrapLinks: function(router) {
+			this.$el.length && router.wrapLinks(this.$el);
+			return this;
+		},
+
+		unwrapLinks: function() {
+			//?
+		},
+		
+	});
+
+
+	var EmptyView = BaseView.extend({
+
+		render: function(attributes) {
+			this.$el = $('<div>');
+			return this;
+		},
+
+	});
+
+
+	var FadingMixIn = {
+
+		render: function(attributes){
+			var _super = this._super;
+			_super.apply(this, arguments);
+			this.$el.css({'display': 'none'});
+			return this;
+		},
+
+		/*
+	   *	returns jQuery promise object
+	   */
+		attach: function(container) {
+			var _super = this._super;
+			var _arguments = arguments;
+			var _this = this;
+			var deferred = $.Deferred();
+			_super.apply(_this, _arguments).done(function(){
+				_this.$el.fadeIn(function(){
+					deferred.resolve();
+				});
+			});
+			return deferred;
+		},
+
+		/*
+	   *	returns jQuery promise object
+	   */
+		detach: function() {
+			var _super = this._super;
+			var _arguments = arguments;
+			var _this = this;
+			var deferred = $.Deferred();
+			_this.$el.fadeOut(function(){
+				_super.apply(_this, _arguments).done(function(){
+					deferred.resolve();
+				});
+			});
+			return deferred;
+		},
+
+		remove: function() {
+			var _super = this._super;
+			var _arguments = arguments;
+			var _this = this;
+			_this.$el.fadeOut(function(){
+				_super.apply(_this, _arguments);
+			});
+		},
+
+	};
+
+
+	LocalStorageMixIn = {
+
+		storage_key: null,
+
+		setToStorage: function(key, data) {
+			if( this.isStorageAvailable()
+							&& key
+									&& data && _.isString(data) ) {
+				window.localStorage.setItem(key, data);
+			}
+		},
+
+		getFromStorage: function(key) {
+			if( this.isStorageAvailable() && key ) {
+				return window.localStorage.getItem(key);
+			}
+		},
+
+		removeFromStorage: function(key) {
+			if( this.isStorageAvailable() && key ) {
+				window.localStorage.removeItem(key);
+			}
+		},
+
+		isStorageAvailable: function() {
+			var key = val = '__test';
+			try {
+	      localStorage.setItem(key, val);
+	      localStorage.removeItem(key);
+	      return true;
+	    } catch(e) {
+	        return false;
+	    }
+		},
+
+	};
+
+
+	module.exports = {
+		'BaseView': BaseView,
+		'FadingMixIn': FadingMixIn,
+		'EmptyView': EmptyView,
+		'LocalStorageMixIn': LocalStorageMixIn,
+	};
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var _ = __webpack_require__(12);
+	var base = __webpack_require__(15);
+	var BaseView = base.BaseView;
+	var FadingMixIn = base.FadingMixIn;
+	var template = __webpack_require__(24);
+
+
+	var IndexView = BaseView.extend(FadingMixIn)
+							  .extend({
+
+	  template: template,
+
+	});
+
+
+	module.exports = IndexView;
+
+/***/ },
 /* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	var stylesInDom = {},
-		memoize = function(fn) {
-			var memo;
-			return function () {
-				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-				return memo;
-			};
-		},
-		isIE9 = memoize(function() {
-			return /msie 9\b/.test(window.navigator.userAgent.toLowerCase());
-		}),
-		getHeadElement = memoize(function () {
-			return document.head || document.getElementsByTagName("head")[0];
-		}),
-		singletonElement = null,
-		singletonCounter = 0;
+	
+	var $ = __webpack_require__(14);
+	var _ = __webpack_require__(12);
+	var backend = __webpack_require__(7);
+	var base = __webpack_require__(15);
+	var utils = __webpack_require__(5);
+	var config = __webpack_require__(2);
+	var BaseView = base.BaseView;
+	var FadingMixIn = base.FadingMixIn;
+	var LocalStorageMixIn = base.LocalStorageMixIn;
+	var template = __webpack_require__(23);
+	var TagsSelect = __webpack_require__(21);
 
-	module.exports = function(list, options) {
-		if(false) {
-			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-		}
 
-		options = options || {};
-		// Force single-tag solution on IE9, which has a hard limit on the # of <style>
-		// tags it will allow on a page
-		if (typeof options.singleton === "undefined") options.singleton = isIE9();
+	var SendMessageView = BaseView.extend(FadingMixIn)
+	                              .extend(LocalStorageMixIn)
+							                  .extend({
 
-		var styles = listToStyles(list);
-		addStylesToDom(styles, options);
+	  formStorageKey: 'send_message.form',
+	  template: template,
+	  controls: {
+	  	'tags-input': TagsSelect,
+	  },
 
-		return function update(newList) {
-			var mayRemove = [];
-			for(var i = 0; i < styles.length; i++) {
-				var item = styles[i];
-				var domStyle = stylesInDom[item.id];
-				domStyle.refs--;
-				mayRemove.push(domStyle);
-			}
-			if(newList) {
-				var newStyles = listToStyles(newList);
-				addStylesToDom(newStyles, options);
-			}
-			for(var i = 0; i < mayRemove.length; i++) {
-				var domStyle = mayRemove[i];
-				if(domStyle.refs === 0) {
-					for(var j = 0; j < domStyle.parts.length; j++)
-						domStyle.parts[j]();
-					delete stylesInDom[domStyle.id];
-				}
-			}
-		};
-	}
+	  render: function(attributes) {
+	    var _super = this._super;
+	    var _arguments = arguments;
+	    _super.apply(this, _arguments);
+	    this.loadFormFromStorage();
+	    return this;
+	  },
 
-	function addStylesToDom(styles, options) {
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			if(domStyle) {
-				domStyle.refs++;
-				for(var j = 0; j < domStyle.parts.length; j++) {
-					domStyle.parts[j](item.parts[j]);
-				}
-				for(; j < item.parts.length; j++) {
-					domStyle.parts.push(addStyle(item.parts[j], options));
-				}
-			} else {
-				var parts = [];
-				for(var j = 0; j < item.parts.length; j++) {
-					parts.push(addStyle(item.parts[j], options));
-				}
-				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-			}
-		}
-	}
+	  bindEvents: function() {
 
-	function listToStyles(list) {
-		var styles = [];
-		var newStyles = {};
-		for(var i = 0; i < list.length; i++) {
-			var item = list[i];
-			var id = item[0];
-			var css = item[1];
-			var media = item[2];
-			var sourceMap = item[3];
-			var part = {css: css, media: media, sourceMap: sourceMap};
-			if(!newStyles[id])
-				styles.push(newStyles[id] = {id: id, parts: [part]});
-			else
-				newStyles[id].parts.push(part);
-		}
-		return styles;
-	}
+	    var submit = this.$('.submit-button').first();
+	    var clear = this.$('.clear-button').first();
+	    var form = submit.parent('form');
+	    var _this = this;
 
-	function createStyleElement() {
-		var styleElement = document.createElement("style");
-		var head = getHeadElement();
-		styleElement.type = "text/css";
-		head.appendChild(styleElement);
-		return styleElement;
-	}
+	    // bind submit event
+	    if( submit.length && form.length ) {
+	      submit.on('click', function(e){
+	        e.preventDefault();
+	        // get data from form
+	        var tags = form[0].tags ? form[0].tags.value : '';
+	        tags = utils.csvToArray(tags);
+	        var message = form[0].message ? form[0].message.value : '';
+	        // send message
+	        if( message && tags.length ) {
+	          backend.sendMessage(message, tags)
+	            .fail(function(error){
+	              alert("Error");
+	            })
+	            .done(function(){
+	              alert("Sended");
+	            });
+	        }
+	      });
+	    }
 
-	function addStyle(obj, options) {
-		var styleElement, update, remove;
+	    // bind clear event
+	    if( clear.length ) {
+	      clear.on('click', function(e){
+	        e.preventDefault();
+	        _this.clearForm();
+	      });
+	    }
+	      
+	    // bind save form interval
+	    if( !this._save_form_interval_id ) {
+	      this._save_form_interval_id = window.setInterval(function(){
+	        _this.saveFormToStorage();
+	      }, config.SAVE_FORM_INTERVAL);
+	    }
 
-		if (options.singleton) {
-			var styleIndex = singletonCounter++;
-			styleElement = singletonElement || (singletonElement = createStyleElement());
-			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-		} else {
-			styleElement = createStyleElement();
-			update = applyToTag.bind(null, styleElement);
-			remove = function () {
-				styleElement.parentNode.removeChild(styleElement);
-			};
-		}
+	  },
 
-		update(obj);
+	  unbindEvents: function() {
 
-		return function updateStyle(newObj) {
-			if(newObj) {
-				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-					return;
-				update(obj = newObj);
-			} else {
-				remove();
-			}
-		};
-	}
+	    // unbind buttons clicks
+	    this.$('.submit-button').first().off('click');
+	    this.$('.clear-button').first().off('click');
 
-	function replaceText(source, id, replacement) {
-		var boundaries = ["/** >>" + id + " **/", "/** " + id + "<< **/"];
-		var start = source.lastIndexOf(boundaries[0]);
-		var wrappedReplacement = replacement
-			? (boundaries[0] + replacement + boundaries[1])
-			: "";
-		if (source.lastIndexOf(boundaries[0]) >= 0) {
-			var end = source.lastIndexOf(boundaries[1]) + boundaries[1].length;
-			return source.slice(0, start) + wrappedReplacement + source.slice(end);
-		} else {
-			return source + wrappedReplacement;
-		}
-	}
+	    // unbind save form interval
+	    if( this._save_form_interval_id ) {
+	      window.clearInterval(this._save_form_interval_id);
+	      delete this._save_form_interval_id;
+	    }
 
-	function applyToSingletonTag(styleElement, index, remove, obj) {
-		var css = remove ? "" : obj.css;
+	  },
 
-		if(styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = replaceText(styleElement.styleSheet.cssText, index, css);
-		} else {
-			var cssNode = document.createTextNode(css);
-			var childNodes = styleElement.childNodes;
-			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-			if (childNodes.length) {
-				styleElement.insertBefore(cssNode, childNodes[index]);
-			} else {
-				styleElement.appendChild(cssNode);
-			}
-		}
-	}
+	  saveFormToStorage: function() {
 
-	function applyToTag(styleElement, obj) {
-		var css = obj.css;
-		var media = obj.media;
-		var sourceMap = obj.sourceMap;
+	    var submit = this.$('.submit-button').first();
+	    var form = submit.parent('form');
+	    if( form.length ) {
+	      var data = JSON.stringify(form.serializeArray());
+	      if( data ) {
+	        this.setToStorage(this.formStorageKey, data);
+	      }
+	    }
+	  },
 
-		if(sourceMap && typeof btoa === "function") {
-			try {
-				css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(JSON.stringify(sourceMap)) + " */";
-				css = "@import url(\"data:stylesheet/css;base64," + btoa(css) + "\")";
-			} catch(e) {}
-		}
+	  loadFormFromStorage: function() {
 
-		if(media) {
-			styleElement.setAttribute("media", media)
-		}
+	    var submit = this.$('.submit-button').first();
+	    var form = submit.parent('form');
+	    var _this = this;
 
-		if(styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = css;
-		} else {
-			while(styleElement.firstChild) {
-				styleElement.removeChild(styleElement.firstChild);
-			}
-			styleElement.appendChild(document.createTextNode(css));
-		}
-	}
+	    if( form.length ) {
+	      // load form data
+	      var data = _this.getFromStorage(_this.formStorageKey) || '{}';
+	      try {
+	        data = $.parseJSON(data);
+	      } catch(e) {
+	        data = {};
+	      }
+	      // set form inputs
+	      if( !_.isEmpty(data) ) {
+	        _(data).each(function(options){
+	          var key = options.name;
+	          var value = options.value;
+	          if( key && value ) {
+	            var input = form[0][key];
+	            if( input ) {
+	              input.value = value;
+	            }
+	          }
+	        });
+	      }
+	    }
 
+	  },
+
+	  clearForm: function() {
+
+	    var submit = this.$('.submit-button').first();
+	    var form = submit.parent('form');
+	    var _this = this;
+
+	    if( form.length ) {
+	      // clear form inputs
+	      form.find('.input').val('');
+	      form.find('.tags-input').select2('val', []);
+	      // remove form data from storage
+	      _this.removeFromStorage(_this.formStorageKey);
+	    }
+
+	  },
+
+	  /*
+	   * returns jQuery promise object
+	   */
+	  loadAllTags: function() {
+	  	return backend.loadAllTags();
+	  },
+
+	});
+
+
+	module.exports = SendMessageView;
 
 /***/ },
 /* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var $ = __webpack_require__(14);
+	var _ = __webpack_require__(12);
+	var backend = __webpack_require__(7);
+	var base = __webpack_require__(15);
+	var BaseView = base.BaseView;
+	var FadingMixIn = base.FadingMixIn;
+	var template = __webpack_require__(22);
+	var TagsSelect = __webpack_require__(21);
+
+
+	var ProfileView = BaseView.extend(FadingMixIn)
+							              .extend({
+
+	  template: template,
+	  controls: {
+	  	'tags-input': TagsSelect,
+	  },
+
+	  bindEvents: function() {
+	    // bind submit event
+	    var submit = this.$('.submit-button').first();
+	    var form = submit.parent('form');
+	    var _this = this;
+	    if( submit.length && form.length ) {
+	      submit.on('click', function(e){
+	        e.preventDefault();
+	        var tags = form[0].tags ? form[0].tags.value : '';
+	        backend.saveTags(_this.router.auth.get('id'), tags.trim())
+	          .fail(function(error){
+	            alert("Error");
+	          })
+	          .done(function(){
+	            alert("Saved");
+	          })
+	      });
+	    }
+	  },
+
+	  unbindEvents: function() {
+	    this.$('.submit-button').first().off('click');
+	  },
+
+	  /*
+	   * returns jQuery promise object
+	   */
+	  loadAllTags: function() {
+	  	return backend.loadAllTags();
+	  },
+
+	  /*
+	   * returns jQuery promise object
+	   */
+	  loadUserTags: function(fbuid) {
+	  	return backend.loadUserTags(fbuid);
+	  },
+
+	});
+
+
+	module.exports = ProfileView;
+
+/***/ },
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Backbone.js 1.1.2
@@ -12463,7 +12527,7 @@
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(16), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(12), __webpack_require__(14), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -14063,7 +14127,7 @@
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function() {
@@ -14084,16 +14148,16 @@
 	}
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	var $ = __webpack_require__(16);
-	var _ = __webpack_require__(9);
+	var $ = __webpack_require__(14);
+	var _ = __webpack_require__(12);
 	var utils = __webpack_require__(5);
 
+	__webpack_require__(26);
 	__webpack_require__(25);
-	__webpack_require__(24);
 
 
 	var TagsSelect = function(el, options) {
@@ -14135,42 +14199,6 @@
 
 
 	module.exports = TagsSelect;
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = function anonymous(locals, filters, escape, rethrow) {
-	    escape = escape || function(html) {
-	        return String(html).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
-	    };
-	    var __stack = {
-	        lineno: 1,
-	        input: '<div class="send-message">\n\n	<form class="form">\n		<table>\n			<tr class="section">\n				<td ><h2 class="section-title">Send message form:</h2></td>\n			</tr>\n			<tr class="field">\n			  <td><label class="label" for="tags">Message text</label></td>\n				<td>\n					<textarea class="input"\n								 name="message"></textarea>\n				</td>\n			</tr>\n			<tr class="field">\n			  <td><label class="label" for="tags">Tags</label></td>\n				<td>\n					<input class="tags-input"\n							 type="hidden"\n							 name="tags">\n				</td>\n			</tr>\n		</table>\n\n		<input class="button submit-button" type="submit" value="Send message">\n		<input class="button clear-button" type="submit" value="Clear form">\n\n	</form>\n\n</div>',
-	        filename: undefined
-	    };
-	    function rethrow(err, str, filename, lineno) {
-	        var lines = str.split("\n"), start = Math.max(lineno - 3, 0), end = Math.min(lines.length, lineno + 3);
-	        var context = lines.slice(start, end).map(function(line, i) {
-	            var curr = i + start + 1;
-	            return (curr == lineno ? " >> " : "    ") + curr + "| " + line;
-	        }).join("\n");
-	        err.path = filename;
-	        err.message = (filename || "ejs") + ":" + lineno + "\n" + context + "\n\n" + err.message;
-	        throw err;
-	    }
-	    try {
-	        var buf = [];
-	        with (locals || {}) {
-	            (function() {
-	                buf.push('<div class="send-message">\n\n	<form class="form">\n		<table>\n			<tr class="section">\n				<td ><h2 class="section-title">Send message form:</h2></td>\n			</tr>\n			<tr class="field">\n			  <td><label class="label" for="tags">Message text</label></td>\n				<td>\n					<textarea class="input"\n								 name="message"></textarea>\n				</td>\n			</tr>\n			<tr class="field">\n			  <td><label class="label" for="tags">Tags</label></td>\n				<td>\n					<input class="tags-input"\n							 type="hidden"\n							 name="tags">\n				</td>\n			</tr>\n		</table>\n\n		<input class="button submit-button" type="submit" value="Send message">\n		<input class="button clear-button" type="submit" value="Clear form">\n\n	</form>\n\n</div>');
-	            })();
-	        }
-	        return buf.join("");
-	    } catch (err) {
-	        rethrow(err, __stack.input, __stack.filename, __stack.lineno);
-	    }
-	}
 
 /***/ },
 /* 22 */
@@ -14218,6 +14246,42 @@
 	    };
 	    var __stack = {
 	        lineno: 1,
+	        input: '<div class="send-message">\n\n	<form class="form">\n		<table>\n			<tr class="section">\n				<td ><h2 class="section-title">Send message form:</h2></td>\n			</tr>\n			<tr class="field">\n			  <td><label class="label" for="tags">Message text</label></td>\n				<td>\n					<textarea class="input"\n								 name="message"></textarea>\n				</td>\n			</tr>\n			<tr class="field">\n			  <td><label class="label" for="tags">Tags</label></td>\n				<td>\n					<input class="tags-input"\n							 type="hidden"\n							 name="tags">\n				</td>\n			</tr>\n		</table>\n\n		<input class="button submit-button" type="submit" value="Send message">\n		<input class="button clear-button" type="submit" value="Clear form">\n\n	</form>\n\n</div>',
+	        filename: undefined
+	    };
+	    function rethrow(err, str, filename, lineno) {
+	        var lines = str.split("\n"), start = Math.max(lineno - 3, 0), end = Math.min(lines.length, lineno + 3);
+	        var context = lines.slice(start, end).map(function(line, i) {
+	            var curr = i + start + 1;
+	            return (curr == lineno ? " >> " : "    ") + curr + "| " + line;
+	        }).join("\n");
+	        err.path = filename;
+	        err.message = (filename || "ejs") + ":" + lineno + "\n" + context + "\n\n" + err.message;
+	        throw err;
+	    }
+	    try {
+	        var buf = [];
+	        with (locals || {}) {
+	            (function() {
+	                buf.push('<div class="send-message">\n\n	<form class="form">\n		<table>\n			<tr class="section">\n				<td ><h2 class="section-title">Send message form:</h2></td>\n			</tr>\n			<tr class="field">\n			  <td><label class="label" for="tags">Message text</label></td>\n				<td>\n					<textarea class="input"\n								 name="message"></textarea>\n				</td>\n			</tr>\n			<tr class="field">\n			  <td><label class="label" for="tags">Tags</label></td>\n				<td>\n					<input class="tags-input"\n							 type="hidden"\n							 name="tags">\n				</td>\n			</tr>\n		</table>\n\n		<input class="button submit-button" type="submit" value="Send message">\n		<input class="button clear-button" type="submit" value="Clear form">\n\n	</form>\n\n</div>');
+	            })();
+	        }
+	        return buf.join("");
+	    } catch (err) {
+	        rethrow(err, __stack.input, __stack.filename, __stack.lineno);
+	    }
+	}
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function anonymous(locals, filters, escape, rethrow) {
+	    escape = escape || function(html) {
+	        return String(html).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+	    };
+	    var __stack = {
+	        lineno: 1,
 	        input: '\n<span class="app-label">\n	People now!\n</span>',
 	        filename: undefined
 	    };
@@ -14245,23 +14309,23 @@
 	}
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
-	$ = jQuery = __webpack_require__(16);
-	module.exports = __webpack_require__(27);
+	$ = jQuery = __webpack_require__(14);
+	module.exports = __webpack_require__(28);
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(26);
+	var content = __webpack_require__(27);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(17)(content, {});
+	var update = __webpack_require__(13)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -14275,14 +14339,14 @@
 	}
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(19)();
-	exports.push([module.id, "/*\nVersion: @@ver@@ Timestamp: @@timestamp@@\n*/\n.select2-container {\n    margin: 0;\n    position: relative;\n    display: inline-block;\n    /* inline-block for ie7 */\n    zoom: 1;\n    *display: inline;\n    vertical-align: middle;\n}\n\n.select2-container,\n.select2-drop,\n.select2-search,\n.select2-search input {\n  /*\n    Force border-box so that % widths fit the parent\n    container without overlap because of margin/padding.\n    More Info : http://www.quirksmode.org/css/box.html\n  */\n  -webkit-box-sizing: border-box; /* webkit */\n     -moz-box-sizing: border-box; /* firefox */\n          box-sizing: border-box; /* css3 */\n}\n\n.select2-container .select2-choice {\n    display: block;\n    height: 26px;\n    padding: 0 0 0 8px;\n    overflow: hidden;\n    position: relative;\n\n    border: 1px solid #aaa;\n    white-space: nowrap;\n    line-height: 26px;\n    color: #444;\n    text-decoration: none;\n\n    border-radius: 4px;\n\n    background-clip: padding-box;\n\n    -webkit-touch-callout: none;\n      -webkit-user-select: none;\n         -moz-user-select: none;\n          -ms-user-select: none;\n              user-select: none;\n\n    background-color: #fff;\n    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eee), color-stop(0.5, #fff));\n    background-image: -webkit-linear-gradient(center bottom, #eee 0%, #fff 50%);\n    background-image: -moz-linear-gradient(center bottom, #eee 0%, #fff 50%);\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffffff', endColorstr = '#eeeeee', GradientType = 0);\n    background-image: linear-gradient(to top, #eee 0%, #fff 50%);\n}\n\nhtml[dir=\"rtl\"] .select2-container .select2-choice {\n    padding: 0 8px 0 0;\n}\n\n.select2-container.select2-drop-above .select2-choice {\n    border-bottom-color: #aaa;\n\n    border-radius: 0 0 4px 4px;\n\n    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eee), color-stop(0.9, #fff));\n    background-image: -webkit-linear-gradient(center bottom, #eee 0%, #fff 90%);\n    background-image: -moz-linear-gradient(center bottom, #eee 0%, #fff 90%);\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0);\n    background-image: linear-gradient(to bottom, #eee 0%, #fff 90%);\n}\n\n.select2-container.select2-allowclear .select2-choice .select2-chosen {\n    margin-right: 42px;\n}\n\n.select2-container .select2-choice > .select2-chosen {\n    margin-right: 26px;\n    display: block;\n    overflow: hidden;\n\n    white-space: nowrap;\n\n    text-overflow: ellipsis;\n    float: none;\n    width: auto;\n}\n\nhtml[dir=\"rtl\"] .select2-container .select2-choice > .select2-chosen {\n    margin-left: 26px;\n    margin-right: 0;\n}\n\n.select2-container .select2-choice abbr {\n    display: none;\n    width: 12px;\n    height: 12px;\n    position: absolute;\n    right: 24px;\n    top: 8px;\n\n    font-size: 1px;\n    text-decoration: none;\n\n    border: 0;\n    background: url("+__webpack_require__(28)+") right top no-repeat;\n    cursor: pointer;\n    outline: 0;\n}\n\n.select2-container.select2-allowclear .select2-choice abbr {\n    display: inline-block;\n}\n\n.select2-container .select2-choice abbr:hover {\n    background-position: right -11px;\n    cursor: pointer;\n}\n\n.select2-drop-mask {\n    border: 0;\n    margin: 0;\n    padding: 0;\n    position: fixed;\n    left: 0;\n    top: 0;\n    min-height: 100%;\n    min-width: 100%;\n    height: auto;\n    width: auto;\n    opacity: 0;\n    z-index: 9998;\n    /* styles required for IE to work */\n    background-color: #fff;\n    filter: alpha(opacity=0);\n}\n\n.select2-drop {\n    width: 100%;\n    margin-top: -1px;\n    position: absolute;\n    z-index: 9999;\n    top: 100%;\n\n    background: #fff;\n    color: #000;\n    border: 1px solid #aaa;\n    border-top: 0;\n\n    border-radius: 0 0 4px 4px;\n\n    -webkit-box-shadow: 0 4px 5px rgba(0, 0, 0, .15);\n            box-shadow: 0 4px 5px rgba(0, 0, 0, .15);\n}\n\n.select2-drop.select2-drop-above {\n    margin-top: 1px;\n    border-top: 1px solid #aaa;\n    border-bottom: 0;\n\n    border-radius: 4px 4px 0 0;\n\n    -webkit-box-shadow: 0 -4px 5px rgba(0, 0, 0, .15);\n            box-shadow: 0 -4px 5px rgba(0, 0, 0, .15);\n}\n\n.select2-drop-active {\n    border: 1px solid #5897fb;\n    border-top: none;\n}\n\n.select2-drop.select2-drop-above.select2-drop-active {\n    border-top: 1px solid #5897fb;\n}\n\n.select2-drop-auto-width {\n    border-top: 1px solid #aaa;\n    width: auto;\n}\n\n.select2-drop-auto-width .select2-search {\n    padding-top: 4px;\n}\n\n.select2-container .select2-choice .select2-arrow {\n    display: inline-block;\n    width: 18px;\n    height: 100%;\n    position: absolute;\n    right: 0;\n    top: 0;\n\n    border-left: 1px solid #aaa;\n    border-radius: 0 4px 4px 0;\n\n    background-clip: padding-box;\n\n    background: #ccc;\n    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #ccc), color-stop(0.6, #eee));\n    background-image: -webkit-linear-gradient(center bottom, #ccc 0%, #eee 60%);\n    background-image: -moz-linear-gradient(center bottom, #ccc 0%, #eee 60%);\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#cccccc', GradientType = 0);\n    background-image: linear-gradient(to top, #ccc 0%, #eee 60%);\n}\n\nhtml[dir=\"rtl\"] .select2-container .select2-choice .select2-arrow {\n    left: 0;\n    right: auto;\n\n    border-left: none;\n    border-right: 1px solid #aaa;\n    border-radius: 4px 0 0 4px;\n}\n\n.select2-container .select2-choice .select2-arrow b {\n    display: block;\n    width: 100%;\n    height: 100%;\n    background: url("+__webpack_require__(28)+") no-repeat 0 1px;\n}\n\nhtml[dir=\"rtl\"] .select2-container .select2-choice .select2-arrow b {\n    background-position: 2px 1px;\n}\n\n.select2-search {\n    display: inline-block;\n    width: 100%;\n    min-height: 26px;\n    margin: 0;\n    padding-left: 4px;\n    padding-right: 4px;\n\n    position: relative;\n    z-index: 10000;\n\n    white-space: nowrap;\n}\n\n.select2-search input {\n    width: 100%;\n    height: auto !important;\n    min-height: 26px;\n    padding: 4px 20px 4px 5px;\n    margin: 0;\n\n    outline: 0;\n    font-family: sans-serif;\n    font-size: 1em;\n\n    border: 1px solid #aaa;\n    border-radius: 0;\n\n    -webkit-box-shadow: none;\n            box-shadow: none;\n\n    background: #fff url("+__webpack_require__(28)+") no-repeat 100% -22px;\n    background: url("+__webpack_require__(28)+") no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));\n    background: url("+__webpack_require__(28)+") no-repeat 100% -22px, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);\n    background: url("+__webpack_require__(28)+") no-repeat 100% -22px, -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);\n    background: url("+__webpack_require__(28)+") no-repeat 100% -22px, linear-gradient(to bottom, #fff 85%, #eee 99%) 0 0;\n}\n\nhtml[dir=\"rtl\"] .select2-search input {\n    padding: 4px 5px 4px 20px;\n\n    background: #fff url("+__webpack_require__(28)+") no-repeat -37px -22px;\n    background: url("+__webpack_require__(28)+") no-repeat -37px -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));\n    background: url("+__webpack_require__(28)+") no-repeat -37px -22px, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);\n    background: url("+__webpack_require__(28)+") no-repeat -37px -22px, -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);\n    background: url("+__webpack_require__(28)+") no-repeat -37px -22px, linear-gradient(to bottom, #fff 85%, #eee 99%) 0 0;\n}\n\n.select2-drop.select2-drop-above .select2-search input {\n    margin-top: 4px;\n}\n\n.select2-search input.select2-active {\n    background: #fff url("+__webpack_require__(29)+") no-repeat 100%;\n    background: url("+__webpack_require__(29)+") no-repeat 100%, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));\n    background: url("+__webpack_require__(29)+") no-repeat 100%, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);\n    background: url("+__webpack_require__(29)+") no-repeat 100%, -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);\n    background: url("+__webpack_require__(29)+") no-repeat 100%, linear-gradient(to bottom, #fff 85%, #eee 99%) 0 0;\n}\n\n.select2-container-active .select2-choice,\n.select2-container-active .select2-choices {\n    border: 1px solid #5897fb;\n    outline: none;\n\n    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, .3);\n            box-shadow: 0 0 5px rgba(0, 0, 0, .3);\n}\n\n.select2-dropdown-open .select2-choice {\n    border-bottom-color: transparent;\n    -webkit-box-shadow: 0 1px 0 #fff inset;\n            box-shadow: 0 1px 0 #fff inset;\n\n    border-bottom-left-radius: 0;\n    border-bottom-right-radius: 0;\n\n    background-color: #eee;\n    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #fff), color-stop(0.5, #eee));\n    background-image: -webkit-linear-gradient(center bottom, #fff 0%, #eee 50%);\n    background-image: -moz-linear-gradient(center bottom, #fff 0%, #eee 50%);\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff', GradientType=0);\n    background-image: linear-gradient(to top, #fff 0%, #eee 50%);\n}\n\n.select2-dropdown-open.select2-drop-above .select2-choice,\n.select2-dropdown-open.select2-drop-above .select2-choices {\n    border: 1px solid #5897fb;\n    border-top-color: transparent;\n\n    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(0.5, #eee));\n    background-image: -webkit-linear-gradient(center top, #fff 0%, #eee 50%);\n    background-image: -moz-linear-gradient(center top, #fff 0%, #eee 50%);\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff', GradientType=0);\n    background-image: linear-gradient(to bottom, #fff 0%, #eee 50%);\n}\n\n.select2-dropdown-open .select2-choice .select2-arrow {\n    background: transparent;\n    border-left: none;\n    filter: none;\n}\nhtml[dir=\"rtl\"] .select2-dropdown-open .select2-choice .select2-arrow {\n    border-right: none;\n}\n\n.select2-dropdown-open .select2-choice .select2-arrow b {\n    background-position: -18px 1px;\n}\n\nhtml[dir=\"rtl\"] .select2-dropdown-open .select2-choice .select2-arrow b {\n    background-position: -16px 1px;\n}\n\n.select2-hidden-accessible {\n    border: 0;\n    clip: rect(0 0 0 0);\n    height: 1px;\n    margin: -1px;\n    overflow: hidden;\n    padding: 0;\n    position: absolute;\n    width: 1px;\n}\n\n/* results */\n.select2-results {\n    max-height: 200px;\n    padding: 0 0 0 4px;\n    margin: 4px 4px 4px 0;\n    position: relative;\n    overflow-x: hidden;\n    overflow-y: auto;\n    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n\nhtml[dir=\"rtl\"] .select2-results {\n    padding: 0 4px 0 0;\n    margin: 4px 0 4px 4px;\n}\n\n.select2-results ul.select2-result-sub {\n    margin: 0;\n    padding-left: 0;\n}\n\n.select2-results li {\n    list-style: none;\n    display: list-item;\n    background-image: none;\n}\n\n.select2-results li.select2-result-with-children > .select2-result-label {\n    font-weight: bold;\n}\n\n.select2-results .select2-result-label {\n    padding: 3px 7px 4px;\n    margin: 0;\n    cursor: pointer;\n\n    min-height: 1em;\n\n    -webkit-touch-callout: none;\n      -webkit-user-select: none;\n         -moz-user-select: none;\n          -ms-user-select: none;\n              user-select: none;\n}\n\n.select2-results-dept-1 .select2-result-label { padding-left: 20px }\n.select2-results-dept-2 .select2-result-label { padding-left: 40px }\n.select2-results-dept-3 .select2-result-label { padding-left: 60px }\n.select2-results-dept-4 .select2-result-label { padding-left: 80px }\n.select2-results-dept-5 .select2-result-label { padding-left: 100px }\n.select2-results-dept-6 .select2-result-label { padding-left: 110px }\n.select2-results-dept-7 .select2-result-label { padding-left: 120px }\n\n.select2-results .select2-highlighted {\n    background: #3875d7;\n    color: #fff;\n}\n\n.select2-results li em {\n    background: #feffde;\n    font-style: normal;\n}\n\n.select2-results .select2-highlighted em {\n    background: transparent;\n}\n\n.select2-results .select2-highlighted ul {\n    background: #fff;\n    color: #000;\n}\n\n.select2-results .select2-no-results,\n.select2-results .select2-searching,\n.select2-results .select2-ajax-error,\n.select2-results .select2-selection-limit {\n    background: #f4f4f4;\n    display: list-item;\n    padding-left: 5px;\n}\n\n/*\ndisabled look for disabled choices in the results dropdown\n*/\n.select2-results .select2-disabled.select2-highlighted {\n    color: #666;\n    background: #f4f4f4;\n    display: list-item;\n    cursor: default;\n}\n.select2-results .select2-disabled {\n  background: #f4f4f4;\n  display: list-item;\n  cursor: default;\n}\n\n.select2-results .select2-selected {\n    display: none;\n}\n\n.select2-more-results.select2-active {\n    background: #f4f4f4 url("+__webpack_require__(29)+") no-repeat 100%;\n}\n\n.select2-results .select2-ajax-error {\n    background: rgba(255, 50, 50, .2);\n}\n\n.select2-more-results {\n    background: #f4f4f4;\n    display: list-item;\n}\n\n/* disabled styles */\n\n.select2-container.select2-container-disabled .select2-choice {\n    background-color: #f4f4f4;\n    background-image: none;\n    border: 1px solid #ddd;\n    cursor: default;\n}\n\n.select2-container.select2-container-disabled .select2-choice .select2-arrow {\n    background-color: #f4f4f4;\n    background-image: none;\n    border-left: 0;\n}\n\n.select2-container.select2-container-disabled .select2-choice abbr {\n    display: none;\n}\n\n\n/* multiselect */\n\n.select2-container-multi .select2-choices {\n    height: auto !important;\n    height: 1%;\n    margin: 0;\n    padding: 0 5px 0 0;\n    position: relative;\n\n    border: 1px solid #aaa;\n    cursor: text;\n    overflow: hidden;\n\n    background-color: #fff;\n    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eee), color-stop(15%, #fff));\n    background-image: -webkit-linear-gradient(top, #eee 1%, #fff 15%);\n    background-image: -moz-linear-gradient(top, #eee 1%, #fff 15%);\n    background-image: linear-gradient(to bottom, #eee 1%, #fff 15%);\n}\n\nhtml[dir=\"rtl\"] .select2-container-multi .select2-choices {\n    padding: 0 0 0 5px;\n}\n\n.select2-locked {\n  padding: 3px 5px 3px 5px !important;\n}\n\n.select2-container-multi .select2-choices {\n    min-height: 26px;\n}\n\n.select2-container-multi.select2-container-active .select2-choices {\n    border: 1px solid #5897fb;\n    outline: none;\n\n    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, .3);\n            box-shadow: 0 0 5px rgba(0, 0, 0, .3);\n}\n.select2-container-multi .select2-choices li {\n    float: left;\n    list-style: none;\n}\nhtml[dir=\"rtl\"] .select2-container-multi .select2-choices li\n{\n    float: right;\n}\n.select2-container-multi .select2-choices .select2-search-field {\n    margin: 0;\n    padding: 0;\n    white-space: nowrap;\n}\n\n.select2-container-multi .select2-choices .select2-search-field input {\n    padding: 5px;\n    margin: 1px 0;\n\n    font-family: sans-serif;\n    font-size: 100%;\n    color: #666;\n    outline: 0;\n    border: 0;\n    -webkit-box-shadow: none;\n            box-shadow: none;\n    background: transparent !important;\n}\n\n.select2-container-multi .select2-choices .select2-search-field input.select2-active {\n    background: #fff url("+__webpack_require__(29)+") no-repeat 100% !important;\n}\n\n.select2-default {\n    color: #999 !important;\n}\n\n.select2-container-multi .select2-choices .select2-search-choice {\n    padding: 3px 5px 3px 18px;\n    margin: 3px 0 3px 5px;\n    position: relative;\n\n    line-height: 13px;\n    color: #333;\n    cursor: default;\n    border: 1px solid #aaaaaa;\n\n    border-radius: 3px;\n\n    -webkit-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);\n            box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);\n\n    background-clip: padding-box;\n\n    -webkit-touch-callout: none;\n      -webkit-user-select: none;\n         -moz-user-select: none;\n          -ms-user-select: none;\n              user-select: none;\n\n    background-color: #e4e4e4;\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#f4f4f4', GradientType=0);\n    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eee));\n    background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);\n    background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);\n    background-image: linear-gradient(to bottom, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);\n}\nhtml[dir=\"rtl\"] .select2-container-multi .select2-choices .select2-search-choice\n{\n    margin: 3px 5px 3px 0;\n    padding: 3px 18px 3px 5px;\n}\n.select2-container-multi .select2-choices .select2-search-choice .select2-chosen {\n    cursor: default;\n}\n.select2-container-multi .select2-choices .select2-search-choice-focus {\n    background: #d4d4d4;\n}\n\n.select2-search-choice-close {\n    display: block;\n    width: 12px;\n    height: 13px;\n    position: absolute;\n    right: 3px;\n    top: 4px;\n\n    font-size: 1px;\n    outline: none;\n    background: url("+__webpack_require__(28)+") right top no-repeat;\n}\nhtml[dir=\"rtl\"] .select2-search-choice-close {\n    right: auto;\n    left: 3px;\n}\n\n.select2-container-multi .select2-search-choice-close {\n    left: 3px;\n}\n\nhtml[dir=\"rtl\"] .select2-container-multi .select2-search-choice-close {\n    left: auto;\n    right: 2px;\n}\n\n.select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {\n  background-position: right -11px;\n}\n.select2-container-multi .select2-choices .select2-search-choice-focus .select2-search-choice-close {\n    background-position: right -11px;\n}\n\n/* disabled styles */\n.select2-container-multi.select2-container-disabled .select2-choices {\n    background-color: #f4f4f4;\n    background-image: none;\n    border: 1px solid #ddd;\n    cursor: default;\n}\n\n.select2-container-multi.select2-container-disabled .select2-choices .select2-search-choice {\n    padding: 3px 5px 3px 5px;\n    border: 1px solid #ddd;\n    background-image: none;\n    background-color: #f4f4f4;\n}\n\n.select2-container-multi.select2-container-disabled .select2-choices .select2-search-choice .select2-search-choice-close {    display: none;\n    background: none;\n}\n/* end multiselect */\n\n\n.select2-result-selectable .select2-match,\n.select2-result-unselectable .select2-match {\n    text-decoration: underline;\n}\n\n.select2-offscreen, .select2-offscreen:focus {\n    clip: rect(0 0 0 0) !important;\n    width: 1px !important;\n    height: 1px !important;\n    border: 0 !important;\n    margin: 0 !important;\n    padding: 0 !important;\n    overflow: hidden !important;\n    position: absolute !important;\n    outline: 0 !important;\n    left: 0px !important;\n    top: 0px !important;\n}\n\n.select2-display-none {\n    display: none;\n}\n\n.select2-measure-scrollbar {\n    position: absolute;\n    top: -10000px;\n    left: -10000px;\n    width: 100px;\n    height: 100px;\n    overflow: scroll;\n}\n\n/* Retina-ize icons */\n\n@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 2dppx)  {\n    .select2-search input,\n    .select2-search-choice-close,\n    .select2-container .select2-choice abbr,\n    .select2-container .select2-choice .select2-arrow b {\n        background-image: url("+__webpack_require__(30)+") !important;\n        background-repeat: no-repeat !important;\n        background-size: 60px 40px !important;\n    }\n\n    .select2-search input {\n        background-position: 100% -21px !important;\n    }\n}\n", ""]);
+	exports = module.exports = __webpack_require__(20)();
+	exports.push([module.id, "/*\nVersion: @@ver@@ Timestamp: @@timestamp@@\n*/\n.select2-container {\n    margin: 0;\n    position: relative;\n    display: inline-block;\n    /* inline-block for ie7 */\n    zoom: 1;\n    *display: inline;\n    vertical-align: middle;\n}\n\n.select2-container,\n.select2-drop,\n.select2-search,\n.select2-search input {\n  /*\n    Force border-box so that % widths fit the parent\n    container without overlap because of margin/padding.\n    More Info : http://www.quirksmode.org/css/box.html\n  */\n  -webkit-box-sizing: border-box; /* webkit */\n     -moz-box-sizing: border-box; /* firefox */\n          box-sizing: border-box; /* css3 */\n}\n\n.select2-container .select2-choice {\n    display: block;\n    height: 26px;\n    padding: 0 0 0 8px;\n    overflow: hidden;\n    position: relative;\n\n    border: 1px solid #aaa;\n    white-space: nowrap;\n    line-height: 26px;\n    color: #444;\n    text-decoration: none;\n\n    border-radius: 4px;\n\n    background-clip: padding-box;\n\n    -webkit-touch-callout: none;\n      -webkit-user-select: none;\n         -moz-user-select: none;\n          -ms-user-select: none;\n              user-select: none;\n\n    background-color: #fff;\n    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eee), color-stop(0.5, #fff));\n    background-image: -webkit-linear-gradient(center bottom, #eee 0%, #fff 50%);\n    background-image: -moz-linear-gradient(center bottom, #eee 0%, #fff 50%);\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffffff', endColorstr = '#eeeeee', GradientType = 0);\n    background-image: linear-gradient(to top, #eee 0%, #fff 50%);\n}\n\nhtml[dir=\"rtl\"] .select2-container .select2-choice {\n    padding: 0 8px 0 0;\n}\n\n.select2-container.select2-drop-above .select2-choice {\n    border-bottom-color: #aaa;\n\n    border-radius: 0 0 4px 4px;\n\n    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eee), color-stop(0.9, #fff));\n    background-image: -webkit-linear-gradient(center bottom, #eee 0%, #fff 90%);\n    background-image: -moz-linear-gradient(center bottom, #eee 0%, #fff 90%);\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0);\n    background-image: linear-gradient(to bottom, #eee 0%, #fff 90%);\n}\n\n.select2-container.select2-allowclear .select2-choice .select2-chosen {\n    margin-right: 42px;\n}\n\n.select2-container .select2-choice > .select2-chosen {\n    margin-right: 26px;\n    display: block;\n    overflow: hidden;\n\n    white-space: nowrap;\n\n    text-overflow: ellipsis;\n    float: none;\n    width: auto;\n}\n\nhtml[dir=\"rtl\"] .select2-container .select2-choice > .select2-chosen {\n    margin-left: 26px;\n    margin-right: 0;\n}\n\n.select2-container .select2-choice abbr {\n    display: none;\n    width: 12px;\n    height: 12px;\n    position: absolute;\n    right: 24px;\n    top: 8px;\n\n    font-size: 1px;\n    text-decoration: none;\n\n    border: 0;\n    background: url("+__webpack_require__(29)+") right top no-repeat;\n    cursor: pointer;\n    outline: 0;\n}\n\n.select2-container.select2-allowclear .select2-choice abbr {\n    display: inline-block;\n}\n\n.select2-container .select2-choice abbr:hover {\n    background-position: right -11px;\n    cursor: pointer;\n}\n\n.select2-drop-mask {\n    border: 0;\n    margin: 0;\n    padding: 0;\n    position: fixed;\n    left: 0;\n    top: 0;\n    min-height: 100%;\n    min-width: 100%;\n    height: auto;\n    width: auto;\n    opacity: 0;\n    z-index: 9998;\n    /* styles required for IE to work */\n    background-color: #fff;\n    filter: alpha(opacity=0);\n}\n\n.select2-drop {\n    width: 100%;\n    margin-top: -1px;\n    position: absolute;\n    z-index: 9999;\n    top: 100%;\n\n    background: #fff;\n    color: #000;\n    border: 1px solid #aaa;\n    border-top: 0;\n\n    border-radius: 0 0 4px 4px;\n\n    -webkit-box-shadow: 0 4px 5px rgba(0, 0, 0, .15);\n            box-shadow: 0 4px 5px rgba(0, 0, 0, .15);\n}\n\n.select2-drop.select2-drop-above {\n    margin-top: 1px;\n    border-top: 1px solid #aaa;\n    border-bottom: 0;\n\n    border-radius: 4px 4px 0 0;\n\n    -webkit-box-shadow: 0 -4px 5px rgba(0, 0, 0, .15);\n            box-shadow: 0 -4px 5px rgba(0, 0, 0, .15);\n}\n\n.select2-drop-active {\n    border: 1px solid #5897fb;\n    border-top: none;\n}\n\n.select2-drop.select2-drop-above.select2-drop-active {\n    border-top: 1px solid #5897fb;\n}\n\n.select2-drop-auto-width {\n    border-top: 1px solid #aaa;\n    width: auto;\n}\n\n.select2-drop-auto-width .select2-search {\n    padding-top: 4px;\n}\n\n.select2-container .select2-choice .select2-arrow {\n    display: inline-block;\n    width: 18px;\n    height: 100%;\n    position: absolute;\n    right: 0;\n    top: 0;\n\n    border-left: 1px solid #aaa;\n    border-radius: 0 4px 4px 0;\n\n    background-clip: padding-box;\n\n    background: #ccc;\n    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #ccc), color-stop(0.6, #eee));\n    background-image: -webkit-linear-gradient(center bottom, #ccc 0%, #eee 60%);\n    background-image: -moz-linear-gradient(center bottom, #ccc 0%, #eee 60%);\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#cccccc', GradientType = 0);\n    background-image: linear-gradient(to top, #ccc 0%, #eee 60%);\n}\n\nhtml[dir=\"rtl\"] .select2-container .select2-choice .select2-arrow {\n    left: 0;\n    right: auto;\n\n    border-left: none;\n    border-right: 1px solid #aaa;\n    border-radius: 4px 0 0 4px;\n}\n\n.select2-container .select2-choice .select2-arrow b {\n    display: block;\n    width: 100%;\n    height: 100%;\n    background: url("+__webpack_require__(29)+") no-repeat 0 1px;\n}\n\nhtml[dir=\"rtl\"] .select2-container .select2-choice .select2-arrow b {\n    background-position: 2px 1px;\n}\n\n.select2-search {\n    display: inline-block;\n    width: 100%;\n    min-height: 26px;\n    margin: 0;\n    padding-left: 4px;\n    padding-right: 4px;\n\n    position: relative;\n    z-index: 10000;\n\n    white-space: nowrap;\n}\n\n.select2-search input {\n    width: 100%;\n    height: auto !important;\n    min-height: 26px;\n    padding: 4px 20px 4px 5px;\n    margin: 0;\n\n    outline: 0;\n    font-family: sans-serif;\n    font-size: 1em;\n\n    border: 1px solid #aaa;\n    border-radius: 0;\n\n    -webkit-box-shadow: none;\n            box-shadow: none;\n\n    background: #fff url("+__webpack_require__(29)+") no-repeat 100% -22px;\n    background: url("+__webpack_require__(29)+") no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));\n    background: url("+__webpack_require__(29)+") no-repeat 100% -22px, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);\n    background: url("+__webpack_require__(29)+") no-repeat 100% -22px, -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);\n    background: url("+__webpack_require__(29)+") no-repeat 100% -22px, linear-gradient(to bottom, #fff 85%, #eee 99%) 0 0;\n}\n\nhtml[dir=\"rtl\"] .select2-search input {\n    padding: 4px 5px 4px 20px;\n\n    background: #fff url("+__webpack_require__(29)+") no-repeat -37px -22px;\n    background: url("+__webpack_require__(29)+") no-repeat -37px -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));\n    background: url("+__webpack_require__(29)+") no-repeat -37px -22px, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);\n    background: url("+__webpack_require__(29)+") no-repeat -37px -22px, -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);\n    background: url("+__webpack_require__(29)+") no-repeat -37px -22px, linear-gradient(to bottom, #fff 85%, #eee 99%) 0 0;\n}\n\n.select2-drop.select2-drop-above .select2-search input {\n    margin-top: 4px;\n}\n\n.select2-search input.select2-active {\n    background: #fff url("+__webpack_require__(30)+") no-repeat 100%;\n    background: url("+__webpack_require__(30)+") no-repeat 100%, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));\n    background: url("+__webpack_require__(30)+") no-repeat 100%, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);\n    background: url("+__webpack_require__(30)+") no-repeat 100%, -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);\n    background: url("+__webpack_require__(30)+") no-repeat 100%, linear-gradient(to bottom, #fff 85%, #eee 99%) 0 0;\n}\n\n.select2-container-active .select2-choice,\n.select2-container-active .select2-choices {\n    border: 1px solid #5897fb;\n    outline: none;\n\n    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, .3);\n            box-shadow: 0 0 5px rgba(0, 0, 0, .3);\n}\n\n.select2-dropdown-open .select2-choice {\n    border-bottom-color: transparent;\n    -webkit-box-shadow: 0 1px 0 #fff inset;\n            box-shadow: 0 1px 0 #fff inset;\n\n    border-bottom-left-radius: 0;\n    border-bottom-right-radius: 0;\n\n    background-color: #eee;\n    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #fff), color-stop(0.5, #eee));\n    background-image: -webkit-linear-gradient(center bottom, #fff 0%, #eee 50%);\n    background-image: -moz-linear-gradient(center bottom, #fff 0%, #eee 50%);\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff', GradientType=0);\n    background-image: linear-gradient(to top, #fff 0%, #eee 50%);\n}\n\n.select2-dropdown-open.select2-drop-above .select2-choice,\n.select2-dropdown-open.select2-drop-above .select2-choices {\n    border: 1px solid #5897fb;\n    border-top-color: transparent;\n\n    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(0.5, #eee));\n    background-image: -webkit-linear-gradient(center top, #fff 0%, #eee 50%);\n    background-image: -moz-linear-gradient(center top, #fff 0%, #eee 50%);\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff', GradientType=0);\n    background-image: linear-gradient(to bottom, #fff 0%, #eee 50%);\n}\n\n.select2-dropdown-open .select2-choice .select2-arrow {\n    background: transparent;\n    border-left: none;\n    filter: none;\n}\nhtml[dir=\"rtl\"] .select2-dropdown-open .select2-choice .select2-arrow {\n    border-right: none;\n}\n\n.select2-dropdown-open .select2-choice .select2-arrow b {\n    background-position: -18px 1px;\n}\n\nhtml[dir=\"rtl\"] .select2-dropdown-open .select2-choice .select2-arrow b {\n    background-position: -16px 1px;\n}\n\n.select2-hidden-accessible {\n    border: 0;\n    clip: rect(0 0 0 0);\n    height: 1px;\n    margin: -1px;\n    overflow: hidden;\n    padding: 0;\n    position: absolute;\n    width: 1px;\n}\n\n/* results */\n.select2-results {\n    max-height: 200px;\n    padding: 0 0 0 4px;\n    margin: 4px 4px 4px 0;\n    position: relative;\n    overflow-x: hidden;\n    overflow-y: auto;\n    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n\nhtml[dir=\"rtl\"] .select2-results {\n    padding: 0 4px 0 0;\n    margin: 4px 0 4px 4px;\n}\n\n.select2-results ul.select2-result-sub {\n    margin: 0;\n    padding-left: 0;\n}\n\n.select2-results li {\n    list-style: none;\n    display: list-item;\n    background-image: none;\n}\n\n.select2-results li.select2-result-with-children > .select2-result-label {\n    font-weight: bold;\n}\n\n.select2-results .select2-result-label {\n    padding: 3px 7px 4px;\n    margin: 0;\n    cursor: pointer;\n\n    min-height: 1em;\n\n    -webkit-touch-callout: none;\n      -webkit-user-select: none;\n         -moz-user-select: none;\n          -ms-user-select: none;\n              user-select: none;\n}\n\n.select2-results-dept-1 .select2-result-label { padding-left: 20px }\n.select2-results-dept-2 .select2-result-label { padding-left: 40px }\n.select2-results-dept-3 .select2-result-label { padding-left: 60px }\n.select2-results-dept-4 .select2-result-label { padding-left: 80px }\n.select2-results-dept-5 .select2-result-label { padding-left: 100px }\n.select2-results-dept-6 .select2-result-label { padding-left: 110px }\n.select2-results-dept-7 .select2-result-label { padding-left: 120px }\n\n.select2-results .select2-highlighted {\n    background: #3875d7;\n    color: #fff;\n}\n\n.select2-results li em {\n    background: #feffde;\n    font-style: normal;\n}\n\n.select2-results .select2-highlighted em {\n    background: transparent;\n}\n\n.select2-results .select2-highlighted ul {\n    background: #fff;\n    color: #000;\n}\n\n.select2-results .select2-no-results,\n.select2-results .select2-searching,\n.select2-results .select2-ajax-error,\n.select2-results .select2-selection-limit {\n    background: #f4f4f4;\n    display: list-item;\n    padding-left: 5px;\n}\n\n/*\ndisabled look for disabled choices in the results dropdown\n*/\n.select2-results .select2-disabled.select2-highlighted {\n    color: #666;\n    background: #f4f4f4;\n    display: list-item;\n    cursor: default;\n}\n.select2-results .select2-disabled {\n  background: #f4f4f4;\n  display: list-item;\n  cursor: default;\n}\n\n.select2-results .select2-selected {\n    display: none;\n}\n\n.select2-more-results.select2-active {\n    background: #f4f4f4 url("+__webpack_require__(30)+") no-repeat 100%;\n}\n\n.select2-results .select2-ajax-error {\n    background: rgba(255, 50, 50, .2);\n}\n\n.select2-more-results {\n    background: #f4f4f4;\n    display: list-item;\n}\n\n/* disabled styles */\n\n.select2-container.select2-container-disabled .select2-choice {\n    background-color: #f4f4f4;\n    background-image: none;\n    border: 1px solid #ddd;\n    cursor: default;\n}\n\n.select2-container.select2-container-disabled .select2-choice .select2-arrow {\n    background-color: #f4f4f4;\n    background-image: none;\n    border-left: 0;\n}\n\n.select2-container.select2-container-disabled .select2-choice abbr {\n    display: none;\n}\n\n\n/* multiselect */\n\n.select2-container-multi .select2-choices {\n    height: auto !important;\n    height: 1%;\n    margin: 0;\n    padding: 0 5px 0 0;\n    position: relative;\n\n    border: 1px solid #aaa;\n    cursor: text;\n    overflow: hidden;\n\n    background-color: #fff;\n    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eee), color-stop(15%, #fff));\n    background-image: -webkit-linear-gradient(top, #eee 1%, #fff 15%);\n    background-image: -moz-linear-gradient(top, #eee 1%, #fff 15%);\n    background-image: linear-gradient(to bottom, #eee 1%, #fff 15%);\n}\n\nhtml[dir=\"rtl\"] .select2-container-multi .select2-choices {\n    padding: 0 0 0 5px;\n}\n\n.select2-locked {\n  padding: 3px 5px 3px 5px !important;\n}\n\n.select2-container-multi .select2-choices {\n    min-height: 26px;\n}\n\n.select2-container-multi.select2-container-active .select2-choices {\n    border: 1px solid #5897fb;\n    outline: none;\n\n    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, .3);\n            box-shadow: 0 0 5px rgba(0, 0, 0, .3);\n}\n.select2-container-multi .select2-choices li {\n    float: left;\n    list-style: none;\n}\nhtml[dir=\"rtl\"] .select2-container-multi .select2-choices li\n{\n    float: right;\n}\n.select2-container-multi .select2-choices .select2-search-field {\n    margin: 0;\n    padding: 0;\n    white-space: nowrap;\n}\n\n.select2-container-multi .select2-choices .select2-search-field input {\n    padding: 5px;\n    margin: 1px 0;\n\n    font-family: sans-serif;\n    font-size: 100%;\n    color: #666;\n    outline: 0;\n    border: 0;\n    -webkit-box-shadow: none;\n            box-shadow: none;\n    background: transparent !important;\n}\n\n.select2-container-multi .select2-choices .select2-search-field input.select2-active {\n    background: #fff url("+__webpack_require__(30)+") no-repeat 100% !important;\n}\n\n.select2-default {\n    color: #999 !important;\n}\n\n.select2-container-multi .select2-choices .select2-search-choice {\n    padding: 3px 5px 3px 18px;\n    margin: 3px 0 3px 5px;\n    position: relative;\n\n    line-height: 13px;\n    color: #333;\n    cursor: default;\n    border: 1px solid #aaaaaa;\n\n    border-radius: 3px;\n\n    -webkit-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);\n            box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);\n\n    background-clip: padding-box;\n\n    -webkit-touch-callout: none;\n      -webkit-user-select: none;\n         -moz-user-select: none;\n          -ms-user-select: none;\n              user-select: none;\n\n    background-color: #e4e4e4;\n    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#f4f4f4', GradientType=0);\n    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eee));\n    background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);\n    background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);\n    background-image: linear-gradient(to bottom, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);\n}\nhtml[dir=\"rtl\"] .select2-container-multi .select2-choices .select2-search-choice\n{\n    margin: 3px 5px 3px 0;\n    padding: 3px 18px 3px 5px;\n}\n.select2-container-multi .select2-choices .select2-search-choice .select2-chosen {\n    cursor: default;\n}\n.select2-container-multi .select2-choices .select2-search-choice-focus {\n    background: #d4d4d4;\n}\n\n.select2-search-choice-close {\n    display: block;\n    width: 12px;\n    height: 13px;\n    position: absolute;\n    right: 3px;\n    top: 4px;\n\n    font-size: 1px;\n    outline: none;\n    background: url("+__webpack_require__(29)+") right top no-repeat;\n}\nhtml[dir=\"rtl\"] .select2-search-choice-close {\n    right: auto;\n    left: 3px;\n}\n\n.select2-container-multi .select2-search-choice-close {\n    left: 3px;\n}\n\nhtml[dir=\"rtl\"] .select2-container-multi .select2-search-choice-close {\n    left: auto;\n    right: 2px;\n}\n\n.select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {\n  background-position: right -11px;\n}\n.select2-container-multi .select2-choices .select2-search-choice-focus .select2-search-choice-close {\n    background-position: right -11px;\n}\n\n/* disabled styles */\n.select2-container-multi.select2-container-disabled .select2-choices {\n    background-color: #f4f4f4;\n    background-image: none;\n    border: 1px solid #ddd;\n    cursor: default;\n}\n\n.select2-container-multi.select2-container-disabled .select2-choices .select2-search-choice {\n    padding: 3px 5px 3px 5px;\n    border: 1px solid #ddd;\n    background-image: none;\n    background-color: #f4f4f4;\n}\n\n.select2-container-multi.select2-container-disabled .select2-choices .select2-search-choice .select2-search-choice-close {    display: none;\n    background: none;\n}\n/* end multiselect */\n\n\n.select2-result-selectable .select2-match,\n.select2-result-unselectable .select2-match {\n    text-decoration: underline;\n}\n\n.select2-offscreen, .select2-offscreen:focus {\n    clip: rect(0 0 0 0) !important;\n    width: 1px !important;\n    height: 1px !important;\n    border: 0 !important;\n    margin: 0 !important;\n    padding: 0 !important;\n    overflow: hidden !important;\n    position: absolute !important;\n    outline: 0 !important;\n    left: 0px !important;\n    top: 0px !important;\n}\n\n.select2-display-none {\n    display: none;\n}\n\n.select2-measure-scrollbar {\n    position: absolute;\n    top: -10000px;\n    left: -10000px;\n    width: 100px;\n    height: 100px;\n    overflow: scroll;\n}\n\n/* Retina-ize icons */\n\n@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 2dppx)  {\n    .select2-search input,\n    .select2-search-choice-close,\n    .select2-container .select2-choice abbr,\n    .select2-container .select2-choice .select2-arrow b {\n        background-image: url("+__webpack_require__(31)+") !important;\n        background-repeat: no-repeat !important;\n        background-size: 60px 40px !important;\n    }\n\n    .select2-search input {\n        background-position: 100% -21px !important;\n    }\n}\n", ""]);
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -17796,19 +17860,19 @@
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "117ur7s.png"
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "q0w22v0.gif"
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "10bkmjy.png"

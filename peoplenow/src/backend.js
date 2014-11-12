@@ -3,7 +3,7 @@ var _ = require('underscore');
 var $ = require('jquery');
 var structures = require('./structures');
 var utils = require('./utils');
-
+var genUID = require('gen-uid');
 
 /*
  *  returns jQuery promise object
@@ -165,8 +165,10 @@ sendMessage = function(messages, tags) {
   tags = utils.forceArray(tags);
   all_deferreds = [];
   if( tags.length && messages.length ) {
-    _(tags).each(function(channel){
-      _(messages).each(function(message){
+    _(messages).each(function(message){
+      var message = {'uid': genUID.token(),
+                     'message': message};
+      _(tags).each(function(channel){
         if( channel && message ) {
           var deferred = $.Deferred();
           all_deferreds.push(deferred);
