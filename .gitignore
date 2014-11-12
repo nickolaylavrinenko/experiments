@@ -43,6 +43,7 @@ node_modules/
 # js and css
 /react_todo/static/js/*
 /react_todo/static/css/*
-
 # generated js from jsx
 react_todo/src/js/components/*.js
+
+/peoplenow/static/bundle.js
