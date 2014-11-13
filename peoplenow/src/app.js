@@ -111,12 +111,15 @@ var initApp = function(auth_options) {
 	console.log('app: started');
 	console.log('app: user ' + (router.checkAuth() ? 'authorized': 'not authorized') );
 
-	//TODO temporary expose something to global context
-	//TODO remove
+
+	// TEST
+
+    //temporary expose something to global context
 	window.router = router;
-	window.auth_options = router.auth;
+	window.auth = router.auth;
 	window.$ = $;
 	window._ = _;
+
 
 };
 
@@ -170,6 +173,19 @@ $(function(){
 			}
 
 			initApp(auth_options);
+
+			// TEST
+
+			// // web sockets test
+			// window.ws_array = [];
+			// for(i=1; i<=10; i++) {
+			// 	path = '/chat_room/' + i;
+			// 	var ws = new WebSocket("ws://www.test.com:8888" + path);
+			// 	ws.onmessage = function(event) {
+			// 		console.log('>>> room - ' + path + ', received - ' + event.data);
+			// 	};
+			// 	ws_array.push(ws);
+			// }
 
 		});
 	});

@@ -32,9 +32,9 @@ var SendMessageView = BaseView.extend(FadingMixIn)
 
   bindEvents: function() {
 
-    var submit = this.$('.submit-button').first();
-    var clear = this.$('.clear-button').first();
-    var form = submit.parent('form');
+    var submit = this.$('.submit-button');
+    var clear = this.$('.clear-button');
+    var form = submit.closest('.form');
     var _this = this;
 
     // bind submit event
@@ -53,6 +53,7 @@ var SendMessageView = BaseView.extend(FadingMixIn)
             })
             .done(function(){
               alert("Sended");
+              _this.clearForm();
             });
         }
       });
@@ -134,8 +135,8 @@ var SendMessageView = BaseView.extend(FadingMixIn)
 
   clearForm: function() {
 
-    var submit = this.$('.submit-button').first();
-    var form = submit.parent('form');
+    var submit = this.$('.submit-button');
+    var form = this.$('.form');;
     var _this = this;
 
     if( form.length ) {

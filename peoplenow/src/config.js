@@ -12,6 +12,10 @@ var config = {
 
 	// SAVE TO LOCALSTORAGE
 	SAVE_FORM_INTERVAL: 5000,
+
+	// WEBSOCKETS
+	WS_HOST: 'www.test.com',
+	WS_PORT: 8888,
 	
 };
 

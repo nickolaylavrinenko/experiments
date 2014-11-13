@@ -158,10 +158,15 @@ forceArray = function(value) {
   return value;
 };
 
+forceString = function(something) {
+  return something ? ('' + something) : '';
+};
+
 
 module.exports = {
   'Queue': Queue,
   'csvToArray': csvToArray,
   'arrayToCsv': arrayToCsv,
   'forceArray': forceArray,
+  'forceString': forceString,
 };

@@ -203,12 +203,12 @@ var Router = Backbone.Router.extend({
     var container = this.container;
 
     // get view
-    var path = ['',view_name, room_id].join('/');
+    var room_path = ['',view_name, room_id].join('/');
     var view = this._cache[view_name];
     if( !view ) {
       view = new ChatRoomView({'router': router,
                                'room_id': room_id,
-                               'path': path});
+                               'room_path': room_path});
       this._cache[view_name] = view;
     }
     // detach previous view and attach new
@@ -223,7 +223,7 @@ var Router = Backbone.Router.extend({
               .attach(container)
               .done(function(){
                 router._active = view;
-                router.navigate(path, {trigger: false, replace: false})
+                router.navigate(room_path, {trigger: false, replace: false})
                 deferred.resolve();
               });
           });

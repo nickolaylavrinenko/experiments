@@ -247,14 +247,15 @@ blockquote, q {
 }
 .chat .messages {
 }
-.chat .row {
+.chat .message {
 	min-height: 30px;
+	margin: 10px;
 }
-.chat .row > * {
+.chat .message > * {
 	display: inline-block;
 	margin-right: 5px
 }
-.chat .message {
+.chat .text {
 	min-width: 100px;
 	max-width: 250px;	
 	padding: 20px;
@@ -266,21 +267,19 @@ blockquote, q {
 	color: #aaa;
 	font-size: 13px;
 }
-.chat .row {
-	margin: 10px;
-}
 .chat .left {
 	text-align: left;
 }
-.chat .left .message{
-	background: #ebfaeb;
+.chat .left .text{
+	/*background: #ebfaeb;*/
+	background: #90bfff;
 	border-radius: 0px 20px 20px 20px;
 }
 .chat .right {
 	text-align: right;
 }
-.chat .right .message{
-	background: #ebebfa;
+.chat .right .text{
+	background: #90bfff;
 	border-radius: 20px 0px 20px 20px;
 }
 .chat .form {
