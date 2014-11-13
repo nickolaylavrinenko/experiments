@@ -155,6 +155,9 @@ var ChatRoomView = BaseView.extend(FadingMixIn)
 
   	var message = event.data;
   	message = $.parseJSON(message);
+    if( message.timestamp ) {
+      message.timestamp = new Date(message.timestamp);
+    }
 
   	if( _.isObject(message)
   		 			&& !_.isEmpty(message)
@@ -164,7 +167,7 @@ var ChatRoomView = BaseView.extend(FadingMixIn)
   		// render message
   		var message_html = '';
       console.log('>>> received message', this.router.auth, message);
-  		if( message.name === this.router.auth.name ) {
+  		if( message.name === this.router.auth.get('name') ) {
   			message_html = messageLeftTemplate(message);
   		} else {
   			message_html = messageRightTemplate(message);
