@@ -35,6 +35,7 @@ var SendMessageView = BaseView.extend(FadingMixIn)
     var submit = this.$('.submit-button');
     var clear = this.$('.clear-button');
     var form = submit.closest('.form');
+    var router = this.router;
     var _this = this;
 
     // bind submit event
@@ -47,7 +48,7 @@ var SendMessageView = BaseView.extend(FadingMixIn)
         var message = form[0].message ? form[0].message.value : '';
         // send message
         if( message && tags.length ) {
-          backend.sendMessage(message, tags)
+          backend.sendMessage(message, tags, router.auth.get('id'))
             .fail(function(error){
               alert("Error");
             })

@@ -160,14 +160,16 @@ saveTags = function(fbuid, tags) {
 /*
  *  returns jQuery promise
  */
-sendMessage = function(messages, tags) {
+sendMessage = function(messages, tags, user_uid) {
   messages = utils.forceArray(messages);
   tags = utils.forceArray(tags);
+  user_uid = utils.forceString(user_uid);
   all_deferreds = [];
-  if( tags.length && messages.length ) {
+  if( tags.length && messages.length && user_uid ) {
     _(messages).each(function(message){
       var message = JSON.stringify({'uid': genUID.token(),
-                                    'message': message});
+                                    'message': message,
+                                    'user_uid': user_uid});
       _(tags).each(function(channel){
         if( channel && message ) {
           var deferred = $.Deferred();
