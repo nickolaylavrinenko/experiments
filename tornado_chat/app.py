@@ -29,7 +29,7 @@ class WebSocketChatHandler(WebSocketHandler):
     def open(self, room_id):
 
         if not room_id:
-            raise HTTPError(400)
+            raise HTTPError(400, 'Room id not provided')
 
         # register in room
         if room_id not in rooms:
