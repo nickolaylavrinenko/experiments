@@ -267,7 +267,7 @@ blockquote, q {
 	max-width: 250px;	
 	padding: 20px;
 	border: 1px solid #f3f3f3;
-	text-align: center;
+	text-align: left;
 }
 .chat .timestamp {
 	display: inline-block;
