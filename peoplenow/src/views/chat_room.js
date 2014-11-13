@@ -163,6 +163,7 @@ var ChatRoomView = BaseView.extend(FadingMixIn)
   											&& message.timestamp ) {
   		// render message
   		var message_html = '';
+      console.log('>>> received message', this.router.auth, message);
   		if( message.name === this.router.auth.name ) {
   			message_html = messageLeftTemplate(message);
   		} else {
