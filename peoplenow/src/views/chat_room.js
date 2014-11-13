@@ -157,6 +157,7 @@ var ChatRoomView = BaseView.extend(FadingMixIn)
   	message = $.parseJSON(message);
     if( message.timestamp ) {
       message.timestamp = new Date(parseInt(message.timestamp));
+      message.timestamp = utils.getTimeFullString(message.timestamp);
     }
 
   	if( _.isObject(message)

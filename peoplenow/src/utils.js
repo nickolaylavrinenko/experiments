@@ -162,6 +162,24 @@ forceString = function(something) {
   return something ? ('' + something) : '';
 };
 
+/*  Date formatting  */
+
+isValidDate : function(date) {
+  return ( date 
+               && date instanceof Date
+                    && date.getTime() !== NaN  ) 
+         ? true : false;
+},
+
+// returns time string in format: HH:MM:SS
+getTimeFullString : function(date) {
+    return this.isValidDate(date) 
+                   ? [("0"+date.getHours()).slice(-2), 
+                      ("0"+date.getMinutes()).slice(-2),
+                      ("0"+date.getSeconds()).slice(-2)].join(":")
+                   : "";
+},
+
 
 module.exports = {
   'Queue': Queue,
@@ -169,4 +187,6 @@ module.exports = {
   'arrayToCsv': arrayToCsv,
   'forceArray': forceArray,
   'forceString': forceString,
+  'isValidDate': isValidDate,
+  'getTimeFullString': getTimeFullString,
 };
