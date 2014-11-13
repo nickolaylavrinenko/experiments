@@ -86,6 +86,12 @@ var ChatRoomView = BaseView.extend(FadingMixIn)
 
   },
 
+  scrollHistory: function() {
+
+    //
+
+  },
+
   unbindEvents: function() {
 
     // unbind buttons clicks
@@ -163,9 +169,11 @@ var ChatRoomView = BaseView.extend(FadingMixIn)
   			message_html = messageRightTemplate(message);
   		}
   		// append to chat
-  		this.$(this.messages_container_selector)
-  				.first()
-  				.append(message_html);
+      $(message_html)
+          .appendTo($(this.messages_container_selector))
+          .fadeIn(700);
+      // scroll chat
+      $(document).scrollTop(document.body.scrollHeight);
   	}
 
   },	
@@ -178,7 +186,6 @@ var ChatRoomView = BaseView.extend(FadingMixIn)
   	var deferred = $.Deferred();
   	var _this = this;
   	var listen_message_func = function(event){
-			console.log('>>> received message', event.data)
 			_this._message_listener(event);
 	  };
 
