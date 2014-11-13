@@ -14,7 +14,7 @@ var config = {
 	SAVE_FORM_INTERVAL: 5000,
 
 	// WEBSOCKETS
-	WS_HOST: 'www.test.com',
+	WS_HOST: 'www.kolyan-molyan.com',
 	WS_PORT: 8888,
 	
 };
