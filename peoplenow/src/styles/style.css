@@ -115,7 +115,8 @@ blockquote, q {
 	position: fixed;
 	top: 0px;
 	left: 0px;
-	right: 0px
+	right: 0px;
+	z-index: 1;
 }
 
 .top-pannel-item {
