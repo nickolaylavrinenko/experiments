@@ -166,9 +166,9 @@ sendMessage = function(messages, tags, user_uid) {
   user_uid = utils.forceString(user_uid);
   all_deferreds = [];
   if( tags.length && messages.length && user_uid ) {
-    _(messages).each(function(message){
-      var message = JSON.stringify({'uid': genUID.token(),
-                                    'message': message,
+    _(messages).each(function(text){
+      var message = JSON.stringify({'text': text,
+                                    'message_uid': genUID.token(),
                                     'user_uid': user_uid});
       _(tags).each(function(channel){
         if( channel && message ) {
