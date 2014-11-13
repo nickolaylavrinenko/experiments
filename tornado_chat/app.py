@@ -44,7 +44,11 @@ class WebSocketChatHandler(WebSocketHandler):
     def on_message(self, message):
 
         if self.is_in_room and message:
-            message_dict = json.loads(message)
+            try:
+                message_dict = json.loads(message)
+            except ValueError:
+                raise HTTPError(400,
+                                'Bad message format, must be in json format')
             if isinstance(message_dict, dict):
                 operation = message_dict.get('operation', '')
                 # load history service message
