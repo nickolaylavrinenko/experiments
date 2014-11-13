@@ -167,11 +167,9 @@ var ChatRoomView = BaseView.extend(FadingMixIn)
   		// render message
   		var message_html = '';
       console.log('>>> received message', this.router.auth, message);
-  		if( message.name === this.router.auth.get('name') ) {
-        console.log('>>> left message');
+  		if( message.user_name === this.router.auth.get('name') ) {
   			message_html = messageLeftTemplate(message);
   		} else {
-        console.log('>>> right message');
   			message_html = messageRightTemplate(message);
   		}
   		// append to chat
