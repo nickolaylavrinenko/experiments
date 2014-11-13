@@ -73,36 +73,6 @@ blockquote, q {
 	margin-top: 100px;
 }
 
-/*
-.field {
-	margin-top: 5px;
-}
-
-
-.user-register-form {
-	display: inline-block;
-	border: 1px solid #aaa;
-	border-radius: 10px;
-	padding: 10px;
-	margin: 20px 0;
-}
-
-.send-message-form {
-	display: inline-block;
-	border: 1px solid #aaa;
-	border-radius: 10px;
-	padding: 10px;
-	margin: 20px 0;
-}
-
-.bordered-input {
-	width: 160px;
-	overflow: hidden;
-	border: 1px solid #aaa;
-	border-radius: 4px;
-}
-*/
-
 /*	Top menu	*/
 
 .top-pannel {
@@ -233,6 +203,10 @@ blockquote, q {
 }
 .send-message .form .select2-container {
 	width: 522px;
+}
+.send-message .tags-input,
+.send-message .form .select2-container {
+	text-align: left;
 }
 .send-message .form .submit-button {
 	margin-top: 20px;
