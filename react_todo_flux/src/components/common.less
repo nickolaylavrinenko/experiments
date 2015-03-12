@@ -1,0 +1,88 @@
+
+
+/***** coolour themes *****/
+
+
+// white-blue scheme
+@background-color: #87cefa;
+@input-background-color: #9fdfff;
+@border-color: white;
+@text-color: white;
+@alert-color: #ff0000;
+@button-color: #bfbfbf;
+
+
+/***** mixins *****/
+
+
+// bordered blocks mixins
+.b-bordered(@weight, @color) {
+    border-bottom: @weight solid @color;  
+}
+.t-bordered(@weight, @color) {
+    border-top: @weight solid @color;  
+}
+.full-bordered(@weight, @color) {
+    border: @weight solid @color;  
+}
+
+
+// indented blocks mixins
+.t-indented(@points) {
+    margin-top: @points;
+}
+.b-indented(@points) {
+    margin-bottom: @points;
+}
+.v-indented(@points) {
+    margin: @points 0;
+}
+.h-indented(@points) {
+    margin: 0 @points;
+}
+.full-indented(@points) {
+    margin: @points;
+}
+.not-indented() {
+    margin: 0;
+}
+
+
+// with wrapped content mixin
+.t-wrapped(@points) {
+    padding-top: @points;
+}
+.b-wrapped(@points) {
+    padding-bottom: @points;
+}
+.v-wrapped(@points) {
+    padding: @points 0;
+}
+.h-wrapped(@points) {
+    padding: 0 @points;
+}
+.full-wrapped(@points) {
+    padding: @points;
+}
+.not-wrapped() {
+    padding: 0;
+}
+
+// arrows
+.right-arrow(@color) {
+    border: 4px solid transparent;
+    border-left: 8px solid @color;
+    margin-left: 5px;
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+}
+.left-arrow(@color) {
+    border: 4px solid transparent;
+    border-right: 8px solid @color;
+    margin-right: 5px;
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+}
+

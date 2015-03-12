@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>todo_app</title>
+        <script src="http://localhost:8080/webpack-dev-server.js"></script>
+        <script type="text/javascript" charset="UTF8" src="/static/bundle.js"></script>
+        <link rel="stylesheet" type="text/css" href="/static/bundle.css">
+    </head>
+    <body>
+      <div class="app-wrapper">
+        <div class="top-container">
+          <header class="app-header">
+            <div class="logo">TODO_APP</div>
+          </header>
+          <div class="list-container">
+            <span class="error-message">
+              Something goes wrong, check dev console for errors.
+            </span>
+          </div>
+          <div class="push"></div>
+        </div>
+        <div class="bottom-container">
+          <div class="form-container">
+            <form class="todo-form" id="todo-form">
+              <div class="field-block">
+                <label for="input-description">description:</label>
+                <textarea class="todo-body" 
+                          id="input-description" 
+                          name="desc"
+                          required="required"></textarea>
+              </div>
+              <div class="field-block">
+                <label for="input-till-date">dead-line:</label>
+                <input class="todo-till-date" 
+                       id="input-till-date" 
+                       name="till-date" 
+                       type="date" 
+                       required="required"></input>
+                <button class="submit-button">Add</button>
+              </div>
+            </form>
+          </div>
+          <footer class="app-footer">
+              <span class="signature">kolyan-molyan.com</span>
+              <span class="year">2014</span>
+          </footer>
+        </div>
+      </div>
+    </body>
+<html>

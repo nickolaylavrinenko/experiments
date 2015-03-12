@@ -1,0 +1,132 @@
+@import "./common/common.less";
+
+
+.todo-list {
+    .v-indented(10px);
+    .todo-item {
+
+        .v-wrapped(20px);
+        .b-bordered(1px, @border-color);
+        position: relative;
+        line-height: 20px;
+        font-size: 17px;
+        cursor: pointer;
+
+        &:last-child {
+            border: 0;
+        }
+
+        .buttons() {
+            & > * {
+                display: inline-block;
+                vertical-align: middle;
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+                border-radius: 30px;
+                text-align: center;
+                margin: 15px 0 0 10px;
+                font-size: 20px;
+            }
+            .done {
+                background: green;
+            }
+            .removed, .outdated {
+                background: red;
+            }
+            .order {
+                background: #bfbfbf;
+                cursor: move;
+            }
+        }
+
+        .todo-buttons {
+            .buttons();
+            display: none;
+            position: absolute;
+            width: 120px;
+            top: 0;
+            right: 0;
+            z-index: 2;
+            & > * {
+                cursor: pointer;
+            }
+        }
+   
+        .todo-state {
+            .buttons();
+            position: absolute;
+            width: 40px;
+            top: 0;
+            right: 0;
+            z-index: 2;
+            & > * {
+                opacity: 0.5;
+            }
+        }
+
+        .todo-wrapper {
+            z-index: 1;
+            & > * { 
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                -o-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+            }
+
+            .todo-body {
+                display: block;
+                z-index: 1;
+                font-size: 20px;
+            }
+
+            .todo-footer {
+                display: block;
+                .t-indented(10px);
+                font-size: 10px;
+                line-height: 15px;
+                height: 15px;
+                z-index: 1;
+
+                .todo-from-date {
+                    float: left;
+                    &:after {
+                        .right-arrow(@text-color);
+                    }
+                    time {
+                        font-size: 13px;
+                        font-weight: bold;
+                        margin-left: 5px;
+                    }
+                }
+                .todo-till-date {
+                    float: right;
+                    &:before {
+                        .right-arrow(@text-color);
+                    }
+                    .upcoming {
+                        color: @alert-color;
+                        &:before {
+                            .right-arrow(@alert-color);
+                        }
+                    }
+                    time {
+                        font-size: 13px;
+                        font-weight: bold;
+                        margin-left: 5px;
+                    }
+                }
+            }
+        }
+
+        &.modify, &.removed , &.done {
+            .todo-wrapper{
+                opacity: 0.5;
+            } 
+        }
+        &.done {
+            cursor: default;
+        }
+
+    } 
+}
