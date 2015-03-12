@@ -1,28 +1,28 @@
 // styles
-require('./form.less');
+import './form.less';
 
 // dependensies
-var React = require("react");
-var Common = require("./common/common");
+import React from 'react';
+import {escapeHTML} from '../utils/html';
+import {ISODateStringToDate} from '../utils/date';
+import listActions from '../actions/listActions';
 
 
 var Form = React.createClass({
 
-    render : function() {
+    render() {
 
         return ( 
             <form className="todo-form" onSubmit={this.handleSubmit} ref="form">
               <div className="field-block">
-                <label htmlFor="input-description">description:</label>
+                <label htmlFor="desc">description:</label>
                 <textarea className="todo-body" 
-                          id="input-description" 
                           name="desc"
                           required="required"/>
               </div>
               <div className="field-block">
-                <label htmlFor="input-till-date">dead-line:</label>
+                <label htmlFor="till">dead-line:</label>
                 <input className="todo-till-date" 
-                       id="input-till-date" 
                        name="till" 
                        type="date" 
                        required="required"/>
@@ -33,38 +33,35 @@ var Form = React.createClass({
 
     },
 
-    handleSubmit : function(e) {
+    handleSubmit(e) {
 
         e.preventDefault();
 
         var form = this.refs.form.getDOMNode();
+
         if( form ) {
-            // get values
-            var desc = form.desc.value;
-            var from_date = new Date();
-            var till_string = form.till.value,
-                till_date;
-            if( desc && from_date && till_string ) {
-                // prepare values
-                desc = Common.escapeHTML(desc);
-                till_date = Common.ISODateStringToDate(till_string);
-                if( !till_date ) {
-                    till_date = new Date(till_string);
-                }
-                // pass values to parent component
-                if( desc && !isNaN(from_date.getTime()) && !isNaN(till_date.getTime()) ) {
-                    if( typeof this.props.parent.addItem === 'function' ) {
-                        this.props.parent.addItem(from_date, till_date, desc);
-                        // clean form values
-                        form.desc.value = '';
-                        form.till.value = '';
-                    }
-                }
+            var desc = escapeHTML(form.desc.value),
+                from = new Date(),
+                till = ISODateStringToDate(form.till.value);
+
+            if( desc && from && till &&
+                    !isNaN(from.getTime()) &&
+                        !isNaN(till.getTime()) ) {
+                listActions.addItem(from, till, desc);
+                this.clearForm();
             }
+        }
+    },
+
+    clearForm() {
+        var form = this.refs.form.getDOMNode();
+        if(form) {
+            form.desc.value = '';
+            form.till.value = '';
         }
     },
 
 });
 
 
-module.exports = Form;
+export default Form;

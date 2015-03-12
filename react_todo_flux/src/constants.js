@@ -7,13 +7,21 @@ const itemActionTypes = {
 };
 
 const itemStates = {
-    'ACTIVE' : 'active',
-    'REMOVED' : 'removed',
-    'DONE' : 'done',
+    'ACTIVE': 'active',
+    'REMOVED': 'removed',
+    'DONE': 'done',
+};
+
+const filterTypes = {
+    'ALL': 'all',
+    'ACTIVE': 'active',
+    'OUTDATED': 'outdated',
+    'DONE': 'done'
 };
 
 
 export {
     itemActionTypes,
-    itemStates
+    itemStates,
+    filterTypes
 };

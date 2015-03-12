@@ -5,4 +5,4 @@ import Flux from 'flux';
 var dispatcher = new Flux.Dispatcher();
 
 
-export dispatcher;
+export default dispatcher;

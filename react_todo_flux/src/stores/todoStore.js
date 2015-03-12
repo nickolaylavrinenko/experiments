@@ -1,13 +1,13 @@
 
-import Flux from 'react-flux';
+import Flux from 'flux';
 import {EventEmitter} from 'events';
-import const dispatcher from '../dispatcher';
-import const StorageProxy from '../utils/storage';
-import const {itemActionTypes: ACTION_TYPES, itemStates: ITEM_STATES } from '../constants';
-
-
-var changeEvent = 'change',
-    todoItems = getItemsFromStorage();
+import dispatcher from '../dispatcher';
+import StorageProxy from '../utils/storage';
+import {
+    itemActionTypes as ACTION_TYPES,
+    itemStates as ITEM_STATES,
+    filterTypes as FILTER_TYPES 
+} from '../constants';
 
 
 // functions to work with storage
@@ -26,11 +26,42 @@ var saveItemsToStorage = function(items) {
 };
 
 
-// store
+// data filters 
+
+var dataFilters = {
+
+    [FILTER_TYPES.ALL]: function(item) {
+        return (item && item.state !== ITEM_STATES.REMOVED) ? true : false; 
+    },
+
+    [FILTER_TYPES.ACTIVE]: function(item) {
+        var now = new Date();
+        return (item && item.state === ITEM_STATES.ACTIVE) ? true : false;
+    },
+
+    [FILTER_TYPES.OUTDATED]: function(item) {
+        var now = new Date();
+        return (item && (item.state === ITEM_STATES.ACTIVE) && 
+               (item.till && item.till instanceof Date && item.till <= now)) ? true : false;
+    },
+
+    [FILTER_TYPES.DONE]: function(item) {
+        var now = new Date();
+        return (item && item.state === ITEM_STATES.DONE) ? true : false;
+    },
+
+};
+
+
+var changeEvent = 'change',
+    todoItems = getItemsFromStorage();
+
+
+// flux store
 
 var store = {
 
-    __proto__: EventEmitter,
+    __proto__: EventEmitter.prototype,
 
     // events interface
 
@@ -42,15 +73,27 @@ var store = {
         this.on(changeEvent, callback);
     },
 
+    removeChangeListener: function(callback) {
+        this.removeListener(changeEvent, callback);
+    },
+
     // data interface
 
     getAllItems() {
         return todoItems;
-    };
+    },
 
-    getActiveItems() {
-        return todoItems;
-    };
+    getFilteredItems(filterName) {
+        var result = this.getAllItems();
+
+        if(filterName &&
+                typeof dataFilters[filterName] === 'function') {
+            let predicate = dataFilters[filterName];
+            result = result.filter(predicate);
+        }
+
+        return result;
+    },
 
     addItem( from, till, desc ) {
         if( from && till && desc ) {

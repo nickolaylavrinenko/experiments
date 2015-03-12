@@ -86,12 +86,11 @@ if( window.localStorage ){
     };
 }
 
-var StorageProxy  {
+var StorageProxy = {
     __proto__: storageAPI,
     _storage: storage
 };
 
 
-export {
-    StorageProxy
-};
+export default StorageProxy;
+
