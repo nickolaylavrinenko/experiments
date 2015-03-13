@@ -10,6 +10,7 @@ const itemStates = {
     'ACTIVE': 'active',
     'REMOVED': 'removed',
     'DONE': 'done',
+    'MODIFICATION': 'modification',
 };
 
 const filterTypes = {

@@ -26,6 +26,7 @@
     "less": "^2.4.0",
     "less-loader": "^2.0.0",
     "react": "^0.12.2",
+    "react-dnd": "^0.9.6",
     "react-router": "^0.12.4",
     "style-loader": "^0.8.3",
     "webpack": "^1.7.2",

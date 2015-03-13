@@ -1,43 +1,49 @@
+
 @import "./common.less";
 
 
 //todo form
 
-.todo-form {
-    .full-wrapped(20px);
-    .full-bordered(3px, @border-color);
+.todoForm {
+    .fullWrappedMixIn(20px);
+    .fullBorderedMixIn(3px, @borderColor);
     border-radius: 10px; 
-    color: @text-color;
+    color: @textColor;
     font-size: 14px;
-    box-shadow: 0 0 10px grey;
+    box-shadow: 1px 2px 10px grey;
+    position: relative;
 
-//    &:invalid {
-//        .full-bordered(3px, @alert-color);
-//    } 
+    &.pressed {
+      top: 1px;
+      box-shadow: 0 0 5px grey;
+    }
 
-    .field-block {
-        .t-indented(20px);
+    &_fieldBlock {
+        .tIndentedMixIn(20px);
         &:first-child {
-            .not-indented();
-        }
-        label {
-            display: block;
-            .b-indented(10px);
-            font-weight: bold;
-            font-size: 15px;
+            .notIndentedMixIn();
         }
     }
-    input, textarea {
-        .full-bordered(1px, @border-color);
+
+    & label {
+        .bIndentedMixIn(10px);
+        display: block;
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    & input, & textarea {
+        .fullBorderedMixIn(1px, @borderColor);
         border-radius: 5px;
-        background: @input-background-color;
-        color: @text-color;
+        background: @inputBackgroundColor;
+        color: @textColor;
 
         &:focus:invalid {
-            .full-bordered(1px, @alert-color);
+            .fullBorderedMixIn(1px, @alertColor);
         }
     }
-    .todo-body {
+
+    &_body {
         max-width: 535px;
         min-width: 300px;
         width: 100%;
@@ -45,19 +51,21 @@
         padding: 10px;
         resize: none;
     }
-    .todo-till-date {
+
+    &_tillDate {
         padding: 10px;
         width: 145px;
     }
-    .submit-button {
+
+    &_submitButton {
+        .fullBorderedMixIn(1px, @borderColor);
         cursor: pointer;
         float: right;
         width: 167px; 
         height: 43px;
-        .full-bordered(1px, @border-color);
         border-radius: 5px;
-        background: @button-color;
-        color: @text-color;
+        background: @buttonColor;
+        color: @textColor;
     }
 }
 

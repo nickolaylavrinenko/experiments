@@ -1,5 +1,12 @@
 
+// styles
+import './item.less';
+
+
+// dependencies
+import $ from "jquery";
 import React from 'react';
+import actions from '../actions/itemActions';
 import {getFullDateString} from '../utils/date';
 import {
     itemActionTypes as ACTION_TYPES,
@@ -9,198 +16,155 @@ import {
 
 
 // animation parameters
-const WAITING_TIMEOUT = 1000,
-    ANIMATION_TIMEOUT= 300;
+const WAITING_TIMEOUT = 1000;
 
 
 var Item = React.createClass({
 
+    getInitialState() {
+        return {state: this.props.state};
+    },
+
     render(){
           
-        var class_name = this.props.state || '';
-        var buttonsBlock = '';
-        var stateBlock = '';
-        var now = new Date();
+        const state = this.state.state || '',
+            now = new Date(),
+            from = this.props.from,
+            till = this.props.till,
+            desc = this.props.desc;
 
-        // determine buttons and state blocks
-        if( this.props.state === ITEM_STATES.ACTIVE ) {
-            buttonsBlock = (
-              <div className="todo-buttons" ref="buttons"> 
-                <div className="order" 
-                     draggable="true"
-                     ref="order_button">
-                  {'\u21C5'}
+        var buttons = '';
+
+        // determine buttons
+        if( state === ITEM_STATES.MODIFICATION ) {
+            buttons = (
+                <div className="todoItem_buttons" ref="buttons"> 
+                    <div className="order" 
+                         draggable="true">
+                        {'\u21C5'}
+                    </div>
+                    <div className="done" 
+                         onClick={this._markAsDone}>
+                        {'\u2714'}
+                    </div>
+                    <div className="removed" 
+                         onClick={this._markAsRemoved}>
+                        {'\u2718'}
+                    </div>
                 </div>
-                <div className="done" 
-                     ref="finish_button">
-                  {'\u2714'}
-                </div>
-                <div className="removed" 
-                     ref="remove_button">
-                  {'\u2718'}
-                </div>
-              </div>
             );
-//              <div className="todo-state">
-//                <div className="outdated">{'\u01C3'}</div>
-//              </div>
-        } else if( this.props.state === ITEM_STATES.DONE ) {
-            stateBlock = (
-              <div className="todo-state">
-                <div className="done">{'\u2714'}</div>
-              </div>
+        } else if( state === ITEM_STATES.ACTIVE ) {
+            if(till && till instanceof Date && till <= now) {
+                buttons = (
+                    <div className="todoItem_state"> 
+                        <div className="outdated">{'\u01C3'}</div>
+                    </div>
+                );
+            }
+        } else if( state === ITEM_STATES.DONE ) {
+            buttons = (
+                <div className="todoItem_buttons" ref="buttons"> 
+                    <div className="done">{'\u2714'}</div>
+                </div>
             );
-        } else if( this.props.state === ITEM_STATES.REMOVED ) {
-            stateBlock = (
-              <div className="todo-state">
-                <div className="removed">{'\u2718'}</div>
-              </div>
+        } else if( state === ITEM_STATES.REMOVED ) {
+            buttons = (
+                <div className="todoItem_buttons" ref="buttons"> 
+                    <div className="removed">{'\u2718'}</div>
+                </div>
             );
         }
 
         return ( 
-            <li className={"todo-item " + class_name} 
+            <li className={"todoItem " + state} 
                 key={this.props.key}
-                onMouseDown={this.startWaiting}
-                onMouseUp={this.stopWaiting}
-                onMouseOut={this.stopWaiting}
+                onMouseDown={this._startWaiting}
+                onMouseUp={this._stopWaiting}
+                onMouseOut={this._stopWaiting}
                 onDragStart={this._handle_drag_start}
                 onDragEnd={this._handle_drag_end}
                 ref="root">
-              <div className="todo-wrapper" 
-                   ref="content">
-                <span className="todo-body">
-                  {this.props.desc}
-                </span>
-                <div className="todo-footer">
-                  <span className="todo-from-date">
-                    from <time>{getFullDateString(this.props.from)}</time>
-                  </span>
-                  <span className="todo-till-date">
-                    to <time>{getFullDateString(this.props.till)}</time>
-                  </span>
+                <div className="todoItem_contentWrapper" 
+                     ref="content">
+                    <span className="todoItem_body">
+                        {desc}
+                    </span>
+                    <div className="todoItem_footer">
+                        <span className="todoItem_footer_fromDate">
+                            from <time>{getFullDateString(from)}</time>
+                        </span>
+                        <span className="todoItem_footer_tillDate">
+                            to <time>{getFullDateString(till)}</time>
+                        </span>
+                    </div>
                 </div>
-              </div>
-              { buttonsBlock }
-              { stateBlock }
+                { buttons }
             </li>
         );
 
     },
 
-    startWaiting() {
+    componentWillUpdate(nextProps, nextState) {
+        const _this = this,
+            $root = $(this.refs.root.getDOMNode());
 
-        var _this = this;
-        var $root = $(this.refs.root.getDOMNode());
-
-        if( this.props.state === ITEM_STATES.ACTIVE ) {
-            if( !_this._modify_mode ) {
-                $root.css('cursor', 'wait');
-                _this._timeout_id = window.setTimeout(function(){
-                    $root.css('cursor', 'default');
-                    delete _this._timeout_id;
-                    _this.switchToModify();
-                }, WAITING_TIMEOUT);
-            }
+        // bind window click event while modification
+        if(nextState.state &&
+                nextState.state === ITEM_STATES.MODIFICATION) {
+            $(document.body).on('click', function(e){
+                const $target = $(e.target);
+                if( !$.contains($root.get(0), $target.get(0)) && !$target.is($root) ) {
+                    _this._switchBack();
+                }
+            });
+        } else {
+            $(document.body).off('click');
         }
- 
     },
 
-    stopWaiting() {
+    _startWaiting() {
+        const _this = this,
+            $root = $(this.refs.root.getDOMNode());
 
-        if( this.props.state === ITEM_STATES.ACTIVE ) {
+        if( this.state.state === ITEM_STATES.ACTIVE ) {
+            $(document.body).trigger('click');
+            $root.css('cursor', 'wait');
+            _this._timeout_id = window.setTimeout(function(){
+                $root.css('cursor', 'default');
+                delete _this._timeout_id;
+                _this._switchToModification();
+            }, WAITING_TIMEOUT);
+        }
+    },
+
+    _stopWaiting() {
+        const _this = this,
+            $root = $(this.refs.root.getDOMNode());
+
+        if( this.state.state === ITEM_STATES.ACTIVE ) {
             if( this._timeout_id ) {
-                var $root = $(this.refs.root.getDOMNode());
                 $root.css('cursor', 'pointer');
                 window.clearTimeout(this._timeout_id);
                 delete this._timeout_id;
-                this._modify_mode = false;
+                _this._switchBack();
             }
         }
-
     },
 
-    switchToModify() {
-
-        var _this = this;
-        var $root = $(this.refs.root.getDOMNode());
-
-        this._modify_mode = true;
-        // add modify class
-        if( !$root.hasClass('modify') ) {
-            $root.addClass('modify');
-        }
-
-        // wait for content animation
-        window.setTimeout(function(){
-
-            // show buttons
-            var $buttons = $(_this.refs.buttons.getDOMNode());
-            $buttons.fadeIn(ANIMATION_TIMEOUT, function(){
-
-                // bind click events when UI will be ready
-                $(document.body).on('click', function(e){
-                    var $target = $(e.target);
-                    if( !$.contains($root.get(0), $target.get(0)) && !$target.is($root) ) {
-                        _this.switchBack();
-                    }
-                });
-                var $finish_button = $(_this.refs.finish_button.getDOMNode());
-                var $remove_button = $(_this.refs.remove_button.getDOMNode());
-                $finish_button.on('click', _this.markAsDone);
-                $remove_button.on('click', _this.markAsRemoved);
-
-            });
-        }, ANIMATION_TIMEOUT);
-
+    _switchToModification() {
+        this.setState({state: ITEM_STATES.MODIFICATION});
     },
 
-    switchBack() {
-
-        var _this = this;
-        var $root = $(this.refs.root.getDOMNode());
-        var $buttons = $(_this.refs.buttons.getDOMNode());
-        var $finish_button = $(_this.refs.finish_button.getDOMNode());
-        var $remove_button = $(_this.refs.remove_button.getDOMNode());
-        var deferred = $.Deferred();
-
-        // remove modify class
-        if( $root.hasClass('modify') ) {
-            $root.removeClass('modify');
-        }
-
-        // unbind events
-        $(document.body).off('click');
-        $finish_button.off('click');
-        $remove_button.off('click');
-
-        //hide buttons
-        $buttons.fadeOut(ANIMATION_TIMEOUT, function(){
-            deferred.resolve();
-        });
-        deferred.done(function(){
-            this.props.parent.moveItem();
-            this._modify_mode = false;
-        }.bind(this));
-
-        return deferred;
-
+    _switchBack() {
+        this.setState({state: ITEM_STATES.ACTIVE});
     },
 
-    markAsDone(){
-        var $content = $(this.refs.content.getDOMNode());
-        this.switchBack().done(function(){
-            $content.off('mousedown mouseup mouseout');
-            this.props.parent.markAsDone(this.props.key);
-        }.bind(this));
+    _markAsDone(){
+        actions.markAsDone(this.props.key);
     },
 
-    markAsRemoved() {
-        var $content = $(this.refs.content.getDOMNode());
-        this.switchBack().done(function(){
-            $content.off('mousedown mouseup mouseout');
-            this.props.parent.markAsRemoved(this.props.key);
-        }.bind(this));
+    _markAsRemoved() {
+        actions.markAsRemoved(this.props.key);
     },
 
     _handle_drag_start(e) {

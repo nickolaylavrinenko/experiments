@@ -7,14 +7,14 @@ import {
 
 var itemActions = {
 
-    markAsDone( index ) {
+    markAsDone(index) {
         dispatcher.dispatch({
             type: ACTION_TYPES.DONE,
             index,
         });
     },
 
-    markAsRemoved( index ) {
+    markAsRemoved(index) {
         dispatcher.dispatch({
             type: ACTION_TYPES.REMOVED,
             index,

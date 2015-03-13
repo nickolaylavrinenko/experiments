@@ -43,7 +43,7 @@ var List = React.createClass({
         });
 
         return (
-            <ul className="todo-list"
+            <ul className="todoList"
                 ref="list"
                 onDragStart={this._handle_drag_start}
                 onDragOver={this._handle_drag_over}>

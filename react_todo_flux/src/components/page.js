@@ -13,20 +13,20 @@ var NotFoundPage = React.createClass({
 
     render : function() {
         return (
-            <div className="app-wrapper">
-                <div className="top-container">
-                    <header className="app-header">
-                        <div className="logo">TODO_APP</div>
+            <div className="appWrapper">
+                <div className="topContainer">
+                    <header className="appHeader">
+                        <div className="appHeader_logo">TODO_APP</div>
                     </header>
-                    <p className="not-found-message"> 
+                    <p className="errorMessage"> 
                         Sorry, the page is not found.
                     </p>
                     <div className="push"></div>
                 </div>
-                <div className="bottom-container">
-                    <footer className="app-footer">
-                        <span className="signature">kolyan-molyan.com</span>
-                        <span className="year">{""+(new Date()).getFullYear()}</span>
+                <div className="bottomContainer">
+                    <footer className="appFooter">
+                        <span className="appFooter_signature">kolyan-molyan.com</span>
+                        <span className="appFooter_year">{""+(new Date()).getFullYear()}</span>
                     </footer>
                 </div>
             </div>
@@ -40,13 +40,13 @@ var Page = React.createClass({
 
     render : function() {
         return (
-            <div className="app-wrapper">
-                <div className="top-container">
-                    <header className="app-header">
-                        <div className="logo">
+            <div className="appWrapper">
+                <div className="topContainer">
+                    <header className="appHeader">
+                        <div className="appHeader_logo">
                             <Link to="index">TODO_APP</Link>
                         </div>
-                        <div className="menu">
+                        <div className="appHeader_menu">
                             filters: 
                             <Link to="filter" params={{filter: "all"}}>all</Link>
                             <Link to="filter" params={{filter: "active"}}>active</Link>
@@ -54,18 +54,18 @@ var Page = React.createClass({
                             <Link to="filter" params={{filter: "done"}}>done</Link>
                         </div>
                     </header>
-                    <div className="list-container">
+                    <div className="listContainer">
                         <RouteHandler {...this.props}/>
                     </div>
                     <div className="push"></div>
                 </div>
-                <div className="bottom-container">
-                    <div className="form-container">
+                <div className="bottomContainer">
+                    <div className="formContainer">
                         <Form/>
                     </div>
-                    <footer className="app-footer">
-                        <span className="signature">kolyan-molyan.com</span>
-                        <span className="year">{ ""+(new Date()).getFullYear() }</span>
+                    <footer className="appFooter">
+                        <span className="appFooter_signature">kolyan-molyan.com</span>
+                        <span className="appFooter_year">{ ""+(new Date()).getFullYear() }</span>
                     </footer>
                 </div>
             </div>

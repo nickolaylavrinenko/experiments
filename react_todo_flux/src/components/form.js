@@ -2,6 +2,7 @@
 import './form.less';
 
 // dependensies
+import $ from 'jquery';
 import React from 'react';
 import {escapeHTML} from '../utils/html';
 import {ISODateStringToDate} from '../utils/date';
@@ -13,27 +14,54 @@ var Form = React.createClass({
     render() {
 
         return ( 
-            <form className="todo-form" onSubmit={this.handleSubmit} ref="form">
-              <div className="field-block">
+            <form className="todoForm" onSubmit={this._handleFormSubmit} ref="form">
+              <div className="todoForm_fieldBlock">
                 <label htmlFor="desc">description:</label>
-                <textarea className="todo-body" 
+                <textarea className="todoForm_body" 
                           name="desc"
                           required="required"/>
               </div>
-              <div className="field-block">
+              <div className="todoForm_fieldBlock">
                 <label htmlFor="till">dead-line:</label>
-                <input className="todo-till-date" 
+                <input className="todoForm_tillDate" 
                        name="till" 
                        type="date" 
                        required="required"/>
-                <button className="submit-button">Add</button>
+                <button
+                    className="todoForm_submitButton"
+                    onMouseDown={this._handleMouseDown}
+                    onMouseUp={this._handleMouseUp}>
+                    Add
+                </button>
               </div>
             </form>
         );
 
     },
 
-    handleSubmit(e) {
+    _handleMouseDown(e) {
+
+        e.preventDefault()
+
+        const $form = $(this.refs.form.getDOMNode());
+        
+        if(!$form.hasClass('pressed')) {
+            $form.addClass('pressed');
+        }
+    },
+
+    _handleMouseUp(e) {
+
+        e.preventDefault()
+
+        const $form = $(this.refs.form.getDOMNode());
+        
+        if($form.hasClass('pressed')) {
+            $form.removeClass('pressed');
+        }
+    },
+
+    _handleFormSubmit(e) {
 
         e.preventDefault();
 

@@ -1,0 +1,144 @@
+
+@import "./common.less";
+
+
+// MixIns
+
+.buttonsBlockMixIn() {
+    & > * {
+        display: inline-block;
+        vertical-align: middle;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 30px;
+        text-align: center;
+        margin: 15px 0 0 10px;
+        font-size: 20px;
+    }
+    .done {
+        background: green;
+    }
+    .removed, .outdated {
+        background: red;
+    }
+    .order {
+        background: #bfbfbf;
+        cursor: move;
+    }
+}
+
+
+// todo item styles
+
+.todoItem {
+    .vWrappedMixIn(20px);
+    .bBorderedMixIn(1px, @borderColor);
+    position: relative;
+    line-height: 20px;
+    font-size: 17px;
+    cursor: pointer;
+
+    &:last-child {
+        border: 0;
+    }
+
+    // modifiers
+
+    &.modification &_contentWrapper,
+    &.removed &_contentWrapper,
+    &.done &_contentWrapper {
+        opacity: 0.5;
+    }
+
+    &.done, &.removed {
+        cursor: default;
+    }
+
+    // right buttons block
+
+    &_buttons, &_state {
+        .buttonsBlockMixIn();
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 2;
+    }
+
+    &_buttons {
+        & > * {
+            cursor: pointer;
+        }
+    }
+
+    &_state {
+        & > * {
+            opacity: 0.4;
+        }
+    }
+
+    // todo content block
+
+    &_contentWrapper {
+        z-index: 1;
+
+        & > * { 
+            -webkit-transition: all .5s ease-in-out;
+            -moz-transition: all .5s ease-in-out;
+            -o-transition: all .5s ease-in-out;
+            transition: all .5s ease-in-out;
+        }
+    }
+
+    &_body {
+        display: block;
+        z-index: 1;
+        font-size: 20px;
+    }
+
+    &_footer {
+        display: block;
+        .tIndentedMixIn(10px);
+        font-size: 10px;
+        line-height: 15px;
+        height: 15px;
+        z-index: 1;
+
+        &_fromDate {
+            float: left;
+
+            &:after {
+                .rightArrowMixIn(@textColor);
+            }
+
+            time {
+                font-size: 13px;
+                font-weight: bold;
+                margin-left: 5px;
+            }
+        }
+
+        &_tillDate {
+            float: right;
+
+            &:before {
+                .rightArrowMixIn(@textColor);
+            }
+
+            &.upcoming {
+                color: @alertColor;
+                &:before {
+                    .rightArrowMixIn(@alertColor);
+                }
+            }
+
+            & time {
+                font-size: 13px;
+                font-weight: bold;
+                margin-left: 5px;
+            }
+        }
+    }
+} 
+
