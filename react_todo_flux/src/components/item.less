@@ -51,7 +51,11 @@
         opacity: 0.5;
     }
 
-    &.done, &.removed {
+    &.active:active {
+        cursor: wait;
+    }
+
+    &.done, &.removed, &.modification {
         cursor: default;
     }
 

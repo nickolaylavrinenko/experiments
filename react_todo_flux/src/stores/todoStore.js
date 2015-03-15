@@ -1,5 +1,6 @@
 
 import Flux from 'flux';
+import ShortId from 'shortid';
 import {EventEmitter} from 'events';
 import dispatcher from '../dispatcher';
 import StorageProxy from '../utils/storage';
@@ -95,22 +96,27 @@ var store = {
         return result;
     },
 
-    addItem( from, till, desc ) {
-        if( from && till && desc ) {
-            todoItems.push({'from': from,
+    addItem(from, till, desc) {
+        if(from && till && desc) {
+            const id = ShortId.generate();
+            todoItems.push({'id': id,
+                            'from': from,
                             'till': till,
                             'desc': desc,
                             'state': ITEM_STATES.ACTIVE});
         }
     },
  
-    moveItem( from, to ) {
-        if ( isFinite(from) && isFinite(to) ) {
-            if( from < to ) {
-               todoItems.splice(to, 0, todoItems.splice(from, 1)[0]);
-            } else if ( to < from ) {
-               todoItems.splice(from, 0, todoItems.splice(to, 1)[0]);
-            }
+    moveItem(fromId, afterId) {
+        const from = todoItems.filter(i => i.id === fromId)[0],
+            after = todoItems.filter(i => i.id === afterId)[0],
+            fromIndex = todoItems.indexOf(from),
+            afterIndex = todoItems.indexOf(after);
+
+        if( fromIndex < afterIndex ) {
+           todoItems.splice(afterIndex, 0, todoItems.splice(fromIndex, 1)[0]);
+        } else if ( afterIndex < fromIndex ) {
+           todoItems.splice(fromIndex, 0, todoItems.splice(afterIndex, 1)[0]);
         }
     },
 

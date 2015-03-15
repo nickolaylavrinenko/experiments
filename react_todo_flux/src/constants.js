@@ -21,8 +21,13 @@ const filterTypes = {
 };
 
 
+const dragDropTypes = {
+    'ITEM': 'item'
+};
+
 export {
     itemActionTypes,
     itemStates,
-    filterTypes
+    filterTypes,
+    dragDropTypes,
 };

@@ -6,12 +6,15 @@ import './item.less';
 // dependencies
 import $ from "jquery";
 import React from 'react';
-import actions from '../actions/itemActions';
+import {DragDropMixin} from 'react-dnd';
+import ItemActions from '../actions/itemActions';
+import ListActions from '../actions/listActions';
 import {getFullDateString} from '../utils/date';
 import {
     itemActionTypes as ACTION_TYPES,
     itemStates as ITEM_STATES,
-    filterTypes as FILTER_TYPES 
+    filterTypes as FILTER_TYPES,
+    dragDropTypes as DND_TYPES,
 } from '../constants';
 
 
@@ -19,7 +22,42 @@ import {
 const WAITING_TIMEOUT = 1000;
 
 
-var Item = React.createClass({
+// drag'n'drop handlers
+const dragSource = {
+    canDrag(component) {
+        return component.state.state &&
+            component.state.state === ITEM_STATES.MODIFICATION;
+    },
+    beginDrag(component) {
+        console.log('>>> Begin drag', component);
+        return {
+          item: {
+            id: component.props.id
+          }
+        };
+    }
+};
+
+const dropTarget = {
+    over(component, item) {
+        console.log('>>> Move', item.id, component.props.id);
+        ListActions.moveItem(item.id, component.props.id);
+    }
+};
+
+
+const Item = React.createClass({
+
+    mixins: [DragDropMixin],
+
+    statics: {
+        configureDragDrop(register) {
+            register(DND_TYPES.ITEM, {
+                dragSource,
+                dropTarget
+            });
+        },
+    },
 
     getInitialState() {
         return {state: this.props.state};
@@ -75,15 +113,20 @@ var Item = React.createClass({
             );
         }
 
+        const { isDragging } = this.getDragState(DND_TYPES.ITEM),
+            opacity = isDragging ? 0: 1;
+
         return ( 
-            <li className={"todoItem " + state} 
+            <li {...this.dragSourceFor(DND_TYPES.ITEM)}
+                {...this.dropTargetFor(DND_TYPES.ITEM)}
+                className={"todoItem " + state} 
                 key={this.props.key}
                 onMouseDown={this._startWaiting}
                 onMouseUp={this._stopWaiting}
                 onMouseOut={this._stopWaiting}
-                onDragStart={this._handle_drag_start}
-                onDragEnd={this._handle_drag_end}
-                ref="root">
+                draggable="true"
+                ref="root"
+                style={{opacity}}>
                 <div className="todoItem_contentWrapper" 
                      ref="content">
                     <span className="todoItem_body">
@@ -104,22 +147,32 @@ var Item = React.createClass({
 
     },
 
-    componentWillUpdate(nextProps, nextState) {
+    componentDidUpdate(prevProps, prevState) {
+        const state = this.state.state;
+
+        // bind window click event while modification
+        if(state &&
+                state === ITEM_STATES.MODIFICATION) {
+            this._bindWindowClickEvent();
+        } else {
+            this._unbindWindowClickEvent();
+        }
+    },
+
+    _bindWindowClickEvent(){
         const _this = this,
             $root = $(this.refs.root.getDOMNode());
 
-        // bind window click event while modification
-        if(nextState.state &&
-                nextState.state === ITEM_STATES.MODIFICATION) {
-            $(document.body).on('click', function(e){
-                const $target = $(e.target);
-                if( !$.contains($root.get(0), $target.get(0)) && !$target.is($root) ) {
-                    _this._switchBack();
-                }
-            });
-        } else {
-            $(document.body).off('click');
-        }
+        $(document.body).on('click', function(e){
+            const $target = $(e.target);
+            if( !$.contains($root.get(0), $target.get(0)) && !$target.is($root) ) {
+                _this._switchBack();
+            }
+        });
+    },
+
+    _unbindWindowClickEvent(){
+        $(document.body).off('click');
     },
 
     _startWaiting() {
@@ -128,9 +181,7 @@ var Item = React.createClass({
 
         if( this.state.state === ITEM_STATES.ACTIVE ) {
             $(document.body).trigger('click');
-            $root.css('cursor', 'wait');
             _this._timeout_id = window.setTimeout(function(){
-                $root.css('cursor', 'default');
                 delete _this._timeout_id;
                 _this._switchToModification();
             }, WAITING_TIMEOUT);
@@ -143,7 +194,6 @@ var Item = React.createClass({
 
         if( this.state.state === ITEM_STATES.ACTIVE ) {
             if( this._timeout_id ) {
-                $root.css('cursor', 'pointer');
                 window.clearTimeout(this._timeout_id);
                 delete this._timeout_id;
                 _this._switchBack();
@@ -160,26 +210,26 @@ var Item = React.createClass({
     },
 
     _markAsDone(){
-        actions.markAsDone(this.props.key);
+        ItemActions.markAsDone(this.props.key);
     },
 
     _markAsRemoved() {
-        actions.markAsRemoved(this.props.key);
+        ItemActions.markAsRemoved(this.props.key);
     },
 
-    _handle_drag_start(e) {
-        var $item = $(e.currentTarget);
-        var $control = $(e.target);
-        var item_offset = $item.offset();
-        var control_offset = $control.offset();
-        var shift = {
-           top: Math.abs(item_offset.top-control_offset.top),
-           left: Math.abs(item_offset.left-control_offset.left),
-        };
-        e.dataTransfer.effectAllowed = 'none';
-        e.dataTransfer.setData("text/html", $item[0]);
-        e.dataTransfer.setDragImage($item[0], shift.left, shift.top);
-    },
+//    _handleDragStart(e) {
+//        var $item = $(e.currentTarget);
+//        var $control = $(e.target);
+//        var item_offset = $item.offset();
+//        var control_offset = $control.offset();
+//        var shift = {
+//           top: Math.abs(item_offset.top-control_offset.top),
+//           left: Math.abs(item_offset.left-control_offset.left),
+//        };
+//        e.dataTransfer.effectAllowed = 'none';
+//        e.dataTransfer.setData("text/html", $item[0]);
+//        e.dataTransfer.setDragImage($item[0], shift.left, shift.top);
+//    },
 
 });
 
