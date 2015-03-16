@@ -11,7 +11,7 @@ import ItemActions from '../actions/itemActions';
 import ListActions from '../actions/listActions';
 import {getFullDateString} from '../utils/date';
 import {
-    itemActionTypes as ACTION_TYPES,
+    actionTypes as ACTION_TYPES,
     itemStates as ITEM_STATES,
     filterTypes as FILTER_TYPES,
     dragDropTypes as DND_TYPES,
@@ -25,11 +25,10 @@ const WAITING_TIMEOUT = 1000;
 // drag'n'drop handlers
 const dragSource = {
     canDrag(component) {
-        return component.state.state &&
-            component.state.state === ITEM_STATES.MODIFICATION;
+        return component.props.state &&
+            component.props.state === ITEM_STATES.MODIFICATION;
     },
     beginDrag(component) {
-        console.log('>>> Begin drag', component);
         return {
           item: {
             id: component.props.id
@@ -40,8 +39,9 @@ const dragSource = {
 
 const dropTarget = {
     over(component, item) {
-        console.log('>>> Move', item.id, component.props.id);
-        ListActions.moveItem(item.id, component.props.id);
+        if(item.id !== component.props.id) {
+            ListActions.moveItem(item.id, component.props.id);
+        }
     }
 };
 
@@ -65,22 +65,18 @@ const Item = React.createClass({
 
     render(){
           
-        const state = this.state.state || '',
-            now = new Date(),
+        const now = new Date(),
+            state = this.props.state,
             from = this.props.from,
             till = this.props.till,
             desc = this.props.desc;
 
         var buttons = '';
 
-        // determine buttons
+        // buttons and state
         if( state === ITEM_STATES.MODIFICATION ) {
             buttons = (
                 <div className="todoItem_buttons" ref="buttons"> 
-                    <div className="order" 
-                         draggable="true">
-                        {'\u21C5'}
-                    </div>
                     <div className="done" 
                          onClick={this._markAsDone}>
                         {'\u2714'}
@@ -101,13 +97,13 @@ const Item = React.createClass({
             }
         } else if( state === ITEM_STATES.DONE ) {
             buttons = (
-                <div className="todoItem_buttons" ref="buttons"> 
+                <div className="todoItem_state"> 
                     <div className="done">{'\u2714'}</div>
                 </div>
             );
         } else if( state === ITEM_STATES.REMOVED ) {
             buttons = (
-                <div className="todoItem_buttons" ref="buttons"> 
+                <div className="todoItem_state"> 
                     <div className="removed">{'\u2718'}</div>
                 </div>
             );
@@ -120,12 +116,11 @@ const Item = React.createClass({
             <li {...this.dragSourceFor(DND_TYPES.ITEM)}
                 {...this.dropTargetFor(DND_TYPES.ITEM)}
                 className={"todoItem " + state} 
-                key={this.props.key}
                 onMouseDown={this._startWaiting}
                 onMouseUp={this._stopWaiting}
                 onMouseOut={this._stopWaiting}
-                draggable="true"
                 ref="root"
+                draggable="true"
                 style={{opacity}}>
                 <div className="todoItem_contentWrapper" 
                      ref="content">
@@ -148,14 +143,18 @@ const Item = React.createClass({
     },
 
     componentDidUpdate(prevProps, prevState) {
-        const state = this.state.state;
+        if(prevProps.state !== this.props.state) {
+            if(this.props.state === ITEM_STATES.MODIFICATION) {
+                this._bindWindowClickEvent();
+            } else {
+                this._unbindWindowClickEvent();
+            }
+        }
+    },
 
-        // bind window click event while modification
-        if(state &&
-                state === ITEM_STATES.MODIFICATION) {
+    componentDidMount() {
+        if(this.props.state === ITEM_STATES.MODIFICATION) {
             this._bindWindowClickEvent();
-        } else {
-            this._unbindWindowClickEvent();
         }
     },
 
@@ -163,27 +162,26 @@ const Item = React.createClass({
         const _this = this,
             $root = $(this.refs.root.getDOMNode());
 
-        $(document.body).on('click', function(e){
+        $(document.body).on('mousedown', function(e){
             const $target = $(e.target);
             if( !$.contains($root.get(0), $target.get(0)) && !$target.is($root) ) {
-                _this._switchBack();
+                _this._markAsActive();
             }
         });
     },
 
-    _unbindWindowClickEvent(){
-        $(document.body).off('click');
+    _unbindWindowClickEvent(){  
+        $(document.body).off('mousedown');
     },
 
     _startWaiting() {
         const _this = this,
             $root = $(this.refs.root.getDOMNode());
 
-        if( this.state.state === ITEM_STATES.ACTIVE ) {
-            $(document.body).trigger('click');
+        if( this.props.state === ITEM_STATES.ACTIVE ) {
             _this._timeout_id = window.setTimeout(function(){
                 delete _this._timeout_id;
-                _this._switchToModification();
+                _this._markAsInModification();
             }, WAITING_TIMEOUT);
         }
     },
@@ -192,44 +190,32 @@ const Item = React.createClass({
         const _this = this,
             $root = $(this.refs.root.getDOMNode());
 
-        if( this.state.state === ITEM_STATES.ACTIVE ) {
+        if( this.props.state === ITEM_STATES.ACTIVE ) {
             if( this._timeout_id ) {
                 window.clearTimeout(this._timeout_id);
                 delete this._timeout_id;
-                _this._switchBack();
+                _this._markAsActive();
             }
         }
     },
 
-    _switchToModification() {
-        this.setState({state: ITEM_STATES.MODIFICATION});
+    _markAsActive(){
+        ItemActions.setState(this.props.id, ITEM_STATES.ACTIVE);
     },
 
-    _switchBack() {
-        this.setState({state: ITEM_STATES.ACTIVE});
+    _markAsInModification() {
+        ItemActions.setState(this.props.id, ITEM_STATES.MODIFICATION);
     },
 
     _markAsDone(){
-        ItemActions.markAsDone(this.props.key);
+        this._unbindWindowClickEvent();
+        ItemActions.setState(this.props.id, ITEM_STATES.DONE);
     },
 
     _markAsRemoved() {
-        ItemActions.markAsRemoved(this.props.key);
+        this._unbindWindowClickEvent();
+        ItemActions.setState(this.props.id, ITEM_STATES.REMOVED);
     },
-
-//    _handleDragStart(e) {
-//        var $item = $(e.currentTarget);
-//        var $control = $(e.target);
-//        var item_offset = $item.offset();
-//        var control_offset = $control.offset();
-//        var shift = {
-//           top: Math.abs(item_offset.top-control_offset.top),
-//           left: Math.abs(item_offset.left-control_offset.left),
-//        };
-//        e.dataTransfer.effectAllowed = 'none';
-//        e.dataTransfer.setData("text/html", $item[0]);
-//        e.dataTransfer.setDragImage($item[0], shift.left, shift.top);
-//    },
 
 });
 

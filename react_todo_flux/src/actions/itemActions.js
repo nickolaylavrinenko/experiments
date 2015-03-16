@@ -1,23 +1,17 @@
 
 import dispatcher from '../dispatcher';
 import {
-    itemActionTypes as ACTION_TYPES
+    actionTypes as ACTION_TYPES
 } from '../constants';
 
 
 var itemActions = {
 
-    markAsDone(index) {
+    setState(id, state) {
         dispatcher.dispatch({
-            type: ACTION_TYPES.DONE,
-            index,
-        });
-    },
-
-    markAsRemoved(index) {
-        dispatcher.dispatch({
-            type: ACTION_TYPES.REMOVED,
-            index,
+            type: ACTION_TYPES.SET_ITEM_STATE,
+            id,
+            state
         });
     },
 

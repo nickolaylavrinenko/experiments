@@ -47,11 +47,12 @@ var Page = React.createClass({
                             <Link to="index">TODO_APP</Link>
                         </div>
                         <div className="appHeader_menu">
-                            filters: 
+                            Filters: 
                             <Link to="filter" params={{filter: "all"}}>all</Link>
                             <Link to="filter" params={{filter: "active"}}>active</Link>
                             <Link to="filter" params={{filter: "outdated"}}>outdated</Link>
                             <Link to="filter" params={{filter: "done"}}>done</Link>
+                            <Link to="filter" params={{filter: "removed"}}>removed</Link>
                         </div>
                     </header>
                     <div className="listContainer">

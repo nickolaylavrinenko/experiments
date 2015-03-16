@@ -5,7 +5,7 @@ import {EventEmitter} from 'events';
 import dispatcher from '../dispatcher';
 import StorageProxy from '../utils/storage';
 import {
-    itemActionTypes as ACTION_TYPES,
+    actionTypes as ACTION_TYPES,
     itemStates as ITEM_STATES,
     filterTypes as FILTER_TYPES 
 } from '../constants';
@@ -32,23 +32,29 @@ var saveItemsToStorage = function(items) {
 var dataFilters = {
 
     [FILTER_TYPES.ALL]: function(item) {
-        return (item && item.state !== ITEM_STATES.REMOVED) ? true : false; 
+        return true;
     },
 
     [FILTER_TYPES.ACTIVE]: function(item) {
-        var now = new Date();
-        return (item && item.state === ITEM_STATES.ACTIVE) ? true : false;
+        return (item &&
+                (item.state === ITEM_STATES.ACTIVE ||
+                item.state === ITEM_STATES.MODIFICATION)) ? true : false;
     },
 
     [FILTER_TYPES.OUTDATED]: function(item) {
         var now = new Date();
-        return (item && (item.state === ITEM_STATES.ACTIVE) && 
+        return (item && 
+                ((item.state === ITEM_STATES.ACTIVE) || 
+                (item.state === ITEM_STATES.MODIFICATION)) && 
                (item.till && item.till instanceof Date && item.till <= now)) ? true : false;
     },
 
     [FILTER_TYPES.DONE]: function(item) {
-        var now = new Date();
         return (item && item.state === ITEM_STATES.DONE) ? true : false;
+    },
+
+    [FILTER_TYPES.REMOVED]: function(item) {
+        return (item && item.state === ITEM_STATES.REMOVED) ? true : false;
     },
 
 };
@@ -56,6 +62,9 @@ var dataFilters = {
 
 var changeEvent = 'change',
     todoItems = getItemsFromStorage();
+
+
+window.todoItems = todoItems;
 
 
 // flux store
@@ -120,18 +129,11 @@ var store = {
         }
     },
 
-    markAsDone( index ) {
-        if( isFinite(index) && index >= 0 ){
-            if( todoItems.length >= index+1 ) {
-                todoItems[index].state = ITEM_STATES.DONE;
-            }
-        }
-    },
-
-    markAsRemoved( index ) {
-        if( isFinite(index) && index >= 0 ){
-            if( todoItems.length >= index+1 ) {
-                todoItems[index].state = ITEM_STATES.REMOVED;
+    setItemState(id, state) {
+        if(id && state){
+            const item = todoItems.filter(i => i.id === id)[0];
+            if(item) {
+                item.state = state;
             }
         }
     },
@@ -149,31 +151,24 @@ store.addChangeListener(()=>{
 store.token = dispatcher.register((action)=>{
     if ( action ) {
         switch(action.type) {
-
-            case ACTION_TYPES.ADD:
+            case ACTION_TYPES.ADD_ITEM:
                 store.addItem(action.from, action.till, action.desc);
                 store.emitChange();
                 break;
 
-            case ACTION_TYPES.MOVE:
+            case ACTION_TYPES.MOVE_ITEM:
                 store.moveItem(action.from, action.to);
                 store.emitChange();
                 break;
 
-            case ACTION_TYPES.DONE:
-                store.markAsDone(action.index);
-                store.emitChange();
-                break;
-
-            case ACTION_TYPES.REMOVED:
-                store.markAsRemoved(action.index);
+            case ACTION_TYPES.SET_ITEM_STATE:
+                store.setItemState(action.id, action.state);
                 store.emitChange();
                 break;
 
             default:
                 // noop
                 break;
-
         }
     }
 });

@@ -1,7 +1,7 @@
 
 import dispatcher from '../dispatcher';
 import {
-    itemActionTypes as ACTION_TYPES
+    actionTypes as ACTION_TYPES
 } from '../constants';
 
 
@@ -9,7 +9,7 @@ var listActions = {
 
     addItem(from, till, desc) {
         dispatcher.dispatch({
-            type: ACTION_TYPES.ADD,
+            type: ACTION_TYPES.ADD_ITEM,
             from,
             till,
             desc
@@ -18,7 +18,7 @@ var listActions = {
  
     moveItem(from, to) {
         dispatcher.dispatch({
-            type: ACTION_TYPES.MOVE,
+            type: ACTION_TYPES.MOVE_ITEM,
             from,
             to,
         });
