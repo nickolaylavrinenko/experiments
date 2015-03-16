@@ -16,9 +16,15 @@ import {
 
 var List = React.createClass({
 
+    propTypes: {
+        params: React.PropTypes.shape({
+            filter: React.PropTypes.string
+        })
+    },
+
     // todo collection state is a store state, not component's state
     componentDidMount() {
-        store.addChangeListener(this._dataChangedCallback.bind(this));
+        store.addChangeListener(this._dataChangedCallback);
     },
     componentWillUnmount() {
         store.removeChangeListener(this._dataChangedCallback);
@@ -29,7 +35,7 @@ var List = React.createClass({
     // end of block
 
     render(){
-        var filterName = this.props.params.filter || 'all',
+        var filterName = this.props.params.filter,
             items = store.getFilteredItems(filterName),
             components = [];
 

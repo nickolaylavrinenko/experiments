@@ -16,7 +16,9 @@ var NotFoundPage = React.createClass({
             <div className="appWrapper">
                 <div className="topContainer">
                     <header className="appHeader">
-                        <div className="appHeader_logo">TODO_APP</div>
+                        <div className="appHeader_logo">
+                            <Link to="index">TODOs</Link>
+                        </div>
                     </header>
                     <p className="errorMessage"> 
                         Sorry, the page is not found.
@@ -44,7 +46,7 @@ var Page = React.createClass({
                 <div className="topContainer">
                     <header className="appHeader">
                         <div className="appHeader_logo">
-                            <Link to="index">TODO_APP</Link>
+                            <Link to="index">TODOs</Link>
                         </div>
                         <div className="appHeader_menu">
                             Filters: 

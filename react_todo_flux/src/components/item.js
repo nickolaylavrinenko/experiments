@@ -50,6 +50,13 @@ const Item = React.createClass({
 
     mixins: [DragDropMixin],
 
+    propTypes: {
+        state: React.PropTypes.string.isRequired,
+        from: React.PropTypes.instanceOf(Date).isRequired,
+        till: React.PropTypes.instanceOf(Date).isRequired,
+        desc: React.PropTypes.string.isRequired
+    },
+
     statics: {
         configureDragDrop(register) {
             register(DND_TYPES.ITEM, {
