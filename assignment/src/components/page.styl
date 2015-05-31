@@ -1,0 +1,36 @@
+
+@import '../common/base';
+
+
+.page {
+    
+    &__viewer {
+        margin: 40px;
+    }
+}
+
+// media queries
+
+@media screen and (min-width: 1078px) {
+    .page {
+        &__viewer {
+            width: 998px;
+        }
+    }
+}
+
+@media screen and (min-width: 890px) and (max-width: 1078px) {
+    .page {
+        &__viewer {
+            width: 810px;
+        }
+    }
+}
+
+@media screen and (max-width: 890px) {
+    .page {
+        &__viewer {
+            width: 622px;
+        }
+    }
+}

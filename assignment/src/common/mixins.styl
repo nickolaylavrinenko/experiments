@@ -1,0 +1,16 @@
+
+@import './constants';
+
+
+borderMixIn() {
+    border: borderWeight solid borderColor;
+    border-radius: borderRadius;
+}
+
+oneLineBlockMixIn(h) {
+    height: h;
+    line-height: h;
+    & > * {
+        vertical-align: middle;
+    }
+}

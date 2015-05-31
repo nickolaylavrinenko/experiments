@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "640x360": "assets/gifs/640x360/Scene-1.gif",
+        "178x100": "assets/gifs/178x100/Scene-1.gif",
+        "title": "image #1"
+    },
+    {
+        "id": 2,
+        "640x360": "assets/gifs/640x360/Scene-2.gif",
+        "178x100": "assets/gifs/178x100/Scene-2.gif",
+        "title": "image #2"
+    },
+    {
+        "id": 3,
+        "640x360": "assets/gifs/640x360/Scene-3.gif",
+        "178x100": "assets/gifs/178x100/Scene-3.gif",
+        "title": "image #3"
+    },
+    {
+        "id": 4,
+        "640x360": "assets/gifs/640x360/Scene-4.gif",
+        "178x100": "assets/gifs/178x100/Scene-4.gif",
+        "title": "image #4"
+    },
+    {
+        "id": 5,
+        "640x360": "assets/gifs/640x360/Scene-5.gif",
+        "178x100": "assets/gifs/178x100/Scene-5.gif",
+        "title": "image #5"
+    },
+    {
+        "id": 6,
+        "640x360": "assets/gifs/640x360/Scene-6.gif",
+        "178x100": "assets/gifs/178x100/Scene-6.gif",
+        "title": "image #6"
+    },
+    {
+        "id": 7,
+        "640x360": "assets/gifs/640x360/Scene-7.gif",
+        "178x100": "assets/gifs/178x100/Scene-7.gif",
+        "title": "image #7"
+    },
+    {
+        "id": 8,
+        "640x360": "assets/gifs/640x360/Scene-8gif",
+        "178x100": "assets/gifs/178x100/Scene-8.gif",
+        "title": "image #8"
+    }
+]

@@ -1,5 +1,5 @@
 
-import Flux from 'flux';
+// import Flux from 'flux';
 import ShortId from 'shortid';
 import {EventEmitter} from 'events';
 import dispatcher from '../dispatcher';
