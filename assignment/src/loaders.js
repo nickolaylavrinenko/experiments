@@ -1,12 +1,22 @@
 
-import gifs from 'mocks/gifs';
+import tree from './store';
+import {ensureArray, isEmpty} from './utils/checks';
+import data from 'mocks/gifs.json';
 
 
 export default {
 
   loadGifsList(tree) {
-    // We can replace this and use ajax to get gifs from some backend
-    tree.set('gifs', gifs);
+
+    // We can replace this and use ajax instead to get images from some backend
+    const items = ensureArray(data);
+
+    tree.set('items', items);
+    if( items.length &&
+          !isEmpty(items[0].id) ) {
+      tree.set('activeId', items[0].id);
+    }
+    tree.commit();
   }
 
 };

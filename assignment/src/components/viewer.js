@@ -1,11 +1,11 @@
 
 import './viewer.styl';
 import React from 'react';
+import {Branch} from 'baobab-react/wrappers';
 import cx from 'classnames';
-import Stub from './stub';
+import ActivePreview from './activePreview';
 import PreviewList from './previewList';
 import Image from './image';
-import gifs from 'mocks/gifs.json';
 
 
 class Viewer extends React.Component {
@@ -17,11 +17,22 @@ class Viewer extends React.Component {
       <div className={cx(className, 'viewer')}>
 
         <div className='viewer__full'>
-          <Image src={gifs[0]['640x360']} title={gifs[0]['title']} />
+          <Branch
+                facets={{
+                  details: 'activeItem'
+                }}>
+            <ActivePreview/>
+          </Branch>
         </div>
 
         <div className='viewer__previews'>
-          <PreviewList items={gifs}/>
+          <Branch
+                cursors={{
+                  items: ['items'],
+                  activeId: ['activeId']
+                }}>
+            <PreviewList/>
+          </Branch>
         </div>
 
       </div>
