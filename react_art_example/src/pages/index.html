@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>react-art</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/bundle.css">
+    <script type="text/javascript" charset="UTF8" src="bundle.js"></script>
+    {% if(o.htmlWebpackPlugin.options.hotMode) { %}
+        <script type="text/javascript" charset="UTF8"src="http://localhost:8000/webpack-dev-server.js"></script>
+    {% } %}
+</head>
+<body></body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "name": "assignment",
+  "version": "0.0.1",
+  "main": "index.js",
+  "description": "assignment",
+  "keywords": [],
+  "repository": "",
+  "private": true,
+  "dependencies": {
+    "autoprefixer-loader": "^2.0.0",
+    "babel": "^5.6.14",
+    "babel-loader": "^5.2.2",
+    "classnames": "^2.1.2",
+    "css-loader": "^0.15.1",
+    "extract-text-webpack-plugin": "^0.8.2",
+    "file-loader": "^0.8.4",
+    "html-webpack-plugin": "^1.5.2",
+    "jeet": "^6.1.2",
+    "nib": "^1.1.0",
+    "react": "^0.13.3",
+    "react-art": "^0.13.0",
+    "style-loader": "^0.12.3",
+    "stylus": "^0.51.1",
+    "stylus-loader": "^1.2.1",
+    "url-loader": "^0.5.6",
+    "webpack": "^1.10.0",
+    "webpack-dev-server": "^1.10.1"
+  },
+  "scripts": {
+    "dev-server": "BUILD_DEV=1 node ./webpack.dev.server.js"
+  }
+}
