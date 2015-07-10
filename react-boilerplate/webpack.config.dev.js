@@ -7,9 +7,7 @@ var
 // directories
 var
   rootDir = __dirname,
-  clientDir = path.join(rootDir, 'client/src'),
-  serverDir = path.join(rootDir, 'server/src'),
-  sharedDir = path.join(rootDir, 'shared/src'),
+  srcDir = path.join(rootDir, 'src'),
   outputDir = path.join(rootDir, 'build');
 
 
@@ -17,7 +15,7 @@ module.exports = {
   entry: [
     'webpack-dev-server/client?http://localhost:8000',
     'webpack/hot/only-dev-server',
-    './client/src/index.js'
+    './src/index.js'
   ],
   output: {
     path: outputDir,
@@ -26,18 +24,13 @@ module.exports = {
   devtool: 'source-map',
   resolve: {
     extensions: ['', '.js'],
-    alias: {
-      'client': clientDir,
-      'shared': sharedDir,
-      'server': serverDir
-    }
   },
   module: {
     loaders: [
       {
         test: /\.js$/,
         loader: 'react-hot!babel?stage=0',
-        include: clientDir
+        include: srcDir
       }
     ]
   },
@@ -47,7 +40,7 @@ module.exports = {
       __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'true')),
     }),
     new HtmlWebpackPlugin({
-      template: './pages/index.html',
+      template: './src/pages/index.html',
       filename: 'index.html'
     }),
     new webpack.NoErrorsPlugin()
