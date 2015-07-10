@@ -1,5 +1,4 @@
 
-import './page.styl';
 import React from 'react';
 import Test from './test';
 
@@ -10,7 +9,7 @@ export default class Page extends React.Component {
 
   render() {
     return (
-      <div className='page'>
+      <div>
         <Test />
       </div>
     );
