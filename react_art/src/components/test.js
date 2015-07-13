@@ -4,8 +4,10 @@
 
 import React from 'react';
 import ReactArt from 'react-art';
-import Circle from './circle';
 
+import Circle from 'react-art/lib/Circle.art';
+import Rectangle from 'react-art/lib/Rectangle.art';
+import Wedge from 'react-art/lib/Wedge.art';
 
 const {
   Surface,
@@ -36,11 +38,40 @@ export default class Test extends React.Component {
 
   componentDidMount() {
     const block = this.refs.block;
-    this.setRotation(block);
-    this.setScaling(block);
+    // this._setRotation(block);
+    // this._setScaling(block);
   }
 
-  setRotation(component) {
+  render() {
+    return (
+        <Surface width={1500} height={900}>
+          <Group x={450} y={300} width={500} height={300}  ref='block'>
+            <ClippingRectangle width={500} height={300}>
+              <Rectangle width={500} height={300} fill='#DCDCDC'>
+              </Rectangle>
+              <Group width={300} height={200}>
+                <Rectangle width={200} height={100} fill='#F00'>
+                </Rectangle>
+                <Rectangle width={200} height={100} fill='#0F0'>
+                </Rectangle>
+              </Group>
+            </ClippingRectangle>
+          </Group>
+        </Surface>
+    );
+  }
+
+              // <Circle
+              //     radius={19}
+              //     stroke='#000000'
+              //     strokeWidth={2}
+              //      x={20} y={20}>
+              // </Circle>
+              // <Text font='14px Arial' fill='#DCDCDC' x={0} y={0}>
+              //   Hello
+              // </Text>
+
+  _setRotation(component) {
     this._rotateIntervalId = window.setInterval(() => {
       if( this.rotateValue >= this.maxRotateValue ) {
         component.rotateTo(this.maxRotateValue);
@@ -52,7 +83,7 @@ export default class Test extends React.Component {
     }, 100);
   }
 
-  setScaling(component) {
+  _setScaling(component) {
     this._scaleIntervalId = window.setInterval(() => {
       if( this.scaleCounter > this.maxScaleCount ) {
         window.clearInterval(this._scaleIntervalId);
@@ -62,37 +93,5 @@ export default class Test extends React.Component {
       }
     }, 100);
   }
-
-  render() {
-    return (
-        <Surface width={1500} height={900}>
-          <Group x={750} y={450} ref='block'>
-            <Circle
-                radius={20}
-                stroke='#000000'
-                strokeWidth={2}
-                 x={20} y={20}>
-            </Circle>
-            <Text font='14px Arial' fill='#DCDCDC' x={0} y={0}>
-              Hello
-            </Text>
-          </Group>
-        </Surface>
-    );
-  }
-
-          // Clipping rectangle doesn't work
-
-          // <ClippingRectangle x={750} y={450} ref='block'>
-          //   <Circle
-          //       radius={20}
-          //       stroke='green'
-          //       strokeWidth={2}
-          //        x={20} y={20}>
-          //   </Circle>
-          //   <Text font='14px Arial' fill='navy' x={0} y={0}>
-          //     Hello
-          //   </Text>
-          // </ClippingRectangle>
 
 };

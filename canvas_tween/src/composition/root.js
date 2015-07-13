@@ -10,12 +10,30 @@ const {
 } = createjs;
 
 
+// monkey patch
+createjs.Stage.prototype._handlePointerDown = function(id, e, pageX, pageY, owner) {
+  // if (this.preventSelection) { e.preventDefault(); }
+  if (this._primaryPointerID == null || id === -1) { this._primaryPointerID = id; } // mouse always takes over.
+  
+  if (pageY != null) { this._updatePointerPosition(id, e, pageX, pageY); }
+  var target = null, nextStage = this._nextStage, o = this._getPointerData(id);
+  if (!owner) { target = o.target = this._getObjectsUnderPoint(o.x, o.y, null, true); }
+
+  if (o.inBounds) { this._dispatchMouseEvent(this, "stagemousedown", false, id, o, e, target); o.down = true; }
+  this._dispatchMouseEvent(target, "mousedown", true, id, o, e);
+  
+  nextStage&&nextStage._handlePointerDown(id, e, pageX, pageY, owner || target && this);
+};
+
+
 export default class Root extends Object {
 
   constructor(canvas, options) {
     super();
     options = options || {};
     this.stage = window.stage = new Stage(canvas);
+    // this.stage.enableDOMEvents(true);
+    // stage.enableMouseOver(10);
     this._init(options);
     this._renderChildren();
   }
