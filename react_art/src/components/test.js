@@ -9,6 +9,8 @@ import Circle from 'react-art/lib/Circle.art';
 import Rectangle from 'react-art/lib/Rectangle.art';
 import Wedge from 'react-art/lib/Wedge.art';
 
+import FlexBox from './flexbox';
+
 const {
   Surface,
   Group,
@@ -45,18 +47,15 @@ export default class Test extends React.Component {
   render() {
     return (
         <Surface width={1500} height={900}>
-          <Group x={450} y={300} width={500} height={300}  ref='block'>
-            <ClippingRectangle width={500} height={300}>
-              <Rectangle width={500} height={300} fill='#DCDCDC'>
-              </Rectangle>
-              <Group width={300} height={200}>
-                <Rectangle width={200} height={100} fill='#F00'>
-                </Rectangle>
-                <Rectangle width={200} height={100} fill='#0F0'>
-                </Rectangle>
-              </Group>
-            </ClippingRectangle>
-          </Group>
+          <FlexBox ref='block'
+              x={450} y={300}
+              width={500} height={300}
+              fill={'#DCDCDC'} stroke={'#FFFFFF'}>
+            <Rectangle width={200} height={100} fill='#F00'>
+            </Rectangle>
+            <Rectangle width={200} height={100} fill='#0F0'>
+            </Rectangle>
+          </FlexBox>
         </Surface>
     );
   }
