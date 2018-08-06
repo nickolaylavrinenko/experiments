@@ -1,0 +1,19 @@
+[{
+  "model": "users.User",
+  "pk": "1",
+  "fields": {
+    "username": "me",
+    "first_name": "Nikolai",
+    "last_name": "Lavrinenko",
+    "email": "nickolaylavrinenko@gmail.com"
+  }
+}, {
+  "model": "users.User",
+  "pk": "2",
+  "fields": {
+    "username": "guest",
+    "first_name": "Guest",
+    "last_name": "Guest",
+    "email": "guest@gmail.com"
+  }
+}]

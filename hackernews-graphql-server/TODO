@@ -1,0 +1,1 @@
+1. Get rid of tokens and use pure django session auth (via cookies). This might have to tell appollo client to provide session cookie

@@ -1,0 +1,25 @@
+[{
+  "model": "links.Link",
+  "pk": "1",
+  "fields": {
+    "url": "http://github.com",
+    "description": "Teh best codebase ever.",
+    "posted_by_id": 1
+  }
+}, {
+  "model": "links.Link",
+  "pk": "2",
+  "fields": {
+    "url": "http://facebook.com",
+    "description": "Teh best social network ever.",
+    "posted_by_id": 2
+  }
+}, {
+  "model": "links.Link",
+  "pk": "3",
+  "fields": {
+    "url": "http://google.com",
+    "description": "Teh best search engine ever.",
+    "posted_by_id": 2
+  }
+}]
